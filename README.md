@@ -17,7 +17,7 @@ Homebrew is a package manager for MacOS. See https://brew.sh/ for further detail
 To install via homebrew, run:
 
 ```
-brew tap skpr/cli
+brew tap skpr/cli https://github.com/skpr/cli
 brew install skpr
 ```
 

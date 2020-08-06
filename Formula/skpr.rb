@@ -1,4 +1,4 @@
-class Notes < Formula
+class Skpr < Formula
   desc "CLI for the Skpr Hosting Platform"
   homepage "https://www.skpr.io"
   url "https://github.com/skpr/cli/releases/VERSION/skpr_darwin_amd64.tgz"
