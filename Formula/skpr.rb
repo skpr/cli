@@ -1,9 +1,9 @@
 class Skpr < Formula
   desc "CLI for the Skpr Hosting Platform"
   homepage "https://www.skpr.io"
-  url "https://github.com/skpr/cli/releases/VERSION/skpr_darwin_amd64.tgz"
-  version "VERSION"
-  sha256 "SHA_256_SUM"
+  url "https://github.com/skpr/cli/releases/v0.6.4-kimtest5/skpr_darwin_amd64.tgz"
+  version "v0.6.4-kimtest5"
+  sha256 "be1233571f7a7e9e2fa78d6ab82f192a6b91936e59bf007860eeb5fb5ae65187"
 
   def install
     bin.install "skpr"
