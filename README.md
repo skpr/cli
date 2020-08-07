@@ -28,7 +28,7 @@ brew upgrade skpr
 ```
 
 
-## Manual installation
+### Manual installation
 
 You can download the binaries from the [Releases](https://github.com/skpr/skpr/releases) section.
 
