@@ -3,7 +3,7 @@ class Skpr < Formula
   homepage "https://www.skpr.io"
   url "https://github.com/skpr/cli/releases/download/v0.6.4-kimtest5/skpr_darwin_amd64.tgz"
   version "v0.6.4-kimtest5"
-  sha256 "be1233571f7a7e9e2fa78d6ab82f192a6b91936e59bf007860eeb5fb5ae65187"
+  sha256 "466b53baf05f5d4fb7080f494b9c583cbb71182ab341e5422d202e2dc37c063a"
 
   def install
     bin.install "skpr"
