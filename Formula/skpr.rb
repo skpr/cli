@@ -6,8 +6,8 @@ class Skpr < Formula
   sha256 "SHA_256_SUM"
 
   def install
-    bin.install "bin/amd64/darwin/skpr"
-    bin.install "bin/amd64/darwin/skpr-rsh"
+    bin.install "skpr"
+    bin.install "skpr-rsh"
 
     # Install bash completion
     output = Utils.safe_popen_read("#{bin}/skpr", "--completion-script-bash")
