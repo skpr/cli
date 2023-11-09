@@ -10,6 +10,16 @@ Full documentation is available at https://docs.skpr.io
 
 ## Installation
 
+### Debian/Ubuntu
+
+Add the apt repository and public key to your config, then update and install.
+
+```
+wget -q https://packages.skpr.io/apt/packages.skpr.io.pub -O- | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/packages.skpr.io.pub > /dev/null
+echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.skpr.io.pub] https://packages.skpr.io/apt stable main" | sudo tee -a /etc/apt/sources.list.d/skpr.list > /dev/null
+sudo apt update && sudo apt install skpr
+```
+
 ### Homebrew
 
 Homebrew is a package manager for MacOS. See https://brew.sh/ for further details.
