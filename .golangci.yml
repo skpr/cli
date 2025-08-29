@@ -7,7 +7,7 @@ linters:
         - fmt.Fprintf
         - fmt.Fprintln
         - (*os.File).Close
-        - (*golang.org/x/crypto/ssh.Session).WindowChange
-        - (*golang.org/x/crypto/ssh/terminal).Restore
+        - (*ssh.Session).WindowChange
+        - (*terminal).Restore
         - (*ssh.Client).Close
         - (io.Closer).Close
