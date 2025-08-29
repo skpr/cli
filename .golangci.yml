@@ -5,3 +5,6 @@ linters:
     errcheck:
       exclude-functions:
         - fmt.Fprintf
+        - fmt.Fprintln
+        - (golang.org/x/crypto/ssh.Session).WindowChange
+        - (golang.org/x/crypto/ssh/terminal).Restore
