@@ -1,7 +1,6 @@
 version: 2
 
-linters:
-  settings:
-    errcheck:
-      exclude-functions:
-        - fmt.Fprintf
+linters-settings:
+  errcheck:
+    exclude-functions:
+      - fmt.Fprintf
