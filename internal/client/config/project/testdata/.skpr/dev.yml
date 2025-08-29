@@ -1,0 +1,3 @@
+ingress:
+  routes:
+    - dev.example.com

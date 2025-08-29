@@ -1,0 +1,3 @@
+# ingress:
+#   routes:
+#     - "stg.example.com"

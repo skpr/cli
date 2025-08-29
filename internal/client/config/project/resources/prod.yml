@@ -1,0 +1,13 @@
+# Provides both hosting and developers with an identifier for if
+# an environment is used for production.
+#  eg. Rollout MySQL updates to all non production environments before
+#      upgrading production
+production: true
+
+# Size of the environment being deployed.
+# https://docs.skpr.io/size
+size: "medium"
+
+#ingress:
+#  routes:
+#    - "example.skpr.live"

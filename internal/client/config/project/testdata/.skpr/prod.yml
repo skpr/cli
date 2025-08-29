@@ -1,0 +1,7 @@
+production: true
+
+size: large
+
+ingress:
+  routes:
+    - www.example.com
