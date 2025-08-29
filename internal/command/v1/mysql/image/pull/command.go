@@ -54,7 +54,7 @@ func (cmd *Command) Run() error {
 	})
 	if err != nil {
 		logger.Info("Using backwards compatibility command to pull image.")
-		return cmd.runBackwardsCompat(c)
+		return cmd.runBackwardsCompat()
 	}
 
 	creds, err := client.CredentialsProvider.Retrieve(ctx)
