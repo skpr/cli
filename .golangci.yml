@@ -6,5 +6,7 @@ linters:
       exclude-functions:
         - fmt.Fprintf
         - fmt.Fprintln
+        - (os.File).Close
         - (golang.org/x/crypto/ssh.Session).WindowChange
         - (golang.org/x/crypto/ssh/terminal).Restore
+        - (golang.org/x/crypto/ssh.Client).Close
