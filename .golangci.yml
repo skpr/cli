@@ -9,4 +9,4 @@ linters:
         - (*os.File).Close
         - (*golang.org/x/crypto/ssh.Session).WindowChange
         - (*golang.org/x/crypto/ssh/terminal).Restore
-        - (*golang.org/x/crypto/ssh.Client).Close
+        - (*ssh.Client).Close
