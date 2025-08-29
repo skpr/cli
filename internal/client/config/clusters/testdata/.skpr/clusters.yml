@@ -1,0 +1,8 @@
+pnx.cluster.skpr.io:
+  api:
+    host: 127.0.0.1
+    port: 443
+    insecure: true
+  ssh:
+    host: 127.0.0.1
+    port: 22

@@ -1,0 +1,46 @@
+size: small
+
+services:
+  mysql:
+    default:
+      image:
+        schedule: "0 20 * * *"
+      sanitize:
+        image:
+          policy: "test-image"
+          rules:
+            rewrite:
+              users_field_data:
+                mail: SANITIZED_MAIL
+                pass: SANITIZED_PASSWORD
+            nodata:
+              - cache*
+            where:
+              node_revision__body: revision_id IN (SELECT vid FROM node)
+
+  solr:
+    default:
+      version: 8.x
+
+cron:
+  echo:
+    command:  echo 1
+    schedule: "* * * * *"
+
+daemon:
+  echo:
+    command:  echo Daemon
+
+smtp:
+  from:
+    address: admin@example.com
+
+backup:
+  schedule: "@daily"
+
+ingress:
+  headers:
+    - Host
+  cookies:
+    - SESS*
+    - SSESS*

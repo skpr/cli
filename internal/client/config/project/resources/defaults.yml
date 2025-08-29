@@ -1,0 +1,12 @@
+type: drupal
+size: "small"
+ingress:
+  cache:
+    policy: drupal
+cron:
+  drush:
+    command:  "drush cron"
+    schedule: "@hourly"
+#smtp:
+#  from:
+#    address: info@example.com

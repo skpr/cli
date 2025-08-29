@@ -1,0 +1,2 @@
+project: {{.Project}}
+cluster: {{.Cluster}}
