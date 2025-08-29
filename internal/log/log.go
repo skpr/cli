@@ -68,13 +68,13 @@ func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
 
 	switch r.Level {
 	case slog.LevelDebug:
-		level = gchalk.WithHex(color.HexBlue).Sprintf(level)
+		level = gchalk.WithHex(color.HexBlue).Sprintf("%s", level)
 	case slog.LevelInfo:
-		level = gchalk.WithHex(color.HexBlue).Sprintf(level)
+		level = gchalk.WithHex(color.HexBlue).Sprintf("%s", level)
 	case slog.LevelWarn:
-		level = gchalk.WithHex(color.HexYellow).Sprintf(level)
+		level = gchalk.WithHex(color.HexYellow).Sprintf("%s", level)
 	case slog.LevelError:
-		level = gchalk.WithHex(color.HexRed).Sprintf(level)
+		level = gchalk.WithHex(color.HexRed).Sprintf("%s", level)
 	}
 
 	// @todo, Add attribute handling.

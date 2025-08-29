@@ -202,15 +202,11 @@ func protoSanitize(mysql *DatabaseSanitize) *pb.SanitizationPolicy {
 	var wheres []*pb.SanitizationWhere
 
 	if len(mysql.Rules.NoData) > 0 {
-		for _, value := range mysql.Rules.NoData {
-			nodatas = append(nodatas, value)
-		}
+		nodatas = append(nodatas, mysql.Rules.NoData...)
 	}
 
 	if len(mysql.Rules.Ignore) > 0 {
-		for _, value := range mysql.Rules.Ignore {
-			ignores = append(ignores, value)
-		}
+		ignores = append(ignores, mysql.Rules.Ignore...)
 	}
 
 	if len(mysql.Rules.Rewrite) > 0 {
