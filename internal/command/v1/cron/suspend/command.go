@@ -56,7 +56,7 @@ func (cmd *Command) Run() error {
 			for _, cron := range resp.List {
 				if cron.Phase == pb.CronJobDetail_Running {
 					*status = true
-					fmt.Fprintf(os.Stderr, fmt.Sprintf("Still waiting for '%v' to finish (%v)\n", cron.Name, cron.Duration))
+					fmt.Fprintf(os.Stderr, "Still waiting for '%v' to finish (%v)\n", cron.Name, cron.Duration)
 				}
 			}
 
