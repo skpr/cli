@@ -1,7 +1,6 @@
 version: "2"
 
 linters:
-  settings:
-    errcheck:
-      exclude:
-        - \.Close
+  disable:
+    # We check error as part of our PR process.
+    - errcheck
