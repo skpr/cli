@@ -3,7 +3,6 @@ package credentials
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -110,7 +109,7 @@ func (c *Config) Write(clusters Clusters) error {
 		}
 	}
 
-	err = ioutil.WriteFile(c.file, data, 0600)
+	err = os.WriteFile(c.file, data, 0600)
 	if err != nil {
 		return fmt.Errorf("failed to write clusters to file: %w", err)
 	}

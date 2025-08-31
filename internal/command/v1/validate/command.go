@@ -86,9 +86,9 @@ func PrintTable(ctx context.Context, w io.Writer, client *wfclient.Client, proto
 		switch finding.Type {
 		case pb.EnvironmentValidateFinding_Violation:
 			violationCount++
-			row = append(row, color.New(color.FgRed).Sprintf(finding.Type.String()))
+			row = append(row, color.New(color.FgRed).Sprintf("%s", finding.Type.String()))
 		case pb.EnvironmentValidateFinding_Warning:
-			row = append(row, color.New(color.FgBlue).Sprintf(finding.Type.String()))
+			row = append(row, color.New(color.FgBlue).Sprintf("%s", finding.Type.String()))
 		}
 
 		rows = append(rows, row)

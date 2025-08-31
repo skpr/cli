@@ -19,6 +19,7 @@ func TestInitialize(t *testing.T) {
 	assert.NoError(err)
 
 	sub, err := fs.Sub(resources, "resources")
+	assert.NoError(err)
 
 	f, err := sub.Open("config.yml")
 	assert.NoError(err)

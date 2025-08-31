@@ -7,10 +7,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 
 	"github.com/skpr/api/pb"
-
 	"github.com/skpr/cli/internal/client/config/clusters"
 	skprcredentials "github.com/skpr/cli/internal/client/config/credentials"
 	skprdiscovery "github.com/skpr/cli/internal/client/config/discovery"
@@ -71,10 +71,10 @@ func Dial(api clusters.API) (*grpc.ClientConn, error) {
 	server := fmt.Sprintf("%s:%d", api.Host, api.Port)
 
 	if api.Insecure {
-		return grpc.Dial(server, grpc.WithInsecure())
+		return grpc.NewClient(server, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
-	return grpc.Dial(server, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
+	return grpc.NewClient(server, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
 }
 
 // NewFromFile loads a file and uses that configuration to return a client.

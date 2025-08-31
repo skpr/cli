@@ -13,7 +13,7 @@ import (
 // Exec a command in the remote environment.
 func (c Client) Exec(params ExecParams) error {
 	if len(params.Command) == 0 {
-		return errors.New("Command was not provided")
+		return errors.New("command was not provided")
 	}
 
 	awsCreds, err := c.CredentialsProvider.Retrieve(context.TODO())

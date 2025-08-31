@@ -46,11 +46,7 @@ func Exists(clusterName string) bool {
 	}
 
 	_, err = os.Stat(path)
-	if err != nil {
-		return false
-	}
-
-	return true
+	return err == nil
 }
 
 // Delete a credentials cache file for a cluster.

@@ -1,0 +1,6 @@
+version: "2"
+
+linters:
+  disable:
+    # We check error as part of our PR process.
+    - errcheck

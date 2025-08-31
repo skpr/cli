@@ -66,7 +66,10 @@ func LoadFromFile(file, name string) (Cluster, error) {
 
 	// If the cluster is specified, let's use that.
 	if _, ok := clusters[name]; ok {
-		mergo.Merge(&cluster, clusters[name], mergo.WithOverride)
+		err = mergo.Merge(&cluster, clusters[name], mergo.WithOverride)
+		if err != nil {
+			return cluster, errors.Wrap(err, "failed to merge config")
+		}
 	}
 
 	err = cluster.Validate()
