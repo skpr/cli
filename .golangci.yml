@@ -3,11 +3,5 @@ version: "2"
 linters:
   settings:
     errcheck:
-      exclude-functions:
-        - fmt.Fprintf
-        - fmt.Fprintln
-        - (*os.File).Close
-        - (*ssh.Session).WindowChange
-        - (*terminal).Restore
-        - (*ssh.Client).Close
-        - (io.Closer).Close
+      exclude:
+        - \.Close
