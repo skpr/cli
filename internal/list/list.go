@@ -7,10 +7,6 @@ import (
 // Print a list with dots.
 func Print(data []string) (string, error) {
 	var dashed []string
-
-	for _, item := range data {
-		dashed = append(dashed, item)
-	}
-
+	dashed = append(dashed, data...)
 	return strings.Join(dashed, "\n"), nil
 }

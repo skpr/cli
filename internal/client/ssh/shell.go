@@ -8,7 +8,7 @@ import (
 
 	"github.com/olekukonko/ts"
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 // Shell creates a long lived "shell" session for the user.
@@ -62,13 +62,13 @@ func (c Client) Shell(params ShellParams) error {
 		termHeight = 24
 	)
 
-	if terminal.IsTerminal(fd) {
-		oldState, err := terminal.MakeRaw(fd)
+	if term.IsTerminal(fd) {
+		oldState, err := term.MakeRaw(fd)
 		if err != nil {
 			return err
 		}
 
-		defer terminal.Restore(fd, oldState)
+		defer term.Restore(fd, oldState)
 
 		size, err := ts.GetSize()
 		if err == nil {

@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -72,7 +71,7 @@ func (c *ConfigFile) Write(config Config) error {
 		}
 	}
 
-	err = ioutil.WriteFile(c.Filename, data, 0600)
+	err = os.WriteFile(c.Filename, data, 0600)
 	if err != nil {
 		return fmt.Errorf("failed to write command config to file: %w", err)
 	}

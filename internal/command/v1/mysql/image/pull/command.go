@@ -83,15 +83,10 @@ func (cmd *Command) Run() error {
 	writer := uilive.New()
 	writer.Start()
 
-	var images []string
-
 	for _, database := range cmd.Params.Databases {
 		tag := fmt.Sprintf("%s-%s", database, DefaultTagSuffix)
 
 		imageName := fmt.Sprintf("%s:%s", getRepositoryResp.Repository, tag)
-
-		// Keep for later so we can inform the developer on which images they can use.
-		images = append(images, imageName)
 
 		logger.Info(fmt.Sprintf("Pulling: %s", imageName))
 

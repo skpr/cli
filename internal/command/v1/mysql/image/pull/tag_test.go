@@ -35,7 +35,7 @@ func TestGetTag(t *testing.T) {
 	assert.Equal(t, "test-tag", tag)
 
 	// Test that we return an error when a tag does not exist.
-	tag, err = getTag(context.TODO(), client, "default", Params{ID: "foo"})
+	_, err = getTag(context.TODO(), client, "default", Params{ID: "foo"})
 	assert.Error(t, err)
 
 	// Test that we return an error when a tag does not exist.

@@ -141,7 +141,7 @@ func (cmd *Command) Run() error {
 
 			plugin := awsplugin.NewAWSSigner(awssigner.NewFromConfig(cfg))
 
-			sigSigner, err := notarysigner.NewFromPlugin(plugin, signerInfo.Identifier, map[string]string{})
+			sigSigner, err := notarysigner.NewPluginSigner(plugin, signerInfo.Identifier, map[string]string{})
 			if err != nil {
 				return err
 			}

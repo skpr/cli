@@ -34,7 +34,7 @@ func Expand(args []string, aliases command.Aliases) (bool, []string, error) {
 		return found, []string{}, err
 	}
 
-	var newArgs []string = strings.Split(expansion, " ")
+	var newArgs = strings.Split(expansion, " ")
 
 	expanded := append(newArgs, extraArgs...)
 	return found, expanded, nil
