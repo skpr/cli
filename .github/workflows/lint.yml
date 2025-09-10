@@ -1,4 +1,4 @@
-name: Test
+name: Lint
 
 on:
   push:
@@ -22,6 +22,6 @@ jobs:
           curl https://mise.run | sh
           mise install
 
-      - name: Test
+      - name: Lint
         run: |
-          mise run test
+          mise run lint

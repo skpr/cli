@@ -1,5 +1,6 @@
 [tools]
 go = "1.24"
+"ubi:golangci/golangci-lint" = "latest"
 
 [env]
 CGO_ENABLED=0
@@ -12,3 +13,7 @@ run = "go mod vendor"
 description = "Run Go tests with coverage"
 run = "go test -cover ./..."
 depends = ["vendor"]
+
+[tasks."lint"]
+description = "Run Go tests with coverage"
+run = "golangci-lint run"
