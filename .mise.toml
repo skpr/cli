@@ -4,6 +4,11 @@ go = "1.24"
 [env]
 CGO_ENABLED=0
 
+[tasks.vendor]
+description = "Ensure vendor is up to date"
+run = "go mod vendor"
+
 [tasks.test]
 description = "Run Go tests with coverage"
 run = "go test -cover ./..."
+depends = ["vendor"]
