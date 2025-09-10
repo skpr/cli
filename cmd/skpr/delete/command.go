@@ -12,7 +12,7 @@ var (
 
 	cmdExample = `
   # Delete the dev environment
-  skpr delete dev`
+  skpr delete <environment>`
 )
 
 // NewCommand creates a new cobra.Command for 'delete' sub command
@@ -20,7 +20,7 @@ func NewCommand() *cobra.Command {
 	command := v1delete.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "delete <environment>",
+		Use:                   "delete [environment]",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Delete a previously deployed environment",

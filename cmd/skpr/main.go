@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
+	"os"
+
 	"github.com/charmbracelet/fang"
 	"github.com/charmbracelet/lipgloss/v2"
 	"github.com/skpr/cli/internal/color"
 	"github.com/spf13/cobra"
-	"os"
 
 	"github.com/skpr/cli/cmd/skpr/alias"
 	"github.com/skpr/cli/cmd/skpr/backup"
@@ -21,6 +22,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/logout"
 	"github.com/skpr/cli/cmd/skpr/mysql"
 	pkg "github.com/skpr/cli/cmd/skpr/package"
+	"github.com/skpr/cli/cmd/skpr/profile"
 	"github.com/skpr/cli/cmd/skpr/purge"
 	"github.com/skpr/cli/cmd/skpr/release"
 	"github.com/skpr/cli/cmd/skpr/restore"
@@ -72,6 +74,7 @@ func main() {
 	cmd.AddCommand(mysql.NewCommand())
 	cmd.AddCommand(pkg.NewCommand())
 	cmd.AddCommand(purge.NewCommand())
+	cmd.AddCommand(profile.NewCommand())
 	cmd.AddCommand(restore.NewCommand())
 	cmd.AddCommand(rsync.NewCommand())
 	cmd.AddCommand(shell.NewCommand())
