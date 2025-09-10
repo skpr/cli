@@ -1,6 +1,6 @@
 module github.com/skpr/cli
 
-go 1.24.3
+go 1.25.1
 
 require (
 	dario.cat/mergo v1.0.2
