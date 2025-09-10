@@ -1,0 +1,9 @@
+[tools]
+go = "1.24"
+
+[env]
+CGO_ENABLED=0
+
+[tasks.test]
+description = "Run Go tests with coverage"
+run = "go test -cover ./..."
