@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
+	"os"
+
 	"github.com/charmbracelet/fang"
 	"github.com/charmbracelet/lipgloss/v2"
 	"github.com/skpr/cli/internal/color"
 	"github.com/spf13/cobra"
-	"os"
 
 	"github.com/skpr/cli/cmd/skpr/alias"
 	"github.com/skpr/cli/cmd/skpr/backup"
@@ -26,6 +27,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/restore"
 	"github.com/skpr/cli/cmd/skpr/rsync"
 	"github.com/skpr/cli/cmd/skpr/shell"
+	"github.com/skpr/cli/cmd/skpr/trace"
 	"github.com/skpr/cli/cmd/skpr/version"
 )
 
@@ -75,6 +77,7 @@ func main() {
 	cmd.AddCommand(restore.NewCommand())
 	cmd.AddCommand(rsync.NewCommand())
 	cmd.AddCommand(shell.NewCommand())
+	cmd.AddCommand(trace.NewCommand())
 	cmd.AddCommand(version.NewCommand())
 	cmd.AddCommand(release.NewCommand())
 
