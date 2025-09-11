@@ -2,17 +2,13 @@ package client
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/metadata"
 
 	"github.com/skpr/api/pb"
 	"github.com/skpr/cli/internal/client/config/clusters"
-	skprcredentials "github.com/skpr/cli/internal/client/config/credentials"
 	skprdiscovery "github.com/skpr/cli/internal/client/config/discovery"
 	"github.com/skpr/cli/internal/client/config/project"
 	"github.com/skpr/cli/internal/client/ssh"
@@ -52,69 +48,19 @@ type Client struct {
 }
 
 // New client.
-func New(config project.Config, discovery *skprdiscovery.Discovery, credsProvider aws.CredentialsProvider, cluster clusters.Cluster) (*Client, context.Context, error) {
-	// https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md
-	// @todo, Attach credentials to this context.
-	awscreds, err := credsProvider.Retrieve(context.TODO())
-	if err != nil {
-		return &Client{}, nil, &ProjectInitError{fmt.Errorf("failed getting aws credentials %w", err)}
-	}
-	md := metadata.Pairs(KeyProject, config.Project, KeyUsername, awscreds.AccessKeyID, KeyPassword, awscreds.SecretAccessKey, KeySession, awscreds.SessionToken)
-	ctx := metadata.NewOutgoingContext(context.Background(), md)
-
-	dial, err := Dial(cluster.API)
-	return &Client{dial, config, discovery, credsProvider, cluster}, ctx, err
+func New() (*Client, context.Context, error) {
+	dial, err := Dial()
+	return &Client{ClientConn: dial}, context.TODO(), err
 }
 
 // Dial a connection to the API server.
-func Dial(api clusters.API) (*grpc.ClientConn, error) {
-	server := fmt.Sprintf("%s:%d", api.Host, api.Port)
-
-	if api.Insecure {
-		return grpc.NewClient(server, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	}
-
-	return grpc.NewClient(server, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
+func Dial() (*grpc.ClientConn, error) {
+	return grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 }
 
 // NewFromFile loads a file and uses that configuration to return a client.
 func NewFromFile() (*Client, context.Context, error) {
-	discovery, err := skprdiscovery.New()
-	if err != nil {
-		return nil, nil, &ProjectInitError{fmt.Errorf("failed to discover config %w", err)}
-	}
-
-	configFile, err := discovery.Config()
-	if err != nil {
-		return nil, nil, &ProjectInitError{fmt.Errorf("failed to get project config file path %w", err)}
-	}
-
-	config, err := project.LoadConfig(configFile)
-	if err != nil {
-		return nil, nil, &ProjectInitError{fmt.Errorf("failed to get project config %w", err)}
-	}
-
-	credentialsFile, err := discovery.Credentials()
-	if err != nil {
-		return nil, nil, &CredsError{fmt.Errorf("failed to get credentials file %w", err)}
-	}
-	credsConfig := skprcredentials.NewConfig(credentialsFile)
-	credsResolver := skprcredentials.NewResolver(credsConfig)
-	creds, err := credsResolver.ResolveCredentials(config.Cluster)
-	if err != nil {
-		return nil, nil, &CredsError{fmt.Errorf("failed to get credentials config %w", err)}
-	}
-
-	clusterFile, err := discovery.Clusters()
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to get clusters file %w", err)
-	}
-	clusterCfg, err := clusters.LoadFromFile(clusterFile, config.Cluster)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to get clusters config %w", err)
-	}
-
-	return New(config, discovery, creds, clusterCfg)
+	return New()
 }
 
 // Project client.
@@ -195,4 +141,9 @@ func (c Client) Volume() pb.VolumeClient {
 // Daemon client operations.
 func (c Client) Daemon() pb.DaemonClient {
 	return pb.NewDaemonClient(c.ClientConn)
+}
+
+// Compass client operations.
+func (c Client) Compass() pb.CompassClient {
+	return pb.NewCompassClient(c.ClientConn)
 }

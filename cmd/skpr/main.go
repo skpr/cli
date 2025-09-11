@@ -22,12 +22,12 @@ import (
 	"github.com/skpr/cli/cmd/skpr/logout"
 	"github.com/skpr/cli/cmd/skpr/mysql"
 	pkg "github.com/skpr/cli/cmd/skpr/package"
-	"github.com/skpr/cli/cmd/skpr/profile"
 	"github.com/skpr/cli/cmd/skpr/purge"
 	"github.com/skpr/cli/cmd/skpr/release"
 	"github.com/skpr/cli/cmd/skpr/restore"
 	"github.com/skpr/cli/cmd/skpr/rsync"
 	"github.com/skpr/cli/cmd/skpr/shell"
+	"github.com/skpr/cli/cmd/skpr/trace"
 	"github.com/skpr/cli/cmd/skpr/version"
 )
 
@@ -74,10 +74,10 @@ func main() {
 	cmd.AddCommand(mysql.NewCommand())
 	cmd.AddCommand(pkg.NewCommand())
 	cmd.AddCommand(purge.NewCommand())
-	cmd.AddCommand(profile.NewCommand())
 	cmd.AddCommand(restore.NewCommand())
 	cmd.AddCommand(rsync.NewCommand())
 	cmd.AddCommand(shell.NewCommand())
+	cmd.AddCommand(trace.NewCommand())
 	cmd.AddCommand(version.NewCommand())
 	cmd.AddCommand(release.NewCommand())
 

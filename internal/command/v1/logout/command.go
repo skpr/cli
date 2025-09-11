@@ -16,7 +16,6 @@ import (
 
 	oidclogin "github.com/skpr/cli/internal/aws/cognito/oidc/login"
 	"github.com/skpr/cli/internal/client"
-	"github.com/skpr/cli/internal/client/config/clusters"
 	credentialscache "github.com/skpr/cli/internal/client/config/credentials/cache"
 	skprdiscovery "github.com/skpr/cli/internal/client/config/discovery"
 	"github.com/skpr/cli/internal/client/config/project"
@@ -82,17 +81,7 @@ func (cmd *Command) Run() error {
 		}
 	}
 
-	clusterFile, err := discovery.Clusters()
-	if err != nil {
-		return fmt.Errorf("failed to get clusters file %w", err)
-	}
-
-	clusterCfg, err := clusters.LoadFromFile(clusterFile, config.Cluster)
-	if err != nil {
-		return fmt.Errorf("failed to get clusters config %w", err)
-	}
-
-	conn, err := client.Dial(clusterCfg.API)
+	conn, err := client.Dial()
 	if err != nil {
 		return err
 	}

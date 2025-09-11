@@ -14,10 +14,7 @@ import (
 	"github.com/skpr/cli/internal/aws/cognito/oidc/login"
 	"github.com/skpr/cli/internal/aws/cognito/oidc/rand"
 	"github.com/skpr/cli/internal/client"
-	"github.com/skpr/cli/internal/client/config/clusters"
 	credentialscache "github.com/skpr/cli/internal/client/config/credentials/cache"
-	skprdiscovery "github.com/skpr/cli/internal/client/config/discovery"
-	"github.com/skpr/cli/internal/client/config/project"
 )
 
 const (
@@ -34,32 +31,7 @@ type Command struct {
 func (cmd *Command) Run() error {
 	log.Println("Connecting to cluster")
 
-	discovery, err := skprdiscovery.New()
-	if err != nil {
-		return fmt.Errorf("failed to discover config %w", err)
-	}
-
-	configFile, err := discovery.Config()
-	if err != nil {
-		return fmt.Errorf("failed to get project config file path %w", err)
-	}
-
-	config, err := project.LoadConfig(configFile)
-	if err != nil {
-		return fmt.Errorf("failed to get project config %w", err)
-	}
-
-	clusterFile, err := discovery.Clusters()
-	if err != nil {
-		return fmt.Errorf("failed to get clusters file %w", err)
-	}
-
-	clusterCfg, err := clusters.LoadFromFile(clusterFile, config.Cluster)
-	if err != nil {
-		return fmt.Errorf("failed to get clusters config %w", err)
-	}
-
-	conn, err := client.Dial(clusterCfg.API)
+	conn, err := client.Dial()
 	if err != nil {
 		return err
 	}
@@ -142,7 +114,7 @@ func (cmd *Command) Run() error {
 			},
 		}
 
-		err = credentialscache.Set(config.Cluster, credentials)
+		err = credentialscache.Set("", credentials)
 		if err != nil {
 			return fmt.Errorf("failed to store credentials: %w", err)
 		}
