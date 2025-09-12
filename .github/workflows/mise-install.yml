@@ -17,10 +17,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v5
 
-      - name: Install Mise
-        run: |
-          curl https://mise.run | sh
-          mise install
+      - uses: jdx/mise-action@v2
+        with:
+          version: latest
 
       - name: Lint
         run: |
