@@ -22,6 +22,6 @@ jobs:
           curl https://mise.run | sh
           mise install
 
-      - name: Lint
+      - name: Test
         run: |
-          mise run lint
+          mise run test

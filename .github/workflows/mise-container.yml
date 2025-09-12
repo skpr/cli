@@ -20,4 +20,4 @@ jobs:
 
       - name: Lint
         run: |
-          mise run lint
+          mise run test
