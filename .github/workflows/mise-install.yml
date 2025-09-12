@@ -1,4 +1,4 @@
-name: Test
+name: Mise Install
 
 on:
   push:
@@ -6,9 +6,12 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  test:
-    name: test
+  lint:
+    name: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code

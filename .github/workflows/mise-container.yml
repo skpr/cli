@@ -1,4 +1,4 @@
-name: Lint
+name: Mise Container
 
 on:
   push:
@@ -13,15 +13,11 @@ jobs:
   lint:
     name: lint
     runs-on: ubuntu-latest
+    container: docker.io/nickschuch/mise:latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
 
-      - name: Install Mise
-        run: |
-          curl https://mise.run | sh
-          mise install
-
       - name: Lint
         run: |
-          mise run lint
+          mise run test
