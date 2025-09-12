@@ -61,3 +61,31 @@ sudo tar -zxf skpr_linux_amd64.tgz -C /usr/local/bin/
 ## Documentation
 
 Documentation can be found at https://docs.skpr.io/
+
+## Development
+
+### Mise (Experimental)
+
+We’ve begun experimenting with Mise as our workflow tool.
+
+Mise helps us streamline not only how we build and test the project, but also how we manage language and tool dependencies in a consistent way.
+
+**Getting Started**
+
+Install Mise using the steps below
+
+```
+https://mise.jdx.dev/getting-started.html
+```
+
+**Review the Tasks**
+
+```bash
+mise tasks
+```
+
+**Build the CLI**
+
+```bash
+mise run build
+```
