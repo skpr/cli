@@ -2,12 +2,14 @@ package init
 
 import (
 	"bufio"
+	"context"
 	"fmt"
-	"github.com/skpr/cli/internal/client/project"
 	"os"
 	"strings"
 
 	"github.com/pkg/errors"
+
+	"github.com/skpr/cli/internal/client/project"
 )
 
 // Command for initializing a project.
