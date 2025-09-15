@@ -6,6 +6,12 @@ go = "1.25"
 [env]
 CGO_ENABLED=0
 LGFLAGS="-extldflags '-static'"
+SKPR_CLUSTER="localhost"
+SKPR_PROJECT="drupal"
+SKPR_CLUSTER_API_PORT=50051
+SKPR_CLUSTER_API_INSECURE="true"
+SKPR_USERNAME="local"
+SKPR_PASSWORD="local"
 
 [tasks.vendor]
 description = "Vendor resets the main module's vendor directory to include all packages needed to build the application"
