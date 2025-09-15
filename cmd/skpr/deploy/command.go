@@ -1,9 +1,8 @@
 package deploy
 
 import (
+	v1deploy "github.com/skpr/cli/internal/command/deploy"
 	"github.com/spf13/cobra"
-
-	v1deploy "github.com/skpr/cli/internal/command/v1/deploy"
 )
 
 var (
@@ -29,7 +28,7 @@ func NewCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			command.Version = args[1]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

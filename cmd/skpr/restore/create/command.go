@@ -1,11 +1,10 @@
 package create
 
 import (
+	v1create "github.com/skpr/cli/internal/command/restore/create"
 	"time"
 
 	"github.com/spf13/cobra"
-
-	v1create "github.com/skpr/cli/internal/command/v1/restore/create"
 )
 
 var (
@@ -34,7 +33,7 @@ func NewCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			command.Backup = args[1]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

@@ -1,9 +1,8 @@
 package logout
 
 import (
+	v1logout "github.com/skpr/cli/internal/command/logout"
 	"github.com/spf13/cobra"
-
-	v1logout "github.com/skpr/cli/internal/command/v1/logout"
 )
 
 var (
@@ -22,11 +21,11 @@ func NewCommand() *cobra.Command {
 		Use:                   "logout",
 		DisableFlagsInUseLine: true,
 		Short:                 "Initiate a logout event from the Skpr hosting plstform",
+		Args:                  cobra.NoArgs,
 		Long:                  cmdLong,
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			command.Callback = args[0]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 
