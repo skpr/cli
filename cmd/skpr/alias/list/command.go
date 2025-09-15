@@ -3,7 +3,7 @@ package list
 import (
 	"github.com/spf13/cobra"
 
-	v1list "github.com/skpr/cli/internal/command/v1/alias/list"
+	v1list "github.com/skpr/cli/internal/command/alias/list"
 )
 
 var (

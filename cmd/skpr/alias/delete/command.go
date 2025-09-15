@@ -3,7 +3,7 @@ package delete
 import (
 	"github.com/spf13/cobra"
 
-	v1delete "github.com/skpr/cli/internal/command/v1/alias/delete"
+	v1delete "github.com/skpr/cli/internal/command/alias/delete"
 )
 
 var (
@@ -31,7 +31,7 @@ func NewCommand() *cobra.Command {
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Alias = args[0]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 
