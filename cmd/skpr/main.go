@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss/v2"
 	"github.com/spf13/cobra"
 
+	"github.com/skpr/cli/cmd/skpr/alias"
 	"github.com/skpr/cli/cmd/skpr/backup"
 	"github.com/skpr/cli/cmd/skpr/config"
 	"github.com/skpr/cli/cmd/skpr/create"
@@ -58,6 +59,7 @@ Develop with Skpr’s secure, dedicated hosting platform and discover 24/7 peace
 }
 
 func main() {
+	cmd.AddCommand(alias.NewCommand())
 	cmd.AddCommand(backup.NewCommand())
 	cmd.AddCommand(config.NewCommand())
 	cmd.AddCommand(create.NewCommand())
