@@ -54,23 +54,17 @@ func (cmd *Command) Run(ctx context.Context) error {
 		Environment: cmd.Params.Environment,
 	})
 	if err != nil {
-		logger.Info("Using backwards compatibility command to pull image.")
-		return cmd.runBackwardsCompat()
-	}
-
-	creds, err := client.CredentialsProvider.Retrieve(ctx)
-	if err != nil {
-		return errors.Wrap(err, "failed to get credentials")
+		return fmt.Errorf("failed to get repository: %w", err)
 	}
 
 	auth := docker.AuthConfiguration{
-		Username: creds.AccessKeyID,
-		Password: creds.SecretAccessKey,
+		Username: client.Credentials.Username,
+		Password: client.Credentials.Password,
 	}
 
 	// @todo, Consider abstracting this if another registry + credentials pair is required.
 	if ecr.IsRegistry(getRepositoryResp.Repository) {
-		auth, err = ecr.UpgradeAuth(ctx, getRepositoryResp.Repository, creds)
+		auth, err = ecr.UpgradeAuth(ctx, getRepositoryResp.Repository, client.Credentials)
 		if err != nil {
 			return errors.Wrap(err, "failed to upgrade AWS ECR authentication")
 		}
