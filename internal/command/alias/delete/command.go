@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	cmdconfig "github.com/skpr/cli/internal/client/config/command"
+	cmdconfig "github.com/skpr/cli/internal/client/config/user"
 )
 
 // Command struct.
