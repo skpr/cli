@@ -73,9 +73,9 @@ func New(ctx context.Context) (context.Context, *Client, error) {
 
 // Dial a connection to the API server.
 func Dial(config config.Config) (*grpc.ClientConn, error) {
-	server := fmt.Sprintf("%s:%d", config.Cluster, config.API.Port)
+	server := fmt.Sprintf("%s:%d", config.API.Host(), config.API.Port())
 
-	if config.API.Insecure {
+	if config.API.Insecure() {
 		return grpc.NewClient(server, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 

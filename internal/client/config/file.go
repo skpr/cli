@@ -2,16 +2,24 @@ package config
 
 import (
 	"fmt"
-	"github.com/skpr/cli/internal/client/utils"
 	"os"
 	"path/filepath"
 
 	"gopkg.in/yaml.v2"
+
+	"github.com/skpr/cli/internal/client/utils"
 )
 
 const (
-	// ConfigFileName for discovery.
-	ConfigFileName = "config.yml"
+	// DefaultAPIPort when not provided.
+	DefaultAPIPort = 443
+	// DefaultSSHPort when not provided.
+	DefaultSSHPort = 22
+)
+
+const (
+	// FileName for project config discovery.
+	FileName = "config.yml"
 )
 
 type File struct {
@@ -26,7 +34,7 @@ func GetFromFile(config *Config) error {
 		return nil
 	}
 
-	data, err := os.ReadFile(filepath.Join(projectDir, ConfigFileName))
+	data, err := os.ReadFile(filepath.Join(projectDir, FileName))
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil
@@ -43,7 +51,8 @@ func GetFromFile(config *Config) error {
 	}
 
 	if file.Cluster != "" {
-		config.Cluster = file.Cluster
+		config.API = URI(fmt.Sprintf("%s:%d", file.Cluster, DefaultAPIPort))
+		config.SSH = URI(fmt.Sprintf("%s:%d", file.Cluster, DefaultSSHPort))
 	}
 
 	if file.Project != "" {

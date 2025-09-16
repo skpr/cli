@@ -15,7 +15,6 @@ func (c Client) Shell(params ShellParams) error {
 	var (
 		user = fmt.Sprintf("%s%s%s", c.Config.Project, UsernameSeparator, params.Environment)
 		pass = getPassword(c.Credentials.Username, c.Credentials.Password, c.Credentials.Session)
-		host = fmt.Sprintf("%s:%d", c.Config.Cluster, c.Config.SSH.Port)
 	)
 
 	config := &ssh.ClientConfig{
@@ -29,7 +28,7 @@ func (c Client) Shell(params ShellParams) error {
 		return nil
 	}
 
-	client, err := ssh.Dial("tcp", host, config)
+	client, err := ssh.Dial("tcp", string(c.Config.SSH), config)
 	if err != nil {
 		return err
 	}

@@ -3,43 +3,80 @@ package config
 import (
 	"errors"
 	"fmt"
-)
-
-const (
-	// DefaultAPIPort when not provided.
-	DefaultAPIPort = 443
-	// DefaultSSHPort when not provided.
-	DefaultSSHPort = 22
+	"net"
+	"net/url"
+	"strconv"
+	"strings"
 )
 
 // Config for connecting to the Skpr API.
 type Config struct {
-	Cluster string
+	API     URI // host:port?insecure=true|false
+	SSH     URI // host:port
 	Project string
-	API     API
-	SSH     SSH
 }
 
-type API struct {
-	Port     int
-	Insecure bool
+// URI is a custom type for parsing URIs.
+type URI string
+
+// Host extracts the hostname part of the URI.
+func (u URI) Host() string {
+	s := string(u)
+	parts := strings.SplitN(s, "?", 2)
+	hostport := parts[0]
+
+	if strings.Contains(hostport, ":") {
+		host, _, err := net.SplitHostPort(hostport)
+		if err == nil {
+			return host
+		}
+	}
+
+	return hostport
 }
 
-type SSH struct {
-	Port int
+// Port extracts the port as an int, or 0 if not specified/invalid.
+func (u URI) Port() int {
+	s := string(u)
+	parts := strings.SplitN(s, "?", 2)
+	hostport := parts[0]
+
+	if strings.Contains(hostport, ":") {
+		_, portStr, err := net.SplitHostPort(hostport)
+		if err == nil {
+			p, _ := strconv.Atoi(portStr)
+			return p
+		}
+	}
+	return 0
+}
+
+// String returns the URI as a string.
+func (u URI) String() string {
+	return string(u)
+}
+
+// Insecure returns true if query param `insecure=true` is set.
+func (u URI) Insecure() bool {
+	s := string(u)
+
+	idx := strings.Index(s, "?")
+	if idx == -1 {
+		return false
+	}
+
+	values, err := url.ParseQuery(s[idx+1:])
+	if err != nil {
+		return false
+	}
+
+	return strings.ToLower(values.Get("insecure")) == "true"
 }
 
 type ConfigGetter func(*Config) error
 
 func New() (Config, error) {
-	config := Config{
-		API: API{
-			Port: DefaultAPIPort,
-		},
-		SSH: SSH{
-			Port: DefaultSSHPort,
-		},
-	}
+	var config Config
 
 	funcs := []ConfigGetter{
 		GetFromFile,
@@ -55,21 +92,17 @@ func New() (Config, error) {
 
 	var errs []error
 
-	if config.Cluster == "" {
-		errs = append(errs, fmt.Errorf("no api specified"))
+	if config.API == "" {
+		errs = append(errs, fmt.Errorf("api uri config not found"))
 	}
 
-	if config.Project == "" {
-		errs = append(errs, fmt.Errorf("no project specified"))
+	if config.SSH == "" {
+		errs = append(errs, fmt.Errorf("ssh uri config not found"))
 	}
 
-	if config.API.Port == 0 {
-		errs = append(errs, fmt.Errorf("no api port specified"))
-	}
-
-	if config.SSH.Port == 0 {
-		errs = append(errs, fmt.Errorf("no ssh port specified"))
-	}
+	// Project is optional.
+	// We want users to be able to connect to the API without a project set.
+	// This allows for commands like `skpr login` to work without a project.
 
 	if len(errs) > 0 {
 		return Config{}, errors.Join(errs...)

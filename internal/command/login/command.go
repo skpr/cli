@@ -117,7 +117,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 			},
 		}
 
-		err = cache2.Set(config.Cluster, credentials)
+		err = cache2.Set(config.API.Host(), credentials)
 		if err != nil {
 			return fmt.Errorf("failed to store credentials: %w", err)
 		}

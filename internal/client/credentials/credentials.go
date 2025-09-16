@@ -2,7 +2,6 @@ package credentials
 
 import (
 	"context"
-	"fmt"
 	"github.com/skpr/cli/internal/client/config"
 )
 
@@ -22,7 +21,7 @@ func New(ctx context.Context, config config.Config) (Credentials, error) {
 	}
 
 	for _, f := range funcs {
-		credentials, found, err := f(ctx, config.Cluster)
+		credentials, found, err := f(ctx, config.API.Host())
 		if err != nil {
 			return Credentials{}, err
 		}
@@ -32,5 +31,7 @@ func New(ctx context.Context, config config.Config) (Credentials, error) {
 		}
 	}
 
-	return Credentials{}, fmt.Errorf("credentials not found")
+	// If not credentials were found we will leave it up to the client to handle it.
+	// That allows us to support our login command and non-authenticated commands.
+	return Credentials{}, nil
 }
