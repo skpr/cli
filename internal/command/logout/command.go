@@ -33,7 +33,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to get project config: %w", err)
 	}
 
-	credentials, found, err := credentialscache.Get(config.Cluster)
+	credentials, found, err := credentialscache.Get(config.API.Host())
 	if err != nil {
 		return fmt.Errorf("failed to get cached credentials: %w", err)
 	}
@@ -61,7 +61,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 
 		// Delete the file now that we have invalidated our tokens.
-		err = credentialscache.Delete(config.Cluster)
+		err = credentialscache.Delete(config.API.Host())
 		if err != nil {
 			return fmt.Errorf("failed to delete credentials cache %w", err)
 		}
