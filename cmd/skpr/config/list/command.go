@@ -1,9 +1,8 @@
 package list
 
 import (
+	v1list "github.com/skpr/cli/internal/command/config/list"
 	"github.com/spf13/cobra"
-
-	v1list "github.com/skpr/cli/internal/command/v1/config/list"
 )
 
 const (
@@ -39,7 +38,7 @@ func NewCommand() *cobra.Command {
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

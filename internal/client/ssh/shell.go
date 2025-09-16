@@ -1,7 +1,6 @@
 package ssh
 
 import (
-	"context"
 	"fmt"
 	"net"
 	"os"
@@ -13,15 +12,9 @@ import (
 
 // Shell creates a long lived "shell" session for the user.
 func (c Client) Shell(params ShellParams) error {
-	awsCreds, err := c.CredentialsProvider.Retrieve(context.TODO())
-	if err != nil {
-		return err
-	}
-
 	var (
 		user = fmt.Sprintf("%s%s%s", c.Config.Project, UsernameSeparator, params.Environment)
-		pass = getPassword(awsCreds.AccessKeyID, awsCreds.SecretAccessKey, awsCreds.SessionToken)
-		host = fmt.Sprintf("%s:%d", c.Cluster.SSH.Host, c.Cluster.SSH.Port)
+		pass = getPassword(c.Credentials.Username, c.Credentials.Password, c.Credentials.Session)
 	)
 
 	config := &ssh.ClientConfig{
@@ -35,7 +28,7 @@ func (c Client) Shell(params ShellParams) error {
 		return nil
 	}
 
-	client, err := ssh.Dial("tcp", host, config)
+	client, err := ssh.Dial("tcp", string(c.Config.SSH), config)
 	if err != nil {
 		return err
 	}

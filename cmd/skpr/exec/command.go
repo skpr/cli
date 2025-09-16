@@ -1,9 +1,8 @@
 package exec
 
 import (
+	v1exec "github.com/skpr/cli/internal/command/exec"
 	"github.com/spf13/cobra"
-
-	v1exec "github.com/skpr/cli/internal/command/v1/exec"
 )
 
 var (
@@ -29,7 +28,7 @@ func NewCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			command.Command = args[1:]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

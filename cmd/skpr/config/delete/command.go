@@ -1,9 +1,8 @@
 package delete
 
 import (
+	v1delete "github.com/skpr/cli/internal/command/config/delete"
 	"github.com/spf13/cobra"
-
-	v1delete "github.com/skpr/cli/internal/command/v1/config/delete"
 )
 
 var (
@@ -29,7 +28,7 @@ func NewCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			command.Key = args[1]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

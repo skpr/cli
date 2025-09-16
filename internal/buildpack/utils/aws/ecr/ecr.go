@@ -3,9 +3,9 @@ package ecr
 import (
 	"context"
 	"fmt"
+	skprcredentials "github.com/skpr/cli/internal/client/credentials"
 	"strings"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
@@ -24,7 +24,7 @@ func IsRegistry(registry string) bool {
 
 // UpgradeAuth to use an AWS IAM token for authentication..
 // https://docs.aws.amazon.com/cli/latest/reference/ecr/get-login.html
-func UpgradeAuth(ctx context.Context, url string, creds aws.Credentials) (docker.AuthConfiguration, error) {
+func UpgradeAuth(ctx context.Context, url string, creds skprcredentials.Credentials) (docker.AuthConfiguration, error) {
 	var auth docker.AuthConfiguration
 
 	region, err := extractRegionFromURL(url)
@@ -35,7 +35,7 @@ func UpgradeAuth(ctx context.Context, url string, creds aws.Credentials) (docker
 	cfg, err := config.LoadDefaultConfig(
 		ctx,
 		config.WithRegion(region),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(creds.AccessKeyID, creds.SecretAccessKey, creds.SessionToken)),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(creds.Username, creds.Password, creds.Session)),
 	)
 
 	if err != nil {

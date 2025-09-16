@@ -1,9 +1,8 @@
 package create
 
 import (
+	v1create "github.com/skpr/cli/internal/command/mysql/restore/create"
 	"github.com/spf13/cobra"
-
-	v1create "github.com/skpr/cli/internal/command/v1/mysql/restore/create"
 )
 
 var (
@@ -32,7 +31,7 @@ func NewCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			command.Backup = args[1]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

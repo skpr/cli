@@ -1,9 +1,8 @@
 package pkg
 
 import (
+	v1package "github.com/skpr/cli/internal/command/package"
 	"github.com/spf13/cobra"
-
-	v1package "github.com/skpr/cli/internal/command/v1/package"
 )
 
 var (
@@ -36,7 +35,7 @@ func NewCommand() *cobra.Command {
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Params.Version = args[0]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

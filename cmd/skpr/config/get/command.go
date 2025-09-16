@@ -1,9 +1,8 @@
 package get
 
 import (
+	v1get "github.com/skpr/cli/internal/command/config/get"
 	"github.com/spf13/cobra"
-
-	v1get "github.com/skpr/cli/internal/command/v1/config/get"
 )
 
 var (
@@ -29,7 +28,7 @@ func NewCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			command.Key = args[1]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

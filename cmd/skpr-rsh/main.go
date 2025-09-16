@@ -1,9 +1,10 @@
 package main
 
 import (
+	"context"
 	"os"
 
-	wfclient "github.com/skpr/cli/internal/client"
+	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/client/ssh"
 )
 
@@ -24,7 +25,7 @@ import (
 //
 // See the "skpr rsync" command for how this is implemented.
 func main() {
-	client, _, err := wfclient.NewFromFile()
+	_, client, err := client.New(context.TODO())
 	if err != nil {
 		panic(err)
 	}

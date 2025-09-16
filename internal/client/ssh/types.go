@@ -1,12 +1,9 @@
 package ssh
 
 import (
+	"github.com/skpr/cli/internal/client/config"
+	"github.com/skpr/cli/internal/client/credentials"
 	"io"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
-
-	"github.com/skpr/cli/internal/client/config/clusters"
-	"github.com/skpr/cli/internal/client/config/project"
 )
 
 // Interface for the SSH client.
@@ -34,7 +31,6 @@ type ShellParams struct {
 
 // Client for SSH interactions.
 type Client struct {
-	Config              project.Config
-	CredentialsProvider aws.CredentialsProvider
-	Cluster             clusters.Cluster
+	Config      config.Config
+	Credentials credentials.Credentials
 }

@@ -1,9 +1,8 @@
 package info
 
 import (
+	v1list "github.com/skpr/cli/internal/command/release/info"
 	"github.com/spf13/cobra"
-
-	v1list "github.com/skpr/cli/internal/command/v1/release/info"
 )
 
 var (
@@ -31,7 +30,7 @@ func NewCommand() *cobra.Command {
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Version = args[0]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 
