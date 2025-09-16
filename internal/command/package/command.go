@@ -24,6 +24,7 @@ import (
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
 	"github.com/skpr/cli/internal/buildpack/utils/notation/utils"
 	"github.com/skpr/cli/internal/client"
+	"github.com/skpr/cli/internal/slice"
 )
 
 // Command to package an application.
@@ -32,6 +33,7 @@ type Command struct {
 	PackageDir    string
 	Params        buildpack.Params
 	PrintManifest bool
+	BuildArgs     []string
 	Debug         bool
 }
 
@@ -65,6 +67,10 @@ func (cmd *Command) Run(ctx context.Context) error {
 		Username: client.Credentials.Username,
 		Password: client.Credentials.Password,
 	}
+
+	// Convert build args from slice to map.
+	//   eg. --build-arg=KEY=VALUE to map[string]string{"KEY": "VALUE"}
+	cmd.Params.BuildArgs = slice.ToMap(cmd.BuildArgs, "=")
 
 	isECR := ecr.IsRegistry(cmd.Params.Registry)
 
