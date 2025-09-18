@@ -1,5 +1,7 @@
 package slice
 
+import "strings"
+
 // Contains a string within a slice.
 func Contains(slice []string, s string) bool {
 	for _, item := range slice {
@@ -66,4 +68,21 @@ func AppendIfMissing(slice []string, i string) []string {
 	}
 
 	return append(slice, i)
+}
+
+// ToMap converts a slice of strings into a map using the provided delimiter.
+func ToMap(slice []string, delimiter string) map[string]string {
+	m := make(map[string]string, len(slice))
+
+	for _, s := range slice {
+		sl := strings.Split(s, delimiter)
+
+		if len(sl) != 2 {
+			continue
+		}
+
+		m[sl[0]] = sl[1]
+	}
+
+	return m
 }

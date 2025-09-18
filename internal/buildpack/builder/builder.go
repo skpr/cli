@@ -56,12 +56,13 @@ type Image struct {
 
 // Params used for building the applications.
 type Params struct {
-	Auth     docker.AuthConfiguration
-	Writer   io.Writer
-	Context  string
-	Registry string
-	NoPush   bool
-	Version  string
+	Auth      docker.AuthConfiguration
+	Writer    io.Writer
+	Context   string
+	Registry  string
+	NoPush    bool
+	Version   string
+	BuildArgs map[string]string
 }
 
 // Dockerfiles the docker build files.
@@ -98,6 +99,13 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 			Name:  BuildArgVersion,
 			Value: params.Version,
 		},
+	}
+
+	for k, v := range params.BuildArgs {
+		args = append(args, docker.BuildArg{
+			Name:  k,
+			Value: v,
+		})
 	}
 
 	start := time.Now()
