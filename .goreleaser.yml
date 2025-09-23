@@ -44,8 +44,8 @@ dockers:
       - skpr-cli
       - skpr-rsh
     image_templates:
-      - docker.io/skpr/cli:latest
-      - docker.io/skpr/cli:{{ .Tag }}
+      - ghcr.io/skpr/cli:latest
+      - ghcr.io/skpr/cli:{{ .Tag }}
     dockerfile: Dockerfile
     build_flag_templates:
       - "--pull"
