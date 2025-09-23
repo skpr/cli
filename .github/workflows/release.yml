@@ -1,17 +1,20 @@
-name: 🧪 Lint
+name: ☁️ Release
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+[0-9A-Za-z]?'
 
-permissions:
-  contents: read
+env:
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
 jobs:
-  lint:
+  release:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
     steps:
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v5
@@ -21,6 +24,6 @@ jobs:
           curl https://mise.run | sh
           mise install
 
-      - name: 🧪 Lint
+      - name: ☁️ Release
         run: |
-          mise run lint
+          mise release
