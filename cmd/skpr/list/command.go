@@ -1,9 +1,8 @@
 package list
 
 import (
+	v1list "github.com/skpr/cli/internal/command/list"
 	"github.com/spf13/cobra"
-
-	v1list "github.com/skpr/cli/internal/command/v1/list"
 )
 
 var (
@@ -26,10 +25,8 @@ func NewCommand() *cobra.Command {
 		Short:                 "Overview of all environments and their current status",
 		Long:                  cmdLong,
 		Example:               cmdExample,
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := command.Run(); err != nil {
-				panic(err)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return command.Run(cmd.Context())
 		},
 	}
 

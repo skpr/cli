@@ -1,9 +1,8 @@
 package set
 
 import (
+	v1set "github.com/skpr/cli/internal/command/config/set"
 	"github.com/spf13/cobra"
-
-	v1set "github.com/skpr/cli/internal/command/v1/config/set"
 )
 
 var (
@@ -30,7 +29,7 @@ func NewCommand() *cobra.Command {
 			command.Environment = args[0]
 			command.Key = args[1]
 			command.Value = args[2]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

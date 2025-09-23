@@ -1,9 +1,8 @@
 package shell
 
 import (
+	v1shell "github.com/skpr/cli/internal/command/shell"
 	"github.com/spf13/cobra"
-
-	v1shell "github.com/skpr/cli/internal/command/v1/shell"
 )
 
 var (
@@ -27,7 +26,7 @@ func NewCommand() *cobra.Command {
 	command := v1shell.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "shell",
+		Use:                   "shell [environment]",
 		DisableFlagsInUseLine: true,
 		Short:                 "Execute a multiple shell commands in a session",
 		Args:                  cobra.ExactArgs(1),
@@ -35,7 +34,7 @@ func NewCommand() *cobra.Command {
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

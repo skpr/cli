@@ -1,9 +1,8 @@
 package login
 
 import (
+	v1login "github.com/skpr/cli/internal/command/login"
 	"github.com/spf13/cobra"
-
-	v1login "github.com/skpr/cli/internal/command/v1/login"
 )
 
 var (
@@ -22,12 +21,11 @@ func NewCommand() *cobra.Command {
 		Use:                   "login",
 		DisableFlagsInUseLine: true,
 		Short:                 "Login to the Skpr cluster.",
-		Args:                  cobra.ExactArgs(1),
+		Args:                  cobra.NoArgs,
 		Long:                  cmdLong,
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			command.Callback = args[0]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

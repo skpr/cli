@@ -1,9 +1,8 @@
 package list
 
 import (
+	v1list "github.com/skpr/cli/internal/command/release/list"
 	"github.com/spf13/cobra"
-
-	v1list "github.com/skpr/cli/internal/command/v1/release/list"
 )
 
 var (
@@ -30,7 +29,7 @@ func NewCommand() *cobra.Command {
 		Long:                  cmdLong,
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

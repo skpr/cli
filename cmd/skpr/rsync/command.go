@@ -1,9 +1,8 @@
 package rsync
 
 import (
+	v1rsync "github.com/skpr/cli/internal/command/rsync"
 	"github.com/spf13/cobra"
-
-	v1rsync "github.com/skpr/cli/internal/command/v1/rsync"
 )
 
 var (
@@ -28,7 +27,7 @@ func NewCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Source = args[0]
 			command.Destination = args[1]
-			return command.Run()
+			return command.Run(cmd.Context())
 		},
 	}
 

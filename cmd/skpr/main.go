@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"os"
+
 	"github.com/charmbracelet/fang"
 	"github.com/charmbracelet/lipgloss/v2"
-	"github.com/skpr/cli/internal/color"
 	"github.com/spf13/cobra"
-	"os"
 
 	"github.com/skpr/cli/cmd/skpr/alias"
 	"github.com/skpr/cli/cmd/skpr/backup"
@@ -27,6 +27,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/rsync"
 	"github.com/skpr/cli/cmd/skpr/shell"
 	"github.com/skpr/cli/cmd/skpr/version"
+	"github.com/skpr/cli/internal/color"
 )
 
 const cmdExample = `

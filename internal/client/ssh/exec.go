@@ -1,7 +1,6 @@
 package ssh
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net"
@@ -16,15 +15,9 @@ func (c Client) Exec(params ExecParams) error {
 		return errors.New("command was not provided")
 	}
 
-	awsCreds, err := c.CredentialsProvider.Retrieve(context.TODO())
-	if err != nil {
-		return err
-	}
-
 	var (
 		user = fmt.Sprintf("%s%s%s", c.Config.Project, UsernameSeparator, params.Environment)
-		pass = getPassword(awsCreds.AccessKeyID, awsCreds.SecretAccessKey, awsCreds.SessionToken)
-		host = fmt.Sprintf("%s:%d", c.Cluster.SSH.Host, c.Cluster.SSH.Port)
+		pass = getPassword(c.Credentials.Username, c.Credentials.Password, c.Credentials.Session)
 	)
 
 	config := &ssh.ClientConfig{
@@ -38,7 +31,7 @@ func (c Client) Exec(params ExecParams) error {
 		return nil
 	}
 
-	client, err := ssh.Dial("tcp", host, config)
+	client, err := ssh.Dial("tcp", string(c.Config.SSH), config)
 	if err != nil {
 		return err
 	}

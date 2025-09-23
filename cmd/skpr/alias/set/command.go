@@ -3,7 +3,7 @@ package set
 import (
 	"github.com/spf13/cobra"
 
-	v1set "github.com/skpr/cli/internal/command/v1/alias/set"
+	v1set "github.com/skpr/cli/internal/command/alias/set"
 )
 
 var (
