@@ -34,3 +34,8 @@ run = "golangci-lint run"
 description = "Checks to verify code correctness"
 run = "go test -cover ./..."
 depends = ["vendor"]
+
+[tasks.release]
+description = "Release the command line interface"
+run = "goreleaser"
+depends = ["vendor"]

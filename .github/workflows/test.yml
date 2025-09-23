@@ -1,4 +1,4 @@
-name: Test
+name: 🧪 Test
 
 on:
   push:
@@ -8,17 +8,16 @@ on:
 
 jobs:
   test:
-    name: test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: ⬇️ Checkout Code
         uses: actions/checkout@v5
 
-      - name: Install Mise
+      - name: 📦 Install Mise
         run: |
           curl https://mise.run | sh
           mise install
 
-      - name: Test
+      - name: 🧪 Test
         run: |
           mise run test

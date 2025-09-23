@@ -2,10 +2,6 @@ project_name: skpr
 
 version: 2
 
-before:
-  hooks:
-    - make manpages
-
 builds:
   - id: skpr-cli
     main: ./cmd/skpr
@@ -62,6 +58,3 @@ nfpms:
     description: CLI for the Skpr Hosting Platform
     builds: [ skpr-cli, skpr-rsh ]
     formats: [ deb, rpm ]
-    contents:
-      - src: ./share/man/man1/skpr.1
-        dst: /usr/share/man/man1/skpr.1
