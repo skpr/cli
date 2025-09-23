@@ -39,17 +39,6 @@ release:
     owner: skpr
     name: cli
 
-dockers:
-  - ids:
-      - skpr-cli
-      - skpr-rsh
-    image_templates:
-      - ghcr.io/skpr/cli:latest
-      - ghcr.io/skpr/cli:{{ .Tag }}
-    dockerfile: Dockerfile
-    build_flag_templates:
-      - "--pull"
-
 nfpms:
   - license: Proprietary
     maintainer: Skpr
