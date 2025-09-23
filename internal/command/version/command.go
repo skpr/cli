@@ -11,25 +11,16 @@ import (
 	"github.com/skpr/cli/internal/version"
 )
 
-var (
-	// GitVersion overridden at build time by:
-	//   -ldflags="-X github.com/skpr/cli/cmd/skpr/version.GitVersion=${VERSION}"
-	GitVersion string
-	// BuildDate overridden at build time by:
-	//   -ldflags="-X github.com/skpr/cli/cmd/skpr/version.BuildDate=${BUILD_DATE}"
-	BuildDate string
-)
-
 // Command that print the client and server versions.
 type Command struct {
 	Debug bool
 }
 
 // Run the command.
-func (cmd *Command) Run(ctx context.Context) error {
+func (cmd *Command) Run(ctx context.Context, gitVersion, buildDate string) error {
 	params := version.PrintParams{
-		ClientVersion:   GitVersion,
-		ClientBuildDate: BuildDate,
+		ClientVersion:   gitVersion,
+		ClientBuildDate: buildDate,
 	}
 
 	// Get server version if we are in a project directory.

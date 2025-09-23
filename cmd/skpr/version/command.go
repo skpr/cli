@@ -1,8 +1,9 @@
 package version
 
 import (
-	v1version "github.com/skpr/cli/internal/command/version"
 	"github.com/spf13/cobra"
+
+	v1version "github.com/skpr/cli/internal/command/version"
 )
 
 var (
@@ -38,7 +39,7 @@ func NewCommand() *cobra.Command {
 		Long:                  cmdLong,
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return command.Run(cmd.Context())
+			return command.Run(cmd.Context(), GitVersion, BuildDate)
 		},
 	}
 

@@ -1,0 +1,67 @@
+project_name: skpr
+
+version: 2
+
+before:
+  hooks:
+    - make manpages
+
+builds:
+  - id: skpr-cli
+    main: ./cmd/skpr
+    binary: skpr
+    ldflags:
+      - -extldflags '-static' -X github.com/skpr/cli/cmd/skpr/version.GitVersion={{.Version}} -X github.com/skpr/cli/cmd/skpr/version.BuildDate={{time "2006-01-02"}}
+    env:
+      - CGO_ENABLED=0
+    goos: [ linux, darwin ]
+    goarch: [ amd64, arm64 ]
+
+  - id: skpr-rsh
+    main: ./cmd/skpr-rsh
+    binary: skpr-rsh
+    ldflags:
+      - -extldflags '-static'
+    env:
+      - CGO_ENABLED=0
+    goos: [ linux, darwin ]
+    goarch: [ amd64, arm64 ]
+
+archives:
+  - id: nix
+    builds: [ skpr-cli, skpr-rsh ]
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ if eq .Os "darwin" }}macOS{{ else }}{{ .Os }}{{ end }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    wrap_in_directory: true
+    format: tar.gz
+    files:
+      - ./share/man/man1/skpr*.1
+
+release:
+  prerelease: auto
+  name_template: "Skpr CLI {{.Version}}"
+  github:
+    owner: skpr
+    name: cli
+
+dockers:
+  - ids:
+      - skpr-cli
+      - skpr-rsh
+    image_templates:
+      - docker.io/skpr/cli:latest
+      - docker.io/skpr/cli:{{ .Tag }}
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--pull"
+
+nfpms:
+  - license: Proprietary
+    maintainer: Skpr
+    homepage: https://www.skpr.io
+    recommends: [ rsync, docker.io ]
+    description: CLI for the Skpr Hosting Platform
+    builds: [ skpr-cli, skpr-rsh ]
+    formats: [ deb, rpm ]
+    contents:
+      - src: ./share/man/man1/skpr.1
+        dst: /usr/share/man/man1/skpr.1
