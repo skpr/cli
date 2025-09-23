@@ -5,6 +5,9 @@ on:
     tags:
       - '*'
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -21,3 +24,5 @@ jobs:
       - name: ☁️ Release
         run: |
           mise release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
