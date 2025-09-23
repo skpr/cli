@@ -3,7 +3,6 @@ module github.com/skpr/cli
 go 1.24.3
 
 require (
-	dario.cat/mergo v1.0.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/aquasecurity/table v1.11.0
 	github.com/aws/aws-sdk-go-v2 v1.39.0
@@ -25,9 +24,7 @@ require (
 	github.com/gosuri/uitable v0.0.4
 	github.com/jinzhu/now v1.1.5
 	github.com/jwalton/gchalk v1.3.0
-	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
-	github.com/mitchellh/go-homedir v1.1.0
 	github.com/notaryproject/notation-core-go v1.3.0
 	github.com/notaryproject/notation-go v1.3.2
 	github.com/olekukonko/ts v0.0.0-20171002115256-78ecb04241c0
@@ -41,7 +38,7 @@ require (
 	golang.org/x/oauth2 v0.31.0
 	golang.org/x/sync v0.17.0
 	golang.org/x/term v0.35.0
-	google.golang.org/grpc v1.66.0
+	google.golang.org/grpc v1.75.0
 	gopkg.in/yaml.v2 v2.4.0
 	oras.land/oras-go/v2 v2.6.0
 )
