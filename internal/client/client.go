@@ -76,10 +76,10 @@ func Dial(config config.Config) (*grpc.ClientConn, error) {
 	server := fmt.Sprintf("%s:%d", config.API.Host(), config.API.Port())
 
 	if config.API.Insecure() {
-		return grpc.NewClient(server, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		return grpc.Dial(server, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
-	return grpc.NewClient(server, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
+	return grpc.Dial(server, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
 }
 
 // Project client.

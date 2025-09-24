@@ -29,7 +29,7 @@ require (
 	github.com/notaryproject/notation-go v1.3.2
 	github.com/olekukonko/ts v0.0.0-20171002115256-78ecb04241c0
 	github.com/pkg/errors v0.9.1
-	github.com/skpr/api v1.2.0
+	github.com/skpr/api v1.0.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/spf13/cobra v1.10.1
 	github.com/stretchr/testify v1.11.1
@@ -38,7 +38,7 @@ require (
 	golang.org/x/oauth2 v0.31.0
 	golang.org/x/sync v0.17.0
 	golang.org/x/term v0.35.0
-	google.golang.org/grpc v1.75.0
+	google.golang.org/grpc v1.58.3
 	gopkg.in/yaml.v2 v2.4.0
 	oras.land/oras-go/v2 v2.6.0
 )
@@ -72,6 +72,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.4.10 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
