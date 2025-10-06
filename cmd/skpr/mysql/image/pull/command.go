@@ -20,10 +20,10 @@ func NewCommand() *cobra.Command {
 	command := v1pull.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "list",
+		Use:                   "pull",
 		Args:                  cobra.MinimumNArgs(1),
 		DisableFlagsInUseLine: true,
-		Short:                 "List created database images for an environment",
+		Short:                 "Pull a database image for an environment",
 		Long:                  cmdLong,
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
