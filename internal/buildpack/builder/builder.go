@@ -63,6 +63,7 @@ type Params struct {
 	NoPush    bool
 	Version   string
 	BuildArgs map[string]string
+	Platform  string
 }
 
 // Dockerfiles the docker build files.
@@ -117,6 +118,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 		ContextDir:   params.Context,
 		OutputStream: prefixWithTime(params.Writer, ImageNameCompile, start),
 		BuildArgs:    args,
+		Platform:     params.Platform,
 	}
 
 	resp.Images = append(resp.Images, Image{
