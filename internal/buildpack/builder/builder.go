@@ -154,6 +154,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 			ContextDir:   params.Context,
 			OutputStream: prefixWithTime(params.Writer, imageName, start),
 			BuildArgs:    args,
+			Platform:     params.Platform,
 		}
 
 		// Add to the builder list.
