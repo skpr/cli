@@ -21,6 +21,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/logout"
 	"github.com/skpr/cli/cmd/skpr/mysql"
 	pkg "github.com/skpr/cli/cmd/skpr/package"
+	"github.com/skpr/cli/cmd/skpr/project"
 	"github.com/skpr/cli/cmd/skpr/purge"
 	"github.com/skpr/cli/cmd/skpr/release"
 	"github.com/skpr/cli/cmd/skpr/restore"
@@ -63,6 +64,7 @@ func main() {
 	cmd.AddCommand(backup.NewCommand())
 	cmd.AddCommand(config.NewCommand())
 	cmd.AddCommand(create.NewCommand())
+	cmd.AddCommand(project.NewCommand())
 	cmd.AddCommand(deletecmd.NewCommand())
 	cmd.AddCommand(deploy.NewCommand())
 	cmd.AddCommand(exec.NewCommand())
