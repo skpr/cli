@@ -12,7 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	awssigner "github.com/aws/aws-sdk-go-v2/service/signer"
 	awsplugin "github.com/aws/aws-signer-notation-plugin/plugin"
-	docker "github.com/fsouza/go-dockerclient"
+	dockregistry "github.com/docker/docker/api/types/registry"
+	dockclient "github.com/docker/docker/client"
 	"github.com/notaryproject/notation-core-go/signature/jws"
 	"github.com/notaryproject/notation-go"
 	notarysigner "github.com/notaryproject/notation-go/signer"
@@ -64,9 +65,12 @@ func (cmd *Command) Run(ctx context.Context) error {
 	cmd.Params.Writer = os.Stderr
 	cmd.Params.Platform = cmd.Platform
 
-	cmd.Params.Auth = docker.AuthConfiguration{
+	// Use official Docker SDK auth config
+	cmd.Params.Auth = dockregistry.AuthConfig{
 		Username: client.Credentials.Username,
 		Password: client.Credentials.Password,
+		// Optionally set ServerAddress if needed (e.g., for ECR):
+		// ServerAddress: cmd.Params.Registry,
 	}
 
 	// Convert build args from slice to map.
@@ -81,7 +85,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		if err != nil {
 			return fmt.Errorf("failed to upgrade AWS ECR authentication: %w", err)
 		}
-
+		// Expect UpgradeAuth to now return dockregistry.AuthConfig
 		cmd.Params.Auth = auth
 	}
 
@@ -104,12 +108,13 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	dockerclient, err := docker.NewClientFromEnv()
+	// Official Docker SDK client
+	dc, err := dockclient.NewClientWithOpts(dockclient.FromEnv, dockclient.WithAPIVersionNegotiation())
 	if err != nil {
 		return fmt.Errorf("failed to setup Docker client: %w", err)
 	}
 
-	builder := buildpack.NewBuilder(dockerclient)
+	builder := buildpack.NewBuilder(dc)
 
 	resp, err := builder.Build(dockerfiles, cmd.Params)
 	if err != nil {
