@@ -1,8 +1,6 @@
 package cron
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/skpr/cli/cmd/skpr/cron/job"
@@ -22,12 +20,6 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Cron operations.",
 		Long:                  cmdLong,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) == 0 {
-				return fmt.Errorf("no subcommand was provided, subcommand is required")
-			}
-			return nil
-		},
 	}
 
 	cmd.AddCommand(job.NewCommand())
