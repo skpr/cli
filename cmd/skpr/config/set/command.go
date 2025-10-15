@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1set.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "set [environment] [key] [value]",
+		Use:                   "set <environment> <key> <value>",
 		Args:                  cobra.ExactArgs(3),
 		DisableFlagsInUseLine: true,
 		Short:                 "Set a config value for the specified environment",

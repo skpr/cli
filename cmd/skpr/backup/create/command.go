@@ -20,7 +20,7 @@ func NewCommand() *cobra.Command {
 	command := v1create.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "create [environment]",
+		Use:                   "create <environment>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Create a backup",

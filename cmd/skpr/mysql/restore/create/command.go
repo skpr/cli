@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1create.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "create [environment] [backup_id]",
+		Use:                   "create <environment> <backup_id>",
 		Args:                  cobra.ExactArgs(2),
 		DisableFlagsInUseLine: true,
 		Short:                 "Create a MySQL restore",

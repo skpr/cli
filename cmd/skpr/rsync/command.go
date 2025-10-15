@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1rsync.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "rsync [source] [destination]",
+		Use:                   "rsync <source> <destination>",
 		DisableFlagsInUseLine: true,
 		Short:                 "Sync files between local and remote environments",
 		Args:                  cobra.ExactArgs(2),

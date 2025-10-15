@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1deploy.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "deploy [environment] [release]",
+		Use:                   "deploy <environment> <version>",
 		Args:                  cobra.MatchAll(cobra.ExactArgs(2)),
 		DisableFlagsInUseLine: true,
 		Short:                 "Deploy a release to an environment",

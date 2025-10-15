@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1exec.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "exec [environment]",
+		Use:                   "exec <environment> -- <command>",
 		Args:                  cobra.MinimumNArgs(2),
 		DisableFlagsInUseLine: true,
 		Short:                 "Execute a single shell command",

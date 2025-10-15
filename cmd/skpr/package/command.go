@@ -25,7 +25,7 @@ func NewCommand() *cobra.Command {
 	command := v1package.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "package [release]",
+		Use:                   "package <version>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		ValidArgs:             []string{"version"},

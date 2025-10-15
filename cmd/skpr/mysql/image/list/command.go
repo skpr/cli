@@ -14,7 +14,7 @@ func NewCommand() *cobra.Command {
 	command := v1list.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "list [environment]",
+		Use:                   "list <environment>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "List created database images for an environment",

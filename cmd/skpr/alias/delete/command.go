@@ -22,7 +22,7 @@ func NewCommand() *cobra.Command {
 	command := v1delete.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "delete [alias]",
+		Use:                   "delete <alias>",
 		Args:                  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		DisableFlagsInUseLine: true,
 		Short:                 "Delete your alias",

@@ -22,7 +22,7 @@ func NewCommand() *cobra.Command {
 	command := v1set.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "set [alias] [expansion]",
+		Use:                   "set <alias> <expansion>",
 		Args:                  cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
 		DisableFlagsInUseLine: true,
 		Short:                 "Set your alias",

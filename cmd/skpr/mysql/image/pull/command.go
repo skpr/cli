@@ -19,7 +19,7 @@ func NewCommand() *cobra.Command {
 	command := v1pull.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "pull [environment] [database]",
+		Use:                   "pull <environment> <database>...",
 		Args:                  cobra.MinimumNArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Pull a database image for an environment",

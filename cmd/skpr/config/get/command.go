@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1get.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "get [environment] [key]",
+		Use:                   "get <environment> <key>",
 		Args:                  cobra.ExactArgs(2),
 		DisableFlagsInUseLine: true,
 		Short:                 "Get a configuration key/value pair",

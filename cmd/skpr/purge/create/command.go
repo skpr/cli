@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1create.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "create [environment] [paths]",
+		Use:                   "create <environment> <path>...",
 		Args:                  cobra.MinimumNArgs(2),
 		DisableFlagsInUseLine: true,
 		Short:                 "Create a purge request",
