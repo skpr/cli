@@ -15,7 +15,6 @@ var (
 func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "backup",
-		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Backup application data. Databases, Files etc",
 		Long:                  cmdLong,

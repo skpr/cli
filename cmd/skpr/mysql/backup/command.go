@@ -22,7 +22,6 @@ var (
 func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "backup",
-		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Backup MySQL data",
 		Long:                  cmdLong,

@@ -17,7 +17,6 @@ var (
 func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "config",
-		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Manage application connection details, secrets, toggles and more",
 		Long:                  cmdLong,

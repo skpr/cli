@@ -32,7 +32,6 @@ var (
 func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "alias",
-		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Create your own subcommands",
 		Long:                  cmdLong,
