@@ -8,15 +8,11 @@ import (
 )
 
 var (
-	cmdLong = `
-  Create a backup of an environment.`
+	cmdLong = `Create a backup of an environment.`
 
 	cmdExample = `
-  # Create a backup.
-  skpr backup create ENVIRONMENT
-
-  # Create and wait for a backup.
-  skpr backup create ENVIRONMENT --wait`
+  # Create and wait for a dev environment backup.
+  skpr backup create dev --wait`
 )
 
 // NewCommand creates a new cobra.Command for 'create' sub command
@@ -24,7 +20,7 @@ func NewCommand() *cobra.Command {
 	command := v1create.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "create",
+		Use:                   "create [environment]",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Create a backup",

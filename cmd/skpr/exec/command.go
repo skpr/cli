@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Executes a shell command in the chosen environment.`
+	cmdLong = `Executes a shell command in the chosen environment.`
 
 	cmdExample = `
   # Exec a shell command on the dev envirionment.

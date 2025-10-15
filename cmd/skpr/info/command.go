@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Display information for Skpr environments.`
+	cmdLong = `Display information for Skpr environments.`
 
 	cmdExample = `
   # Display information about the dev environment.

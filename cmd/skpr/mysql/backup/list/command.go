@@ -6,18 +6,17 @@ import (
 )
 
 var (
-	cmdLong = `
-  List all MySQL backups for an environment.`
+	cmdLong = `List all MySQL backups for an environment.`
 
 	cmdExample = `
-  # List MySQL backups for an environment.
-  skpr mysql backup list ENVIRONMENT
+  # List MySQL backups for dev environment.
+  skpr mysql backup list dev
 
-  # List all MySQL backups for an environment in JSON format.
-  skpr mysql backup list ENVIRONMENT --json
+  # List all MySQL backups for dev environment in JSON format.
+  skpr mysql backup list dev --json
 
   # Pipe a list of all MySQL backups to jq for advanced query functionality.
-  skpr mysql backup list ENVIRONMENT --json | jq`
+  skpr mysql backup list dev --json | jq`
 )
 
 // NewCommand creates a new cobra.Command for 'list' sub command
@@ -25,7 +24,7 @@ func NewCommand() *cobra.Command {
 	command := v1list.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "list",
+		Use:                   "list [environment]",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "List MySQL backups for an environment",

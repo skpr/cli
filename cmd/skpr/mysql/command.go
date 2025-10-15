@@ -9,8 +9,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Commands for interacting with the Skpr platforms MySQL features.`
+	cmdLong = `Commands for interacting with the Skpr platforms MySQL features.`
 )
 
 // NewCommand creates a new cobra.Command for 'mysql' sub command

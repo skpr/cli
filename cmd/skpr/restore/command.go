@@ -12,10 +12,10 @@ var (
 
 	cmdExample = `
   # Create a restore from a backup.
-  skpr restore create ENVIRONMENT BACKUP_ID
+  skpr restore create dev BACKUP_ID
   
   # List restores which have been created on the dev environment.
-  skpr restore list ENVIRONMENT`
+  skpr restore list dev`
 )
 
 // NewCommand creates a new cobra.Command for 'restore' sub command

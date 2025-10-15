@@ -6,12 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-		Overview of all environments and their current status`
-
-	cmdExample = `
-		# List all environments
-		skpr list`
+	cmdLong = `Overview of all environments and their current status`
 )
 
 // NewCommand creates a new cobra.Command for 'list' sub command
@@ -24,7 +19,6 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Overview of all environments and their current status",
 		Long:                  cmdLong,
-		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return command.Run(cmd.Context())
 		},

@@ -7,10 +7,6 @@ import (
 
 var (
 	cmdLong = "Connect to an environments command line session for running multiple commands."
-
-	cmdExample = `
-  # Connect to an environments command line session.
-  skpr shell ENVIRONMENT`
 )
 
 // Options is the commandline options for 'shell' sub command
@@ -31,7 +27,6 @@ func NewCommand() *cobra.Command {
 		Short:                 "Execute a multiple shell commands in a session",
 		Args:                  cobra.ExactArgs(1),
 		Long:                  cmdLong,
-		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			return command.Run(cmd.Context())

@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Get a config value for the specified environment.`
+	cmdLong = `Get a config value for the specified environment.`
 
 	cmdExample = `
   # Get auth.user config for dev environment
@@ -19,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1get.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "get <environment> <key>",
+		Use:                   "get [environment] [key]",
 		Args:                  cobra.ExactArgs(2),
 		DisableFlagsInUseLine: true,
 		Short:                 "Get a configuration key/value pair",

@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Delete a config value for the specified environment.`
+	cmdLong = `Delete a config value for the specified environment.`
 
 	cmdExample = `
   # Get auth.user config for dev environment
@@ -19,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1delete.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "delete <environment> <key>",
+		Use:                   "delete [environment] [key]",
 		Args:                  cobra.ExactArgs(2),
 		DisableFlagsInUseLine: true,
 		Short:                 "Delete a configuration key/value pair",

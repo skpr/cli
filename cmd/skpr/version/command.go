@@ -7,12 +7,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Print client and server version information`
-
-	cmdExample = `
-  # Print client and server versioning information.
-  skpr version`
+	cmdLong = `Print client and server version information`
 
 	// GitVersion overridden at build time by:
 	//   -ldflags="-X github.com/skpr/cli/internal/command/v1/version.GitVersion=${VERSION}"
@@ -37,13 +32,12 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Print client and server version information",
 		Long:                  cmdLong,
-		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return command.Run(cmd.Context(), GitVersion, BuildDate)
 		},
 	}
 
-	cmd.Flags().BoolVarP(&command.Debug, "Debug", "d", false, "Turn on debugging when interactions with the server.")
+	cmd.Flags().BoolVarP(&command.Debug, "Debug", "d", false, "Turn on debugging when interacting with the server.")
 
 	return cmd
 }

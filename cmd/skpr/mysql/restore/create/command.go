@@ -6,15 +6,11 @@ import (
 )
 
 var (
-	cmdLong = `
-  Create a MySQL restore of an environment.`
+	cmdLong = `Create a MySQL restore of an environment.`
 
 	cmdExample = `
-  # Create a MySQL restore from a backup.
-  skpr mysql restore create ENVIRONMENT BACKUP_ID
-
-  # Create and wait.
-  skpr mysql restore create ENVIRONMENT BACKUP_ID --wait`
+  # Create a Mysql restore for dev with BACKUP_ID and wait.
+  skpr mysql restore create dev BACKUP_ID --wait`
 )
 
 // NewCommand creates a new cobra.Command for 'create' sub command
@@ -22,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1create.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "create",
+		Use:                   "create [environment] [backup_id]",
 		Args:                  cobra.ExactArgs(2),
 		DisableFlagsInUseLine: true,
 		Short:                 "Create a MySQL restore",

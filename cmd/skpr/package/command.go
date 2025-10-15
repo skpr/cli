@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Package a release that will be deployed to environments.`
+	cmdLong = `Package a release that will be deployed to environments.`
 
 	cmdExample = `
   # Package release 1.0.0 for deployment

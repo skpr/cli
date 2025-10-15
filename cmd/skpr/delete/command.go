@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Delete an environment.`
+	cmdLong = `Delete an environment.`
 
 	cmdExample = `
   # Delete the dev environment

@@ -8,15 +8,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Manage the lifecycle for backups for an environment`
-
-	cmdExample = `
-  # Create a backup for an environment.
-  skpr backup create ENVIRONMENT
-
-  # List all backups for an environment.
-  skpr backup list ENVIRONMENT`
+	cmdLong = `Manage the lifecycle for backups for an environment`
 )
 
 // NewCommand creates a new cobra.Command for 'backup' sub command
@@ -27,7 +19,6 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Backup application data. Databases, Files etc",
 		Long:                  cmdLong,
-		Example:               cmdExample,
 	}
 
 	cmd.AddCommand(create.NewCommand())

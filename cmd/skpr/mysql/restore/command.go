@@ -8,15 +8,14 @@ import (
 )
 
 var (
-	cmdLong = `
-  Initiate a restore process which will restore a MySQL backup to a specified environment`
+	cmdLong = `Initiate a restore process which will restore a MySQL backup to a specified environment`
 
 	cmdExample = `
-  # Create a MySQL restore from a backup.
-  skpr mysql restore create ENVIRONMENT BACKUP_ID
+  # Create a MySQL restore from a backup for dev environment.
+  skpr mysql restore create dev BACKUP_ID
   
-  # List MySQL restores which have been created for an environment.
-  skpr mysql restore list ENVIRONMENT`
+  # List MySQL restores which have been created for dev environment.
+  skpr mysql restore list dev`
 )
 
 // NewCommand creates a new cobra.Command for 'restore' sub command

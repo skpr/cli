@@ -9,21 +9,23 @@ import (
 )
 
 var (
-	cmdLong = `
-		Create a resource from a file or from stdin.
-		JSON and YAML formats are accepted.`
+	cmdLong = `Manage aliases.`
 
 	cmdExample = `
-	# Create a new alias
-	skpr alias set my-alias "echo 'Hello World'"
-	# List all aliases
-	skpr alias list
-	# Delete an alias
-	skpr alias delete my-alias
-	# Create an alias in a different folder
-	skpr alias set --dir="/path/to/.skpr" my-alias "echo 'Hello World'"
-	# List all aliases in a different folder
-	skpr alias list --dir="/path/to/.skpr"`
+  # Create a new alias
+  skpr alias set my-alias "echo 'Hello World'"
+
+  # List all aliases
+  skpr alias list
+
+  # Delete an alias
+  skpr alias delete my-alias
+
+  # Create an alias in a different folder
+  skpr alias set --dir="/path/to/.skpr" my-alias "echo 'Hello World'"
+
+  # List all aliases in a different folder
+  skpr alias list --dir="/path/to/.skpr"`
 )
 
 // NewCommand creates a new cobra.Command for 'alias' sub command

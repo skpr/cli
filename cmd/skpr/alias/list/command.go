@@ -7,13 +7,9 @@ import (
 )
 
 var (
-	cmdLong = `
-  List all aliases.`
+	cmdLong = `List all aliases.`
 
 	cmdExample = `
-  # List all alias.
-  skpr alias list [<flags>]
-
   # List all aliases and specify the skpr config directory.
   skpr alias list --dir="/path/to/.skpr"`
 )
