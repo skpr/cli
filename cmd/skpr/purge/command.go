@@ -8,15 +8,14 @@ import (
 )
 
 var (
-	cmdLong = `
-  A series of commands for executing and reviewing cache invalidation.`
+	cmdLong = `A series of commands for executing and reviewing cache invalidation.`
 
 	cmdExample = `
   # Create a purge for a specific set of paths.
-  skpr purge create ENVIRONMENT /my-sub-path /my-sub-path-2
+  skpr purge create dev /my-sub-path /my-sub-path-2
   
-  # List purge requests.
-  skpr purge list ENVIRONMENT`
+  # List purge requests for dev.
+  skpr purge list dev`
 )
 
 // NewCommand creates a new cobra.Command for 'image' sub command

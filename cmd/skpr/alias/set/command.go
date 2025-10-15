@@ -7,18 +7,14 @@ import (
 )
 
 var (
-	cmdLong = `
-  Set an alias for a command.`
+	cmdLong = `Set an alias for a command.`
 
 	cmdExample = `
-  # Set an alias.
-  skpr alias set [<flags>] <alias> <expansion>
-
   # Set an alias
   skpr alias set my-alias "echo 'Hello World'"
 
   # Set the alias and specify the skpr config directory.
-  skpr alias set --dir="/path/to/.skpr" <alias> <expansion>`
+  alias set my-alias "echo 'Hello World'" --dir="/path/to/.skpr"`
 )
 
 // NewCommand creates a new cobra.Command for `skpr alias set`.
@@ -26,7 +22,7 @@ func NewCommand() *cobra.Command {
 	command := v1set.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "set",
+		Use:                   "set <alias> <expansion>",
 		Args:                  cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
 		DisableFlagsInUseLine: true,
 		Short:                 "Set your alias",

@@ -7,14 +7,13 @@ import (
 )
 
 var (
-	cmdLong = `
-  Delete an alias of the command.`
+	cmdLong = `Delete an alias of the command.`
 
 	cmdExample = `
-  # Delete an alias.
+  # Delete alias my-alias.
   skpr alias delete my-alias
 
-  # Delete the alias and specify the skpr config directory.
+  # Delete the my-alias alias in the skpr config directory.
   skpr alias delete my-alias --dir="/home/pnx/.skpr"`
 )
 
@@ -23,7 +22,7 @@ func NewCommand() *cobra.Command {
 	command := v1delete.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "delete",
+		Use:                   "delete <alias>",
 		Args:                  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		DisableFlagsInUseLine: true,
 		Short:                 "Delete your alias",

@@ -6,18 +6,14 @@ import (
 )
 
 var (
-	cmdLong = `
-  List all backups for an environment.`
+	cmdLong = `List all backups for an environment.`
 
 	cmdExample = `
-  # List backups for an environment.
-  skpr backup list ENVIRONMENT
-
-  # List all backup for an environment in JSON format.
-  skpr backup list ENVIRONMENT --json
+  # List all backup for dev environment in JSON format.
+  skpr backup list dev --json
 
   # Pipe a list of all backups to jq for advanced query functionality.
-  skpr backup list ENVIRONMENT --json | jq`
+  skpr backup list dev --json | jq`
 )
 
 // NewCommand creates a new cobra.Command for 'list' sub command
@@ -25,7 +21,7 @@ func NewCommand() *cobra.Command {
 	command := v1list.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "list",
+		Use:                   "list <environment>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "List backups for an environment",

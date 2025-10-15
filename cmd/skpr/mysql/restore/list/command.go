@@ -6,12 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  List all of the available MySQL restores for a given Skpr environment.`
-
-	cmdExample = `
-  # List MySQL restores which have been created on the dev environment.
-  skpr mysql restore list dev`
+	cmdLong = `List all of the available MySQL restores for a given Skpr environment.`
 )
 
 // NewCommand creates a new cobra.Command for 'list' sub command
@@ -19,12 +14,11 @@ func NewCommand() *cobra.Command {
 	command := v1list.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "list",
+		Use:                   "list <environment>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "List MySQL restores for an environment",
 		Long:                  cmdLong,
-		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			return command.Run(cmd.Context())

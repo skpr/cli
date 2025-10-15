@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Execute a deployment of a packaged release to a specified environment.`
+	cmdLong = `Execute a deployment of a packaged release to a specified environment.`
 
 	cmdExample = `
   # Deploy release 1.0.0 to the dev environment
@@ -19,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1deploy.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "deploy [environment] [release]",
+		Use:                   "deploy <environment> <version>",
 		Args:                  cobra.MatchAll(cobra.ExactArgs(2)),
 		DisableFlagsInUseLine: true,
 		Short:                 "Deploy a release to an environment",

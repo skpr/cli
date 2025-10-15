@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Delete an environment.`
+	cmdLong = `Delete an environment.`
 
 	cmdExample = `
   # Delete the dev environment
@@ -19,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1delete.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "delete [environment]",
+		Use:                   "delete <environment>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Delete a previously deployed environment",

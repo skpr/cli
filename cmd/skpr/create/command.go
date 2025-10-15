@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1create.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "create [environment] [release]",
+		Use:                   "create <environment> <version>",
 		Args:                  cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
 		DisableFlagsInUseLine: true,
 		Short:                 "Create a new environment.",

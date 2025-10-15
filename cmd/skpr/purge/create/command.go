@@ -6,12 +6,11 @@ import (
 )
 
 var (
-	cmdLong = `
-  Create a purge request to invalidate edge caching.`
+	cmdLong = `Create a purge request to invalidate edge caching.`
 
 	cmdExample = `
   # Create a purge request.
-  skpr purge create ENVIRONMENT PATH PATH PATH`
+  skpr purge create dev /my-path /my-path2 "/all-subpaths/*"`
 )
 
 // NewCommand creates a new cobra.Command for 'create' sub command
@@ -19,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1create.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "create",
+		Use:                   "create <environment> <path>...",
 		Args:                  cobra.MinimumNArgs(2),
 		DisableFlagsInUseLine: true,
 		Short:                 "Create a purge request",

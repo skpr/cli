@@ -6,12 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  List all of the available images for a given Skpr environment.`
-
-	cmdExample = `
-  # List image which have been created on the dev environment.
-  skpr mysql image list ENVIRONMENT`
+	cmdLong = `List all of the available images for a given Skpr environment.`
 )
 
 // NewCommand creates a new cobra.Command for 'list' sub command
@@ -19,12 +14,11 @@ func NewCommand() *cobra.Command {
 	command := v1list.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "list",
+		Use:                   "list <environment>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "List created database images for an environment",
 		Long:                  cmdLong,
-		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			return command.Run(cmd.Context())

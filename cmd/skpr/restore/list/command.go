@@ -6,12 +6,11 @@ import (
 )
 
 var (
-	cmdLong = `
-		List all of the available restores for a given Skpr environment.`
+	cmdLong = `List all of the available restores for a given Skpr environment.`
 
 	cmdExample = `
-		# List restores which have been created on the dev environment.
-		skpr restore list ENVIRONMENT`
+  # List restores which have been created on the dev environment.
+  skpr restore list dev`
 )
 
 // NewCommand creates a new cobra.Command for 'list' sub command
@@ -19,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1list.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "list",
+		Use:                   "list <environment>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "List restores for an environment",

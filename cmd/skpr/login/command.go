@@ -7,10 +7,6 @@ import (
 
 var (
 	cmdLong = "Login to the Skpr hosting platform."
-
-	cmdExample = `
-  # Login to the Skpr hosting platform.
-  skpr login`
 )
 
 // NewCommand creates a new cobra.Command for 'login' sub command
@@ -23,7 +19,6 @@ func NewCommand() *cobra.Command {
 		Short:                 "Login to the Skpr cluster.",
 		Args:                  cobra.NoArgs,
 		Long:                  cmdLong,
-		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return command.Run(cmd.Context())
 		},
