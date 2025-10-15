@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Package a release that will be deployed to environments.`
+	cmdLong = `Package a release that will be deployed to environments.`
 
 	cmdExample = `
   # Package release 1.0.0 for deployment
@@ -26,7 +25,7 @@ func NewCommand() *cobra.Command {
 	command := v1package.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "package [release]",
+		Use:                   "package <version>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		ValidArgs:             []string{"version"},

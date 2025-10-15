@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Get a config value for the specified environment.`
+	cmdLong = `Get a config value for the specified environment.`
 
 	cmdExample = `
   # Get auth.user config for dev environment

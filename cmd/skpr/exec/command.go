@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Executes a shell command in the chosen environment.`
+	cmdLong = `Executes a shell command in the chosen environment.`
 
 	cmdExample = `
   # Exec a shell command on the dev envirionment.
@@ -19,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1exec.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "exec [environment]",
+		Use:                   "exec <environment> -- <command>",
 		Args:                  cobra.MinimumNArgs(2),
 		DisableFlagsInUseLine: true,
 		Short:                 "Execute a single shell command",

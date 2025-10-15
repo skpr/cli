@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Show information on an packaged release for this project.`
+	cmdLong = `Show information on an packaged release for this project.`
 
 	cmdExample = `
   # Show information on release 1.0.0.
@@ -22,7 +21,7 @@ func NewCommand() *cobra.Command {
 	command := v1list.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "info <release name> [<flags>]",
+		Use:                   "info <version>",
 		Args:                  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		DisableFlagsInUseLine: true,
 		Short:                 "Show information on a release.",

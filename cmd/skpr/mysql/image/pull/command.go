@@ -7,12 +7,11 @@ import (
 )
 
 var (
-	cmdLong = `
-  Pulls a database image associated with an environment.`
+	cmdLong = `Pulls a database image associated with an environment.`
 
 	cmdExample = `
-  # Pull the database image for an environment.
-  skpr mysql image pull ENVIRONMENT`
+  # Pull the database image for dev environment.
+  skpr mysql image pull dev`
 )
 
 // NewCommand creates a new cobra.Command for 'list' sub command
@@ -20,7 +19,7 @@ func NewCommand() *cobra.Command {
 	command := v1pull.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "pull",
+		Use:                   "pull <environment> <database>...",
 		Args:                  cobra.MinimumNArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Pull a database image for an environment",

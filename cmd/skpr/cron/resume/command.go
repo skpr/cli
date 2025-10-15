@@ -1,23 +1,24 @@
-package list
+package resume
 
 import (
-	v1list "github.com/skpr/cli/internal/command/purge/list"
 	"github.com/spf13/cobra"
+
+	"github.com/skpr/cli/internal/command/cron/resume"
 )
 
 var (
-	cmdLong = `List purge requests for a given Skpr environment.`
+	cmdLong = `Resume all cron jobs for a given environment.`
 )
 
-// NewCommand creates a new cobra.Command for 'list' sub command
+// NewCommand creates a new cobra.Command for 'delete' sub command
 func NewCommand() *cobra.Command {
-	command := v1list.Command{}
+	command := resume.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "list <environment>",
+		Use:                   "resume <environment>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
-		Short:                 "List purge requests",
+		Short:                 "Resume all cron jobs associated with an environment.",
 		Long:                  cmdLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]

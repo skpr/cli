@@ -11,8 +11,7 @@ const (
 )
 
 var (
-	cmdLong = `
-  List all of the config key/value pairs for the specified environment`
+	cmdLong = `List all of the config key/value pairs for the specified environment`
 
 	cmdExample = `
   # List all of the config for dev environment

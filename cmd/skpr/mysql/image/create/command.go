@@ -6,12 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  Create an image for a given Skpr environment.`
-
-	cmdExample = `
-  # Create an database image from the dev environment.
-  skpr mysql image create ENVIRONMENT`
+	cmdLong = `Create an image for a given Skpr environment.`
 )
 
 // NewCommand creates a new cobra.Command for 'create' sub command
@@ -19,12 +14,11 @@ func NewCommand() *cobra.Command {
 	command := v1create.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "create",
+		Use:                   "create <environment>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Create a database image from an environment",
 		Long:                  cmdLong,
-		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			return command.Run(cmd.Context())

@@ -8,22 +8,20 @@ import (
 )
 
 var (
-	cmdLong = `
-  Manage the lifecycle for MySQL backups for an environment`
+	cmdLong = `Manage the lifecycle for MySQL backups for an environment`
 
 	cmdExample = `
-  # Create a backup for an environment.
-  skpr mysql backup create ENVIRONMENT
+  # Create a backup for dev environment.
+  skpr mysql backup create dev
 
-  # List all backups for an environment.
-  skpr mysql backup list ENVIRONMENT`
+  # List all backups for dev environment.
+  skpr mysql backup list dev`
 )
 
 // NewCommand creates a new cobra.Command for 'backup' sub command
 func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "backup",
-		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Backup MySQL data",
 		Long:                  cmdLong,

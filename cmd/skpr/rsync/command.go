@@ -9,8 +9,8 @@ var (
 	cmdLong = "Sync files from remote and local directories"
 
 	cmdExample = `
-		# Sync from local to a remote environment
-		skpr rsync ./foo/ ENVIRONMENT:/mnt/temporary/foo/`
+  # Sync from local to a remote environment
+  skpr rsync ./foo/ dev:/mnt/temporary/foo/`
 )
 
 // NewCommand creates a new cobra.Command for 'rsync' sub command
@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 	command := v1rsync.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "rsync",
+		Use:                   "rsync <source> <destination>",
 		DisableFlagsInUseLine: true,
 		Short:                 "Sync files between local and remote environments",
 		Args:                  cobra.ExactArgs(2),

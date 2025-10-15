@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	cmdLong = `
-  List releases which have been packaged for this project.`
+	cmdLong = `List releases which have been packaged for this project.`
 
 	cmdExample = `
   # List all releases.
@@ -22,7 +21,7 @@ func NewCommand() *cobra.Command {
 	command := v1list.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "list [<flags>]",
+		Use:                   "list",
 		Args:                  cobra.MatchAll(cobra.ExactArgs(0)),
 		DisableFlagsInUseLine: true,
 		Short:                 "List all releases",

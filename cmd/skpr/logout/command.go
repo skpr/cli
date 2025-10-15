@@ -7,10 +7,6 @@ import (
 
 var (
 	cmdLong = "Logout from the Skpr hosting platform."
-
-	cmdExample = `
-  # Logout from the Skpr hosting platform.
-  skpr logout`
 )
 
 // NewCommand creates a new cobra.Command for 'logout' sub command
@@ -23,7 +19,6 @@ func NewCommand() *cobra.Command {
 		Short:                 "Initiate a logout event from the Skpr hosting plstform",
 		Args:                  cobra.NoArgs,
 		Long:                  cmdLong,
-		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return command.Run(cmd.Context())
 		},
