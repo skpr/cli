@@ -1,6 +1,8 @@
 package set
 
 import (
+	"strings"
+
 	"github.com/spf13/cobra"
 
 	v1set "github.com/skpr/cli/internal/command/alias/set"
@@ -23,19 +25,17 @@ func NewCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:                   "set <alias> <expansion>",
-		Args:                  cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs),
+		Args:                  cobra.MinimumNArgs(2),
 		DisableFlagsInUseLine: true,
 		Short:                 "Set your alias",
 		Long:                  cmdLong,
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Alias = args[0]
-			command.Expansion = args[1]
+			command.Expansion = strings.Join(args[1:], " ")
 			return command.Run()
 		},
 	}
-
-	cmd.Flags().StringVar(&command.Dir, "dir", ".skpr", "The skpr config directory.")
 
 	return cmd
 }

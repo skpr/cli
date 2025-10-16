@@ -3,21 +3,21 @@ package delete
 import (
 	"context"
 	"fmt"
-	"path/filepath"
 
 	cmdconfig "github.com/skpr/cli/internal/client/config/user"
 )
 
 // Command struct.
 type Command struct {
-	Dir   string
 	Alias string
 }
 
 // Run the command.
 func (cmd *Command) Run(ctx context.Context) error {
-	configPath := filepath.Join(cmd.Dir, "config.yml")
-	configFile := cmdconfig.NewConfigFile(configPath)
+	configFile, err := cmdconfig.NewConfigFile()
+	if err != nil {
+		return fmt.Errorf("could not get user config file: %w", err)
+	}
 
 	exists, err := configFile.Exists()
 	if err != nil {

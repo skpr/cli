@@ -10,7 +10,7 @@ import (
 
 func TestExpandAliases(t *testing.T) {
 	args := []string{"mp", "dev"}
-	aliases := command.Aliases{
+	aliases := user.Aliases{
 		"mp": "mysql image pull",
 	}
 	found, newArgs, err := Expand(args, aliases)
@@ -20,7 +20,7 @@ func TestExpandAliases(t *testing.T) {
 }
 
 func TestExpandAliasesWithPlaceholder(t *testing.T) {
-	aliases := command.Aliases{
+	aliases := user.Aliases{
 		"mp": "mysql image pull $1",
 		"fs": "rsync $1:/data/app/sites/default/files $2",
 	}
@@ -40,7 +40,7 @@ func TestExpandAliasesWithPlaceholder(t *testing.T) {
 
 func TestExpandNoArgs(t *testing.T) {
 	args := []string{}
-	aliases := command.Aliases{}
+	aliases := user.Aliases{}
 	found, newArgs, err := Expand(args, aliases)
 	assert.NoError(t, err)
 	assert.Len(t, newArgs, 0)
