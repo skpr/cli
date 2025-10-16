@@ -9,7 +9,7 @@ import (
 )
 
 // Expand expands aliases in the list of args.
-func Expand(args []string, aliases command.Aliases) (bool, []string, error) {
+func Expand(args []string, aliases user.Aliases) (bool, []string, error) {
 	found := false
 	if len(args) == 0 {
 		return found, args, nil

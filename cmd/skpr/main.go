@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/charmbracelet/fang"
 	"github.com/charmbracelet/lipgloss/v2"
@@ -136,6 +137,12 @@ func addAliases(cmd *cobra.Command) {
 			return
 		}
 
+		binPath, err := os.Executable()
+		if err != nil {
+			fmt.Fprint(os.Stderr, "Failed to get skpr executable path: ", err.Error(), "\n")
+			return
+		}
+
 		cmd.AddGroup(&cobra.Group{
 			ID:    GroupAliases,
 			Title: "Alias Commands",
@@ -148,7 +155,7 @@ func addAliases(cmd *cobra.Command) {
 				DisableFlagsInUseLine: true,
 				GroupID:               GroupAliases,
 				RunE: func(cmd *cobra.Command, args []string) error {
-					e := exec.Command("sh", "-c", v)
+					e := exec.Command(binPath, strings.Split(v, " ")...)
 					e.Stdin = os.Stdin
 					e.Stdout = os.Stdout
 					e.Stderr = os.Stderr
