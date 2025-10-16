@@ -1,4 +1,4 @@
-package command
+package user
 
 import (
 	"fmt"
@@ -18,20 +18,37 @@ type Aliases map[string]string
 
 // ConfigFile is the config file.
 type ConfigFile struct {
-	Filename string
+	Path string
 }
 
 // NewConfigFile creates a new config file.
-func NewConfigFile(filename string) *ConfigFile {
-	return &ConfigFile{
-		Filename: filename,
+func NewConfigFile() (*ConfigFile, error) {
+	configFile := &ConfigFile{}
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return configFile, err
 	}
+
+	configFile.Path = filepath.Join(homeDir, ".skpr", "config.yml")
+
+	return configFile, nil
 }
 
 // Read reads config from file.
 func (c *ConfigFile) Read() (Config, error) {
 	var config Config
-	data, err := os.ReadFile(c.Filename)
+
+	exists, err := c.Exists()
+	if err != nil {
+		return config, err
+	}
+
+	if !exists {
+		return config, nil
+	}
+
+	data, err := os.ReadFile(c.Path)
 	if err != nil {
 		return config, fmt.Errorf("failed to read command config: %w", err)
 	}
@@ -40,18 +57,21 @@ func (c *ConfigFile) Read() (Config, error) {
 	if err != nil {
 		return config, fmt.Errorf("failed to unmarshal command config: %w", err)
 	}
+
 	return config, nil
 }
 
 // Exists checks if the config file exists.
 func (c *ConfigFile) Exists() (bool, error) {
-	_, err := os.Lstat(c.Filename)
+	_, err := os.Lstat(c.Path)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return false, nil
 		}
+
 		return false, err
 	}
+
 	return true, nil
 }
 
@@ -62,8 +82,8 @@ func (c *ConfigFile) Write(config Config) error {
 		return fmt.Errorf("failed to marshal command config: %w", err)
 	}
 
-	dir := filepath.Dir(c.Filename)
-
+	// Ensure the directory exists.
+	dir := filepath.Dir(c.Path)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err = os.Mkdir(dir, 0700)
 		if err != nil {
@@ -71,7 +91,7 @@ func (c *ConfigFile) Write(config Config) error {
 		}
 	}
 
-	err = os.WriteFile(c.Filename, data, 0600)
+	err = os.WriteFile(c.Path, data, 0600)
 	if err != nil {
 		return fmt.Errorf("failed to write command config to file: %w", err)
 	}
@@ -82,20 +102,25 @@ func (c *ConfigFile) Write(config Config) error {
 // ReadAliases reads the Aliases from config.
 func (c *ConfigFile) ReadAliases() (Aliases, error) {
 	aliases := Aliases{}
+
 	exists, err := c.Exists()
 	if err != nil {
 		return Aliases{}, err
 	}
+
 	if !exists {
 		return aliases, nil
 	}
+
 	cfg, err := c.Read()
 	if err != nil {
 		return aliases, err
 	}
+
 	// Ensure aliases are not nil.
 	if cfg.Aliases == nil {
 		return aliases, nil
 	}
+
 	return cfg.Aliases, nil
 }

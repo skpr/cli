@@ -35,7 +35,5 @@ func NewCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&command.Dir, "dir", ".skpr", "The skpr config directory.")
-
 	return cmd
 }

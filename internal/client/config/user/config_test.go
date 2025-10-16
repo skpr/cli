@@ -1,4 +1,4 @@
-package command
+package user
 
 import (
 	"path/filepath"
@@ -8,15 +8,18 @@ import (
 )
 
 func TestReadWriteConfig(t *testing.T) {
-	filename := filepath.Join(t.TempDir(), ".skpr", "config.yml")
-	configFile := NewConfigFile(filename)
+	filePath := filepath.Join(t.TempDir(), ".skpr", "config.yml")
+
+	configFile := ConfigFile{Path: filePath}
+
 	config := Config{
 		Aliases: Aliases{"foo": "bar baz", "whiz": "whang woo"},
 	}
+
 	err := configFile.Write(config)
 	assert.NoError(t, err)
 
-	assert.FileExists(t, filename)
+	assert.FileExists(t, filePath)
 
 	newCfg, err := configFile.Read()
 	assert.NoError(t, err)
@@ -28,8 +31,9 @@ func TestReadWriteConfig(t *testing.T) {
 }
 
 func TestConfigExists(t *testing.T) {
-	filename := filepath.Join(t.TempDir(), ".skpr", "config.yml")
-	configFile := NewConfigFile(filename)
+	filePath := filepath.Join(t.TempDir(), ".skpr", "config.yml")
+
+	configFile := ConfigFile{Path: filePath}
 	exists, err := configFile.Exists()
 	assert.NoError(t, err)
 	assert.False(t, exists)
