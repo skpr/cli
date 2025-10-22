@@ -11,8 +11,8 @@ import (
 	"github.com/skpr/cli/cmd/skpr/alias"
 	"github.com/skpr/cli/cmd/skpr/backup"
 	"github.com/skpr/cli/cmd/skpr/config"
-	"github.com/skpr/cli/cmd/skpr/cron"
 	"github.com/skpr/cli/cmd/skpr/create"
+	"github.com/skpr/cli/cmd/skpr/cron"
 	"github.com/skpr/cli/cmd/skpr/daemon"
 	deletecmd "github.com/skpr/cli/cmd/skpr/delete"
 	"github.com/skpr/cli/cmd/skpr/deploy"
@@ -28,6 +28,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/restore"
 	"github.com/skpr/cli/cmd/skpr/rsync"
 	"github.com/skpr/cli/cmd/skpr/shell"
+	"github.com/skpr/cli/cmd/skpr/validate"
 	"github.com/skpr/cli/cmd/skpr/version"
 	"github.com/skpr/cli/internal/color"
 )
@@ -82,6 +83,7 @@ func main() {
 	cmd.AddCommand(shell.NewCommand())
 	cmd.AddCommand(version.NewCommand())
 	cmd.AddCommand(release.NewCommand())
+	cmd.AddCommand(validate.NewCommand())
 
 	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme)); err != nil {
 		os.Exit(1)
