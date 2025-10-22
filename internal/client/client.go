@@ -3,16 +3,16 @@ package client
 import (
 	"context"
 	"fmt"
-	"github.com/skpr/cli/internal/client/config"
-	skprcredentials "github.com/skpr/cli/internal/client/credentials"
-	"github.com/skpr/cli/internal/client/ssh"
 
+	"github.com/skpr/api/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/skpr/api/pb"
+	"github.com/skpr/cli/internal/client/config"
+	skprcredentials "github.com/skpr/cli/internal/client/credentials"
+	"github.com/skpr/cli/internal/client/ssh"
 )
 
 const (

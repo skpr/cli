@@ -1,8 +1,9 @@
 package deploy
 
 import (
-	v1deploy "github.com/skpr/cli/internal/command/deploy"
 	"github.com/spf13/cobra"
+
+	v1deploy "github.com/skpr/cli/internal/command/deploy"
 )
 
 var (

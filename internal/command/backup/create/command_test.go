@@ -6,10 +6,9 @@ import (
 	"log/slog"
 	"testing"
 
+	"github.com/skpr/api/pb"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
-
-	"github.com/skpr/api/pb"
 )
 
 type Mock struct {

@@ -1,8 +1,9 @@
 package rsync
 
 import (
-	v1rsync "github.com/skpr/cli/internal/command/rsync"
 	"github.com/spf13/cobra"
+
+	v1rsync "github.com/skpr/cli/internal/command/rsync"
 )
 
 var (

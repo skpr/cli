@@ -1,8 +1,9 @@
 package set
 
 import (
-	v1set "github.com/skpr/cli/internal/command/config/set"
 	"github.com/spf13/cobra"
+
+	v1set "github.com/skpr/cli/internal/command/config/set"
 )
 
 var (

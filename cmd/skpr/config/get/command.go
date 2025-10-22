@@ -1,8 +1,9 @@
 package get
 
 import (
-	v1get "github.com/skpr/cli/internal/command/config/get"
 	"github.com/spf13/cobra"
+
+	v1get "github.com/skpr/cli/internal/command/config/get"
 )
 
 var (

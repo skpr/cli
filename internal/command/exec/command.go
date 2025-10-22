@@ -2,12 +2,12 @@ package exec
 
 import (
 	"context"
-	"github.com/skpr/cli/internal/client/ssh"
 	"os"
 
 	"github.com/pkg/errors"
 
 	"github.com/skpr/cli/internal/client"
+	"github.com/skpr/cli/internal/client/ssh"
 )
 
 // Command to exec a command on an environment.

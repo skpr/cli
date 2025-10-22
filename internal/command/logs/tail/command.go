@@ -11,9 +11,8 @@ import (
 	"github.com/TylerBrock/colorjson"
 	faithcolor "github.com/fatih/color"
 	"github.com/jwalton/gchalk"
-	"golang.org/x/sync/errgroup"
-
 	"github.com/skpr/api/pb"
+	"golang.org/x/sync/errgroup"
 
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/color"

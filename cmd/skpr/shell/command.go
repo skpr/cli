@@ -1,8 +1,9 @@
 package shell
 
 import (
-	v1shell "github.com/skpr/cli/internal/command/shell"
 	"github.com/spf13/cobra"
+
+	v1shell "github.com/skpr/cli/internal/command/shell"
 )
 
 var (

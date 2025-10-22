@@ -4,10 +4,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/skpr/api/pb"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
-
-	"github.com/skpr/api/pb"
 )
 
 // ImageListClient is a client for mocking the ImageListClient type.

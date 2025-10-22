@@ -1,8 +1,9 @@
 package list
 
 import (
-	v1list "github.com/skpr/cli/internal/command/restore/list"
 	"github.com/spf13/cobra"
+
+	v1list "github.com/skpr/cli/internal/command/restore/list"
 )
 
 var (
