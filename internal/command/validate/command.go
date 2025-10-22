@@ -29,7 +29,10 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return err
 	}
 
-	projectDir := utils.FindSkprConfigDir(".") // @todo, Make this dynamic.
+	projectDir, err := utils.FindSkprConfigDir()
+	if err != nil {
+		return fmt.Errorf("failed to find project directory: %w", err)
+	}
 
 	env, err := project.LoadFromDirectory(projectDir, cmd.Environment)
 	if err != nil {

@@ -33,9 +33,9 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 	fmt.Println("Loading environment configuration")
 
-	projectDir := utils.FindSkprConfigDir(".") // @todo, Make this dynamic.
-	if projectDir == "" {
-		return fmt.Errorf("could not find project directory")
+	projectDir, err := utils.FindSkprConfigDir()
+	if err != nil {
+		return fmt.Errorf("failed to find project directory: %w", err)
 	}
 
 	env, err := project.LoadFromDirectory(projectDir, cmd.Environment)

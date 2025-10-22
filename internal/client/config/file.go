@@ -28,7 +28,10 @@ type File struct {
 }
 
 func GetFromFile(config *Config) error {
-	projectDir := utils.FindSkprConfigDir(".") // @todo, Swap the dot for something better.
+	projectDir, err := utils.FindSkprConfigDir()
+	if err != nil {
+		return fmt.Errorf("failed to find project directory: %w", err)
+	}
 
 	if projectDir == "" {
 		return nil
