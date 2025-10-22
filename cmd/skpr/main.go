@@ -93,7 +93,11 @@ func main() {
 	cmd.AddCommand(release.NewCommand())
 
 	// Add user set aliases to the root command.
-	addAliases(cmd)
+	err := addAliases(cmd)
+	if err != nil {
+		fmt.Println("Failed to add alias commands:", err)
+		os.Exit(1)
+	}
 
 	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme)); err != nil {
 		os.Exit(1)
@@ -125,7 +129,7 @@ func MyColorScheme(ld lipgloss.LightDarkFunc) fang.ColorScheme {
 }
 
 // Adds user defined aliases to the root command.
-func addAliases(cmd *cobra.Command) {
+func addAliases(cmd *cobra.Command) error {
 	configFile, err := user.NewConfigFile()
 
 	// Only add aliases if we got an error.
@@ -133,14 +137,12 @@ func addAliases(cmd *cobra.Command) {
 		// Load the aliases.
 		aliases, err := configFile.ReadAliases()
 		if err != nil {
-			fmt.Fprint(os.Stderr, "Failed to load aliases: ", err.Error(), "\n")
-			return
+			return fmt.Errorf("failed to read aliases: %w", err)
 		}
 
 		binPath, err := os.Executable()
 		if err != nil {
-			fmt.Fprint(os.Stderr, "Failed to get skpr executable path: ", err.Error(), "\n")
-			return
+			return fmt.Errorf("failed to get skpr executable path: %w", err)
 		}
 
 		cmd.AddGroup(&cobra.Group{
@@ -165,4 +167,6 @@ func addAliases(cmd *cobra.Command) {
 			})
 		}
 	}
+
+	return nil
 }
