@@ -31,6 +31,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/restore"
 	"github.com/skpr/cli/cmd/skpr/rsync"
 	"github.com/skpr/cli/cmd/skpr/shell"
+	"github.com/skpr/cli/cmd/skpr/validate"
 	"github.com/skpr/cli/cmd/skpr/version"
 	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/skpr/cli/internal/color"
@@ -91,6 +92,7 @@ func main() {
 	cmd.AddCommand(shell.NewCommand())
 	cmd.AddCommand(version.NewCommand())
 	cmd.AddCommand(release.NewCommand())
+	cmd.AddCommand(validate.NewCommand())
 
 	// Add user set aliases to the root command.
 	err := addAliases(cmd)
