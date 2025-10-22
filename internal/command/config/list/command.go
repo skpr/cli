@@ -72,13 +72,6 @@ func sortConfigList(list []*pb.Config) []*pb.Config {
 	return list
 }
 
-// Row which can be....
-type Row struct {
-	Key   string `header:"key"`
-	Value string `header:"value"`
-	Type  string `header:"type"`
-}
-
 // Print the table...
 func Print(w io.Writer, list []*pb.Config, environment string, trimLen int, wide bool) error {
 	header := []string{

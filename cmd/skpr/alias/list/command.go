@@ -10,8 +10,8 @@ var (
 	cmdLong = `List all aliases.`
 
 	cmdExample = `
-  # List all aliases and specify the skpr config directory.
-  skpr alias list --dir="/path/to/.skpr"`
+  # List all aliases.
+  skpr alias list`
 )
 
 // NewCommand creates a new cobra.Command for `skpr alias list`.
@@ -29,8 +29,6 @@ func NewCommand() *cobra.Command {
 			return command.Run()
 		},
 	}
-
-	cmd.Flags().StringVar(&command.Dir, "dir", ".skpr", "The skpr config directory.")
 
 	return cmd
 }

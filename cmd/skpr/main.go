@@ -2,7 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/charmbracelet/fang"
 	"github.com/charmbracelet/lipgloss/v2"
@@ -16,7 +19,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/daemon"
 	deletecmd "github.com/skpr/cli/cmd/skpr/delete"
 	"github.com/skpr/cli/cmd/skpr/deploy"
-	"github.com/skpr/cli/cmd/skpr/exec"
+	execcmd "github.com/skpr/cli/cmd/skpr/exec"
 	"github.com/skpr/cli/cmd/skpr/info"
 	"github.com/skpr/cli/cmd/skpr/list"
 	"github.com/skpr/cli/cmd/skpr/login"
@@ -29,7 +32,13 @@ import (
 	"github.com/skpr/cli/cmd/skpr/rsync"
 	"github.com/skpr/cli/cmd/skpr/shell"
 	"github.com/skpr/cli/cmd/skpr/version"
+	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/skpr/cli/internal/color"
+)
+
+const (
+	// GroupAliases is the ID for the alias command group.
+	GroupAliases = "aliases"
 )
 
 const cmdExample = `
@@ -69,7 +78,7 @@ func main() {
 	cmd.AddCommand(daemon.NewCommand())
 	cmd.AddCommand(deletecmd.NewCommand())
 	cmd.AddCommand(deploy.NewCommand())
-	cmd.AddCommand(exec.NewCommand())
+	cmd.AddCommand(execcmd.NewCommand())
 	cmd.AddCommand(info.NewCommand())
 	cmd.AddCommand(list.NewCommand())
 	cmd.AddCommand(login.NewCommand())
@@ -82,6 +91,13 @@ func main() {
 	cmd.AddCommand(shell.NewCommand())
 	cmd.AddCommand(version.NewCommand())
 	cmd.AddCommand(release.NewCommand())
+
+	// Add user set aliases to the root command.
+	err := addAliases(cmd)
+	if err != nil {
+		fmt.Println("Failed to add alias commands:", err)
+		os.Exit(1)
+	}
 
 	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme)); err != nil {
 		os.Exit(1)
@@ -110,4 +126,47 @@ func MyColorScheme(ld lipgloss.LightDarkFunc) fang.ColorScheme {
 	s.Program = secondary
 
 	return s
+}
+
+// Adds user defined aliases to the root command.
+func addAliases(cmd *cobra.Command) error {
+	configFile, err := user.NewConfigFile()
+
+	// Only add aliases if we got an error.
+	if err == nil {
+		// Load the aliases.
+		aliases, err := configFile.ReadAliases()
+		if err != nil {
+			return fmt.Errorf("failed to read aliases: %w", err)
+		}
+
+		binPath, err := os.Executable()
+		if err != nil {
+			return fmt.Errorf("failed to get skpr executable path: %w", err)
+		}
+
+		cmd.AddGroup(&cobra.Group{
+			ID:    GroupAliases,
+			Title: "Alias Commands",
+		})
+
+		for k, v := range aliases {
+			cmd.AddCommand(&cobra.Command{
+				Use:                   k,
+				Short:                 fmt.Sprintf("Command: %s", v),
+				DisableFlagsInUseLine: true,
+				GroupID:               GroupAliases,
+				RunE: func(cmd *cobra.Command, args []string) error {
+					e := exec.Command(binPath, strings.Split(v, " ")...)
+					e.Stdin = os.Stdin
+					e.Stdout = os.Stdout
+					e.Stderr = os.Stderr
+					e.Env = os.Environ()
+					return e.Run()
+				},
+			})
+		}
+	}
+
+	return nil
 }
