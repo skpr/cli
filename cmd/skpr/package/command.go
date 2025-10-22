@@ -1,8 +1,9 @@
 package pkg
 
 import (
-	v1package "github.com/skpr/cli/internal/command/package"
 	"github.com/spf13/cobra"
+
+	v1package "github.com/skpr/cli/internal/command/package"
 )
 
 var (

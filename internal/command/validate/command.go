@@ -3,14 +3,13 @@ package validate
 import (
 	"context"
 	"fmt"
-
 	"io"
 	"os"
 
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
-
 	"github.com/skpr/api/pb"
+
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/client/project"
 	"github.com/skpr/cli/internal/client/utils"

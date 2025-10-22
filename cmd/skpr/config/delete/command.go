@@ -1,8 +1,9 @@
 package delete
 
 import (
-	v1delete "github.com/skpr/cli/internal/command/config/delete"
 	"github.com/spf13/cobra"
+
+	v1delete "github.com/skpr/cli/internal/command/config/delete"
 )
 
 var (

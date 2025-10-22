@@ -3,19 +3,18 @@ package deploy
 import (
 	"context"
 	"fmt"
-	"github.com/skpr/cli/internal/client/project"
-	"github.com/skpr/cli/internal/client/utils"
-	"github.com/skpr/cli/internal/command/validate"
 	"io"
 	"os"
 
 	"github.com/pkg/errors"
+	"github.com/skpr/api/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/skpr/api/pb"
-
 	"github.com/skpr/cli/internal/client"
+	"github.com/skpr/cli/internal/client/project"
+	"github.com/skpr/cli/internal/client/utils"
+	"github.com/skpr/cli/internal/command/validate"
 	envutils "github.com/skpr/cli/internal/environment"
 )
 

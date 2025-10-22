@@ -9,10 +9,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
+	"github.com/skpr/api/pb"
 	"github.com/skratchdot/open-golang/open"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/skpr/api/pb"
 	oidclogin "github.com/skpr/cli/internal/aws/cognito/oidc/login"
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/client/config"

@@ -9,7 +9,6 @@ import (
 	docker "github.com/fsouza/go-dockerclient"
 	"github.com/gosuri/uilive"
 	"github.com/pkg/errors"
-
 	"github.com/skpr/api/pb"
 
 	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"

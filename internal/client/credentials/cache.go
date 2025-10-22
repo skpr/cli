@@ -3,13 +3,14 @@ package credentials
 import (
 	"context"
 	"fmt"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity"
 	"github.com/pkg/errors"
-	cache2 "github.com/skpr/cli/internal/client/credentials/cache"
 
 	skprcredentials "github.com/skpr/cli/internal/aws/credentials"
+	cache2 "github.com/skpr/cli/internal/client/credentials/cache"
 )
 
 func GetFromCache(ctx context.Context, cluster string) (Credentials, bool, error) {

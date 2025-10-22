@@ -4,9 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/skratchdot/open-golang/open"
-
 	"github.com/skpr/api/pb"
+	"github.com/skratchdot/open-golang/open"
 
 	"github.com/skpr/cli/internal/client"
 )

@@ -1,9 +1,10 @@
 package ssh
 
 import (
+	"io"
+
 	"github.com/skpr/cli/internal/client/config"
 	"github.com/skpr/cli/internal/client/credentials"
-	"io"
 )
 
 // Interface for the SSH client.

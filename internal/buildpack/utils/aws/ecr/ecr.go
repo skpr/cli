@@ -3,7 +3,6 @@ package ecr
 import (
 	"context"
 	"fmt"
-	skprcredentials "github.com/skpr/cli/internal/client/credentials"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -11,6 +10,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	docker "github.com/fsouza/go-dockerclient"
 	"github.com/pkg/errors"
+
+	skprcredentials "github.com/skpr/cli/internal/client/credentials"
 )
 
 // Username to pass to the Docker registry.

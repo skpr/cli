@@ -6,7 +6,6 @@ import (
 
 	"github.com/gosuri/uitable"
 	"github.com/pkg/errors"
-
 	"github.com/skpr/api/pb"
 
 	"github.com/skpr/cli/internal/client"

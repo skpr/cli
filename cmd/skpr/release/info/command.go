@@ -1,8 +1,9 @@
 package info
 
 import (
-	v1list "github.com/skpr/cli/internal/command/release/info"
 	"github.com/spf13/cobra"
+
+	v1list "github.com/skpr/cli/internal/command/release/info"
 )
 
 var (

@@ -1,8 +1,9 @@
 package logout
 
 import (
-	v1logout "github.com/skpr/cli/internal/command/logout"
 	"github.com/spf13/cobra"
+
+	v1logout "github.com/skpr/cli/internal/command/logout"
 )
 
 var (

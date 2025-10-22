@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
-
 	"github.com/skpr/api/pb"
 
 	"github.com/skpr/cli/internal/client"

@@ -1,8 +1,9 @@
 package login
 
 import (
-	v1login "github.com/skpr/cli/internal/command/login"
 	"github.com/spf13/cobra"
+
+	v1login "github.com/skpr/cli/internal/command/login"
 )
 
 var (

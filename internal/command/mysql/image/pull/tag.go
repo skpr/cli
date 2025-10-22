@@ -4,9 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"google.golang.org/grpc"
-
 	"github.com/skpr/api/pb"
+	"google.golang.org/grpc"
 )
 
 // ImageListClient is a client for mocking the ImageListClient type.

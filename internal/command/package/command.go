@@ -16,7 +16,6 @@ import (
 	"github.com/notaryproject/notation-core-go/signature/jws"
 	"github.com/notaryproject/notation-go"
 	notarysigner "github.com/notaryproject/notation-go/signer"
-
 	"github.com/skpr/api/pb"
 
 	buildpack "github.com/skpr/cli/internal/buildpack/builder"

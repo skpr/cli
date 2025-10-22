@@ -3,9 +3,8 @@ package project
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/skpr/api/pb"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestProto(t *testing.T) {

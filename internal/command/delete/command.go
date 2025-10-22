@@ -6,9 +6,8 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
-	"github.com/tcnksm/go-input"
-
 	"github.com/skpr/api/pb"
+	"github.com/tcnksm/go-input"
 
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/confirmation"

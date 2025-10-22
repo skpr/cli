@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/skpr/api/pb"
 	"github.com/skratchdot/open-golang/open"
 	"golang.org/x/oauth2"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/skpr/api/pb"
 	"github.com/skpr/cli/internal/aws/cognito/oidc/login"
 	"github.com/skpr/cli/internal/aws/cognito/oidc/rand"
 	"github.com/skpr/cli/internal/client"

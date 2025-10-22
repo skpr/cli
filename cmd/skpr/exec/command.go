@@ -1,8 +1,9 @@
 package exec
 
 import (
-	v1exec "github.com/skpr/cli/internal/command/exec"
 	"github.com/spf13/cobra"
+
+	v1exec "github.com/skpr/cli/internal/command/exec"
 )
 
 var (

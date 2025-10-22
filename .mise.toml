@@ -1,5 +1,6 @@
 [tools]
 go = "1.25"
+"go:github.com/daixiang0/gci" = "latest"
 "ubi:golangci/golangci-lint" = "latest"
 "ubi:goreleaser/goreleaser" = "latest"
 
