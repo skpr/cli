@@ -5,6 +5,10 @@ on:
     tags:
       - '*'
 
+env:
+  BUCKET_NAME: package-skpr-io
+  AWS_REGION:  us-east-1
+
 permissions:
   contents: write
   packages: write
@@ -12,7 +16,6 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-
     steps:
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v5
@@ -27,3 +30,59 @@ jobs:
           mise release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release_debs:
+    runs-on: ubuntu-latest
+    needs:
+      - release
+    steps:
+      - name: ⬇️ Git clone the repository
+        uses: actions/checkout@v5
+
+      - name: 📁 Make apt repo dirs
+        run: mkdir -p apt-repo/pool/main/skpr
+
+      - name: 📦 Download latest release
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: skpr/cli
+          latest: true
+          fileName: "*.deb"
+          out-file-path: apt-repo/pool/main/skpr
+
+      - name: ⚙️ Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: 🔑 Import GPG Private Key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+
+      - name: 🔐 List keys
+        run: gpg -K
+
+      - name: 📦 Generate Apt Repo
+        run: |
+          cd apt-repo
+          ../scripts/generate-apt-repo.sh
+          cd -
+
+      - name: 🔑 Export Public Key
+        run: |
+          cd apt-repo
+          echo "${{ secrets.GPG_PUBLIC_KEY }}" > packages.skpr.io.pub
+          cd -
+
+      - name: ☁️ Sync to S3
+        run: |
+          cd apt-repo
+          aws s3 sync --delete . s3://${{ env.BUCKET_NAME }}/apt/
+          cd -
+
+      - name: 🧹 Invalidate Cloudfront
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_ID }} --paths /apt/*

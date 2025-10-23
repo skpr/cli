@@ -39,8 +39,35 @@ release:
     owner: skpr
     name: cli
 
+brews:
+  - name: skpr
+    repository:
+      owner: skpr
+      name: homebrew-taps
+    commit_author:
+      name: skprbot
+      email: skprbot@skpr.io
+    homepage: https://www.skpr.io
+    description: CLI for the Skpr Hosting Platform
+    dependencies:
+      - name: rsync
+        type: optional
+      - name: docker
+        type: optional
+    install: |
+      bin.install "skpr"
+      bin.install "skpr-rsh"
+
+      # Install bash completion
+      output = Utils.safe_popen_read("#{bin}/skpr", "--completion-script-bash")
+      (bash_completion/"skpr").write output
+
+      # Install zsh completion
+      output = Utils.safe_popen_read("#{bin}/skpr", "--completion-script-zsh")
+      (zsh_completion/"_skpr").write output
+
 nfpms:
-  - license: Proprietary
+  - license: GPL-3.0
     maintainer: Skpr
     homepage: https://www.skpr.io
     recommends: [ rsync, docker.io ]
