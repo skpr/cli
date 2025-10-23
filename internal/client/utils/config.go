@@ -19,6 +19,15 @@ func FindSkprConfigDir() (string, error) {
 	// Check for environment variable override
 	envProjectDirectory := os.Getenv(EnvProjectDirectory)
 	if envProjectDirectory != "" {
+		exists, err := checkDirectory(envProjectDirectory)
+		if err != nil {
+			return "", fmt.Errorf("failed to check if directory from %s exists: %w", EnvProjectDirectory, err)
+		}
+
+		if !exists {
+			return "", fmt.Errorf("directory from %s does not exist or is not a directory: %s", EnvProjectDirectory, envProjectDirectory)
+		}
+
 		return envProjectDirectory, nil
 	}
 
@@ -44,9 +53,23 @@ func FindSkprConfigDir() (string, error) {
 		parent := filepath.Dir(dir)
 		if parent == dir {
 			// Reached filesystem root
-			return "", fmt.Errorf("walked to the root directory and unable to find Skpr config directory")
+			return "", fmt.Errorf("walked to the root directory and unable to find a %s config directory", ProjectConfigDir)
 		}
 
 		dir = parent
 	}
+}
+
+// Checks if a directory at the given path exists.
+func checkDirectory(path string) (bool, error) {
+	info, err := os.Stat(path)
+	if err == nil {
+		return info.IsDir(), nil
+	}
+
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+
+	return false, err
 }
