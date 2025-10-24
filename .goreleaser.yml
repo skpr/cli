@@ -59,11 +59,11 @@ brews:
       bin.install "skpr-rsh"
 
       # Install bash completion
-      output = Utils.safe_popen_read("#{bin}/skpr", "--completion-script-bash")
+      output = Utils.safe_popen_read("#{bin}/skpr", "completion", "bash")
       (bash_completion/"skpr").write output
 
       # Install zsh completion
-      output = Utils.safe_popen_read("#{bin}/skpr", "--completion-script-zsh")
+      output = Utils.safe_popen_read("#{bin}/skpr", "completion", "zsh")
       (zsh_completion/"_skpr").write output
 
 nfpms:
