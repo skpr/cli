@@ -104,6 +104,9 @@ func main() {
 	cmd.AddCommand(validate.NewCommand())
 	cmd.AddCommand(version.NewCommand())
 
+	// Hide the help command.
+	cmd.SetHelpCommand(&cobra.Command{Hidden: true})
+
 	// Experimental commands.
 	featureFlags, err := userConfig.LoadFeatureFlags()
 	if err != nil {
@@ -145,7 +148,7 @@ func main() {
 		})
 	}
 
-	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme)); err != nil {
+	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme), fang.WithoutCompletions()); err != nil {
 		os.Exit(1)
 	}
 }

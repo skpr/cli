@@ -23,52 +23,59 @@ const (
 	GroupCDN = "cdn"
 	// GroupLifecycle for grouping our lifecycle commands eg. create, delete, deploy, config
 	GroupLifecycle = "lifecycle"
+	// GroupOther for grouping all other commands.
+	GroupOther = "other"
 )
 
 // AddGroupsToCommand adds command groups to the provided cobra.Command
 func AddGroupsToCommand(cmd *cobra.Command) {
 	cmd.AddGroup(&cobra.Group{
 		ID:    GroupAuthentication,
-		Title: "Authentication Commands",
+		Title: "Authentication",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    GroupLifecycle,
-		Title: "Lifecycle Commands",
+		Title: "Deployment Lifecycle",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    GroupSecureShell,
-		Title: "Secure Shell Commands",
+		Title: "Secure Shell",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    GroupDisasterRecovery,
-		Title: "Disaster Recovery Commands",
+		Title: "Disaster Recovery",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    GroupDataStorage,
-		Title: "Data Storage Commands",
+		Title: "Data Storage",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    GroupBackground,
-		Title: "Background Task Commands",
+		Title: "Background Tasks",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    GroupDebug,
-		Title: "Debug Commands",
+		Title: "Debug",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    GroupCDN,
-		Title: "CDN Commands",
+		Title: "CDN",
 	})
 
 	cmd.AddGroup(&cobra.Group{
 		ID:    GroupAlias,
-		Title: "Alias Commands",
+		Title: "Alias",
+	})
+
+	cmd.AddGroup(&cobra.Group{
+		ID:    GroupOther,
+		Title: "Other",
 	})
 }
