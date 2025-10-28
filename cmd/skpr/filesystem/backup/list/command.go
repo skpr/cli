@@ -11,13 +11,13 @@ var (
 
 	cmdExample = `
   # List filesystem backups for dev environment.
-  skpr volume backup list dev
+  skpr filesystem backup list dev
 
   # List all filesystem backups for dev environment in JSON format.
-  skpr volume backup list dev --json
+  skpr filesystem backup list dev --json
 
   # Pipe a list of all filesystem backups to jq for advanced query functionality.
-  skpr volume backup list dev --json | jq`
+  skpr filesystem backup list dev --json | jq`
 )
 
 // NewCommand creates a new cobra.Command for 'list' sub command

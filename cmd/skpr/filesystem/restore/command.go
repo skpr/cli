@@ -3,8 +3,8 @@ package restore
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/skpr/cli/cmd/skpr/volume/restore/create"
-	"github.com/skpr/cli/cmd/skpr/volume/restore/list"
+	"github.com/skpr/cli/cmd/skpr/filesystem/restore/create"
+	"github.com/skpr/cli/cmd/skpr/filesystem/restore/list"
 )
 
 var (
@@ -12,10 +12,10 @@ var (
 
 	cmdExample = `
   # Create a filesystem restore from a backup for dev environment.
-  skpr volume restore create dev BACKUP_ID
+  skpr filesystem restore create dev BACKUP_ID
   
   # List filesystem restores which have been created for dev environment.
-  skpr volume restore list dev`
+  skpr filesystem restore list dev`
 )
 
 // NewCommand creates a new cobra.Command for 'restore' sub command

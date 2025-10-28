@@ -3,8 +3,8 @@ package backup
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/skpr/cli/cmd/skpr/volume/backup/create"
-	"github.com/skpr/cli/cmd/skpr/volume/backup/list"
+	"github.com/skpr/cli/cmd/skpr/filesystem/backup/create"
+	"github.com/skpr/cli/cmd/skpr/filesystem/backup/list"
 )
 
 var (
@@ -12,10 +12,10 @@ var (
 
 	cmdExample = `
   # Create a backup for dev environment.
-  skpr volume backup create dev
+  skpr filesystem backup create dev
 
   # List all backups for dev environment.
-  skpr volume backup list dev`
+  skpr filesystem backup list dev`
 )
 
 // NewCommand creates a new cobra.Command for 'backup' sub command

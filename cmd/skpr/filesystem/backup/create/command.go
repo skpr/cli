@@ -11,10 +11,10 @@ var (
 
 	cmdExample = `
   # Create a filesystem backup of dev.
-  skpr volume backup create dev
+  skpr filesystem backup create dev
 
   # Create and wait for a filesystem backup.
-  skpr volume backup create dev --wait`
+  skpr filesystem backup create dev --wait`
 )
 
 // NewCommand creates a new cobra.Command for 'create' sub command
