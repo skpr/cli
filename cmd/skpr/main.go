@@ -107,6 +107,11 @@ func main() {
 	// Hide the help command.
 	cmd.SetHelpCommand(&cobra.Command{Hidden: true})
 
+	// Hide the completions command.
+	cmd.CompletionOptions = cobra.CompletionOptions{
+		HiddenDefaultCmd: true,
+	}
+
 	// Experimental commands.
 	featureFlags, err := userConfig.LoadFeatureFlags()
 	if err != nil {
@@ -148,7 +153,7 @@ func main() {
 		})
 	}
 
-	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme), fang.WithoutCompletions()); err != nil {
+	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme)); err != nil {
 		os.Exit(1)
 	}
 }
