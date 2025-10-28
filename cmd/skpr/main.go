@@ -25,6 +25,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/list"
 	"github.com/skpr/cli/cmd/skpr/login"
 	"github.com/skpr/cli/cmd/skpr/logout"
+	"github.com/skpr/cli/cmd/skpr/logs"
 	"github.com/skpr/cli/cmd/skpr/mysql"
 	pkg "github.com/skpr/cli/cmd/skpr/package"
 	"github.com/skpr/cli/cmd/skpr/purge"
@@ -79,36 +80,28 @@ func main() {
 	skprcommand.AddGroupsToCommand(cmd)
 
 	cmd.AddCommand(alias.NewCommand())
-
 	cmd.AddCommand(backup.NewCommand())
-	cmd.AddCommand(restore.NewCommand())
-
 	cmd.AddCommand(config.NewCommand())
-
-	cmd.AddCommand(pkg.NewCommand())
-	cmd.AddCommand(deploy.NewCommand())
 	cmd.AddCommand(create.NewCommand())
-	cmd.AddCommand(deletecmd.NewCommand())
-	cmd.AddCommand(info.NewCommand())
-	cmd.AddCommand(list.NewCommand())
-	cmd.AddCommand(release.NewCommand())
-	cmd.AddCommand(validate.NewCommand())
-
 	cmd.AddCommand(cron.NewCommand())
 	cmd.AddCommand(daemon.NewCommand())
-
+	cmd.AddCommand(deploy.NewCommand())
+	cmd.AddCommand(deletecmd.NewCommand())
 	cmd.AddCommand(execcmd.NewCommand())
-	cmd.AddCommand(shell.NewCommand())
-	cmd.AddCommand(rsync.NewCommand())
-
+	cmd.AddCommand(filesystem.NewCommand())
+	cmd.AddCommand(info.NewCommand())
+	cmd.AddCommand(list.NewCommand())
 	cmd.AddCommand(login.NewCommand())
 	cmd.AddCommand(logout.NewCommand())
-
+	cmd.AddCommand(logs.NewCommand())
 	cmd.AddCommand(mysql.NewCommand())
-	cmd.AddCommand(filesystem.NewCommand())
-
+	cmd.AddCommand(pkg.NewCommand())
 	cmd.AddCommand(purge.NewCommand())
-
+	cmd.AddCommand(release.NewCommand())
+	cmd.AddCommand(restore.NewCommand())
+	cmd.AddCommand(rsync.NewCommand())
+	cmd.AddCommand(shell.NewCommand())
+	cmd.AddCommand(validate.NewCommand())
 	cmd.AddCommand(version.NewCommand())
 
 	// Experimental commands.
