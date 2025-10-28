@@ -5,15 +5,24 @@ import (
 )
 
 const (
-	GroupAlias            = "alias"
+	// GroupAlias for grouping commands related to alias management
+	GroupAlias = "alias"
+	// GroupDisasterRecovery for grouping our backup/restore commands
 	GroupDisasterRecovery = "dr"
-	GroupSecureShell      = "secure-shell"
-	GroupBackground       = "background"
-	GroupDataStorage      = "data-storage"
-	GroupAuthentication   = "authentication"
-	GroupDebug            = "debug"
-	GroupCDN              = "cdn"
-	GroupLifecycle        = "lifecycle"
+	// GroupSecureShell for grouping our ssh related commands eg. exec, shell, rsync
+	GroupSecureShell = "secure-shell"
+	// GroupBackground for grouping our background task commands eg. daemons, cron
+	GroupBackground = "background"
+	// GroupDataStorage for grouping our data storage commands eg. mysql, filesystem
+	GroupDataStorage = "data-storage"
+	// GroupAuthentication for grouping our authentication commands eg. login, logout
+	GroupAuthentication = "authentication"
+	// GroupDebug for grouping our debugging commands eg. trace, logs
+	GroupDebug = "debug"
+	// GroupCDN for grouping our CDN commands eg. purge
+	GroupCDN = "cdn"
+	// GroupLifecycle for grouping our lifecycle commands eg. create, delete, deploy, config
+	GroupLifecycle = "lifecycle"
 )
 
 // AddGroupsToCommand adds command groups to the provided cobra.Command
