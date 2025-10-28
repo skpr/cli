@@ -14,40 +14,14 @@ type Command struct {
 
 // Run the command.
 func (cmd *Command) Run() error {
-	configFile, err := cmdconfig.NewConfigFile()
+	configFile, err := cmdconfig.NewClient()
 	if err != nil {
 		return fmt.Errorf("could not get user config file: %w", err)
 	}
 
-	exists, err := configFile.Exists()
+	err = configFile.SetAlias(cmd.Alias, cmd.Expansion)
 	if err != nil {
-		return err
-	}
-
-	var config cmdconfig.Config
-
-	if !exists {
-		config = cmdconfig.Config{
-			Aliases: cmdconfig.Aliases{
-				cmd.Alias: cmd.Expansion,
-			},
-		}
-	} else {
-		config, err = configFile.Read()
-		if err != nil {
-			return err
-		}
-
-		if config.Aliases == nil {
-			config.Aliases = cmdconfig.Aliases{}
-		}
-
-		config.Aliases[cmd.Alias] = cmd.Expansion
-	}
-
-	err = configFile.Write(config)
-	if err != nil {
-		return err
+		return fmt.Errorf("failed to set alias: %w", err)
 	}
 
 	fmt.Println("Alias set.")

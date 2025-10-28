@@ -72,6 +72,13 @@ Develop with Skpr’s secure, dedicated hosting platform and discover 24/7 peace
 }
 
 func main() {
+	// Load our configuration which contains aliases and feature flags.
+	userConfig, err := user.NewClient()
+	if err != nil {
+		fmt.Println("Failed to load user config file:", err)
+		os.Exit(1)
+	}
+
 	cmd.AddCommand(alias.NewCommand())
 	cmd.AddCommand(backup.NewCommand())
 	cmd.AddCommand(config.NewCommand())
@@ -91,16 +98,54 @@ func main() {
 	cmd.AddCommand(restore.NewCommand())
 	cmd.AddCommand(rsync.NewCommand())
 	cmd.AddCommand(shell.NewCommand())
-	cmd.AddCommand(trace.NewCommand())
 	cmd.AddCommand(version.NewCommand())
 	cmd.AddCommand(release.NewCommand())
 	cmd.AddCommand(validate.NewCommand())
 
-	// Add user set aliases to the root command.
-	err := addAliases(cmd)
+	// Experimental commands.
+	featureFlags, err := userConfig.LoadFeatureFlags()
+	if err != nil {
+		fmt.Println("Failed to load feature flags:", err)
+		os.Exit(1)
+	}
+
+	if featureFlags.Trace {
+		cmd.AddCommand(trace.NewCommand())
+	}
+
+	// Alias commands.
+	aliases, err := userConfig.ListAliases()
 	if err != nil {
 		fmt.Println("Failed to add alias commands:", err)
 		os.Exit(1)
+	}
+
+	binPath, err := os.Executable()
+	if err != nil {
+		fmt.Println("Failed to get skpr executable path:", err)
+		os.Exit(1)
+	}
+
+	cmd.AddGroup(&cobra.Group{
+		ID:    GroupAliases,
+		Title: "Alias Commands",
+	})
+
+	for k, v := range aliases {
+		cmd.AddCommand(&cobra.Command{
+			Use:                   k,
+			Short:                 fmt.Sprintf("Command: %s", v),
+			DisableFlagsInUseLine: true,
+			GroupID:               GroupAliases,
+			RunE: func(cmd *cobra.Command, args []string) error {
+				e := exec.Command(binPath, strings.Split(v, " ")...)
+				e.Stdin = os.Stdin
+				e.Stdout = os.Stdout
+				e.Stderr = os.Stderr
+				e.Env = os.Environ()
+				return e.Run()
+			},
+		})
 	}
 
 	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme)); err != nil {
@@ -130,47 +175,4 @@ func MyColorScheme(ld lipgloss.LightDarkFunc) fang.ColorScheme {
 	s.Program = secondary
 
 	return s
-}
-
-// Adds user defined aliases to the root command.
-func addAliases(cmd *cobra.Command) error {
-	configFile, err := user.NewConfigFile()
-
-	// Only add aliases if we got an error.
-	if err == nil {
-		// Load the aliases.
-		aliases, err := configFile.ReadAliases()
-		if err != nil {
-			return fmt.Errorf("failed to read aliases: %w", err)
-		}
-
-		binPath, err := os.Executable()
-		if err != nil {
-			return fmt.Errorf("failed to get skpr executable path: %w", err)
-		}
-
-		cmd.AddGroup(&cobra.Group{
-			ID:    GroupAliases,
-			Title: "Alias Commands",
-		})
-
-		for k, v := range aliases {
-			cmd.AddCommand(&cobra.Command{
-				Use:                   k,
-				Short:                 fmt.Sprintf("Command: %s", v),
-				DisableFlagsInUseLine: true,
-				GroupID:               GroupAliases,
-				RunE: func(cmd *cobra.Command, args []string) error {
-					e := exec.Command(binPath, strings.Split(v, " ")...)
-					e.Stdin = os.Stdin
-					e.Stdout = os.Stdout
-					e.Stderr = os.Stderr
-					e.Env = os.Environ()
-					return e.Run()
-				},
-			})
-		}
-	}
-
-	return nil
 }

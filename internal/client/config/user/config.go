@@ -8,119 +8,125 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Config is the command config.
+// Config represents the persistent user configuration.
 type Config struct {
-	Aliases Aliases `yaml:"aliases,omitempty"`
+	Aliases      Aliases            `yaml:"aliases,omitempty"`
+	Experimental ConfigExperimental `yaml:"experimental,omitempty"`
 }
 
-// Aliases is a single command alias.
+// ConfigExperimental holds experimental feature flags.
+type ConfigExperimental struct {
+	Trace bool `yaml:"trace,omitempty"`
+}
+
+// Aliases maps alias names to commands.
 type Aliases map[string]string
 
-// ConfigFile is the config file.
+// ConfigFile manages the config file location.
 type ConfigFile struct {
 	Path string
 }
 
-// NewConfigFile creates a new config file.
-func NewConfigFile() (*ConfigFile, error) {
-	configFile := &ConfigFile{}
-
+// NewClient returns a ConfigFile client for interacting with ~/.skpr/config.yml.
+func NewClient() (*ConfigFile, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return configFile, err
+		return nil, err
 	}
 
-	configFile.Path = filepath.Join(homeDir, ".skpr", "config.yml")
-
-	return configFile, nil
+	return &ConfigFile{
+		Path: filepath.Join(homeDir, ".skpr", "config.yml"),
+	}, nil
 }
 
-// Read reads config from file.
-func (c *ConfigFile) Read() (Config, error) {
-	var config Config
-
-	exists, err := c.Exists()
-	if err != nil {
-		return config, err
-	}
-
-	if !exists {
-		return config, nil
-	}
+// load loads config from disk, or returns an empty config if none exists.
+func (c *ConfigFile) load() (Config, error) {
+	var cfg Config
 
 	data, err := os.ReadFile(c.Path)
 	if err != nil {
-		return config, fmt.Errorf("failed to read command config: %w", err)
-	}
-
-	err = yaml.Unmarshal(data, &config)
-	if err != nil {
-		return config, fmt.Errorf("failed to unmarshal command config: %w", err)
-	}
-
-	return config, nil
-}
-
-// Exists checks if the config file exists.
-func (c *ConfigFile) Exists() (bool, error) {
-	_, err := os.Lstat(c.Path)
-	if err != nil {
 		if os.IsNotExist(err) {
-			return false, nil
+			return cfg, nil
 		}
-
-		return false, err
+		return cfg, fmt.Errorf("failed to read config: %w", err)
 	}
 
-	return true, nil
+	if err := yaml.Unmarshal(data, &cfg); err != nil {
+		return cfg, fmt.Errorf("failed to unmarshal config: %w", err)
+	}
+
+	return cfg, nil
 }
 
-// Write writes config to a file.
-func (c *ConfigFile) Write(config Config) error {
-	data, err := yaml.Marshal(config)
+// save writes config to disk, creating directories as needed.
+func (c *ConfigFile) save(cfg Config) error {
+	data, err := yaml.Marshal(cfg)
 	if err != nil {
-		return fmt.Errorf("failed to marshal command config: %w", err)
+		return fmt.Errorf("failed to marshal config: %w", err)
 	}
 
-	// Ensure the directory exists.
 	dir := filepath.Dir(c.Path)
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		err = os.Mkdir(dir, 0700)
-		if err != nil {
-			return fmt.Errorf("failed to create directory: %w", err)
-		}
+	if err := os.MkdirAll(dir, 0700); err != nil {
+		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 
-	err = os.WriteFile(c.Path, data, 0600)
-	if err != nil {
-		return fmt.Errorf("failed to write command config to file: %w", err)
+	if err := os.WriteFile(c.Path, data, 0600); err != nil {
+		return fmt.Errorf("failed to write config file: %w", err)
 	}
 
 	return nil
 }
 
-// ReadAliases reads the Aliases from config.
-func (c *ConfigFile) ReadAliases() (Aliases, error) {
-	aliases := Aliases{}
-
-	exists, err := c.Exists()
+// SetAlias creates or updates an alias and persists the change.
+func (c *ConfigFile) SetAlias(name, value string) error {
+	cfg, err := c.load()
 	if err != nil {
-		return Aliases{}, err
+		return err
 	}
 
-	if !exists {
-		return aliases, nil
-	}
-
-	cfg, err := c.Read()
-	if err != nil {
-		return aliases, err
-	}
-
-	// Ensure aliases are not nil.
 	if cfg.Aliases == nil {
-		return aliases, nil
+		cfg.Aliases = Aliases{}
+	}
+
+	cfg.Aliases[name] = value
+
+	return c.save(cfg)
+}
+
+// RemoveAlias deletes an alias if present and persists the change.
+func (c *ConfigFile) RemoveAlias(name string) error {
+	cfg, err := c.load()
+	if err != nil {
+		return err
+	}
+
+	if cfg.Aliases != nil {
+		delete(cfg.Aliases, name)
+	}
+
+	return c.save(cfg)
+}
+
+// ListAliases returns all configured aliases.
+func (c *ConfigFile) ListAliases() (Aliases, error) {
+	cfg, err := c.load()
+	if err != nil {
+		return nil, err
+	}
+
+	if cfg.Aliases == nil {
+		return Aliases{}, nil
 	}
 
 	return cfg.Aliases, nil
+}
+
+// LoadFeatureFlags returns the current experimental feature flags.
+func (c *ConfigFile) LoadFeatureFlags() (ConfigExperimental, error) {
+	cfg, err := c.load()
+	if err != nil {
+		return ConfigExperimental{}, err
+	}
+
+	return cfg.Experimental, nil
 }

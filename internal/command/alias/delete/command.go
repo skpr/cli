@@ -14,39 +14,14 @@ type Command struct {
 
 // Run the command.
 func (cmd *Command) Run(ctx context.Context) error {
-	configFile, err := cmdconfig.NewConfigFile()
+	configFile, err := cmdconfig.NewClient()
 	if err != nil {
 		return fmt.Errorf("could not get user config file: %w", err)
 	}
 
-	exists, err := configFile.Exists()
+	err = configFile.RemoveAlias(cmd.Alias)
 	if err != nil {
-		return err
-	}
-
-	if !exists {
-		fmt.Printf("Alias '%s' does not exist\n", cmd.Alias)
-		return nil
-	}
-
-	var config cmdconfig.Config
-
-	config, err = configFile.Read()
-	if err != nil {
-		return err
-	}
-
-	_, ok := config.Aliases[cmd.Alias]
-	if !ok {
-		fmt.Printf("Alias '%s' does not exist\n", cmd.Alias)
-		return nil
-	}
-
-	delete(config.Aliases, cmd.Alias)
-
-	err = configFile.Write(config)
-	if err != nil {
-		return err
+		return fmt.Errorf("failed to remove alias: %w", err)
 	}
 
 	fmt.Println("Alias deleted.")

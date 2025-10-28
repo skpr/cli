@@ -162,7 +162,7 @@ func (c Client) Daemon() pb.DaemonClient {
 	return pb.NewDaemonClient(c.conn)
 }
 
-// Compass client operations.
-func (c Client) Compass() pb.CompassClient {
-       return pb.NewCompassClient(c.ClientConn)
+// Trace client operations.
+func (c Client) Trace() pb.TraceClient {
+	return pb.NewTraceClient(c.conn)
 }
