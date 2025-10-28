@@ -3,7 +3,7 @@ package create
 import (
 	"github.com/spf13/cobra"
 
-	v1create "github.com/skpr/cli/internal/command/volume/restore/create"
+	v1create "github.com/skpr/cli/internal/command/filesystem/restore/create"
 )
 
 var (

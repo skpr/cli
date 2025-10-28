@@ -102,7 +102,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		"Phase",
 		"Start Time",
 		"Duration",
-		"Volume",
+		"Filesystem",
 	}
 
 	var flatRows [][]string

@@ -12,7 +12,7 @@ import (
 	"github.com/skpr/cli/internal/client"
 )
 
-// Command to create a volume backup.
+// Command to create a filesystem backup.
 type Command struct {
 	Environment string
 	VolumeName  string
@@ -26,14 +26,14 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return err
 	}
 
-	fmt.Fprintln(os.Stderr, "Creating new volume backup")
+	fmt.Fprintln(os.Stderr, "Creating new filesystem backup")
 
 	resp, err := client.Volume().BackupCreate(ctx, &pb.VolumeBackupCreateRequest{
 		Environment: cmd.Environment,
 		VolumeName:  cmd.VolumeName,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to create volume backup: %w", err)
+		return fmt.Errorf("failed to create filesystem backup: %w", err)
 	}
 
 	fmt.Println(resp.ID)
@@ -42,7 +42,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return nil
 	}
 
-	fmt.Fprintln(os.Stderr, "Waiting for volume backup to finish")
+	fmt.Fprintln(os.Stderr, "Waiting for filesystem backup to finish")
 
 	limiter := time.Tick(10 * time.Second)
 
@@ -53,7 +53,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 			ID: resp.ID,
 		})
 		if err != nil {
-			return errors.Wrap(err, "failed to get volume backup")
+			return errors.Wrap(err, "failed to get filesystem backup")
 		}
 
 		switch resp.VolumeBackup.Phase {
@@ -61,9 +61,9 @@ func (cmd *Command) Run(ctx context.Context) error {
 			fmt.Fprintln(os.Stderr, "Backup complete!")
 			return nil
 		case pb.VolumeBackupStatus_Failed:
-			return fmt.Errorf("the volume backup failed: the Skpr team has been notified")
+			return fmt.Errorf("the filesystem backup failed: the Skpr team has been notified")
 		case pb.VolumeBackupStatus_Unknown:
-			return fmt.Errorf("the volume backup failed for an unknown reason: the Skpr team has been notified")
+			return fmt.Errorf("the filesystem backup failed for an unknown reason: the Skpr team has been notified")
 		}
 	}
 }

@@ -3,7 +3,7 @@ package list
 import (
 	"github.com/spf13/cobra"
 
-	v1list "github.com/skpr/cli/internal/command/volume/backup/list"
+	v1list "github.com/skpr/cli/internal/command/filesystem/backup/list"
 )
 
 var (
