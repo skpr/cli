@@ -13,27 +13,17 @@ type Command struct{}
 
 // Run the command.
 func (cmd *Command) Run() error {
-	configFile, err := cmdconfig.NewConfigFile()
+	configFile, err := cmdconfig.NewClient()
 	if err != nil {
 		return fmt.Errorf("could not get user config file: %w", err)
 	}
 
-	exists, err := configFile.Exists()
+	aliases, err := configFile.ListAliases()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to list aliases: %w", err)
 	}
 
-	if !exists {
-		fmt.Println("No aliases defined.")
-		return nil
-	}
-
-	config, err := configFile.Read()
-	if err != nil {
-		return err
-	}
-
-	if len(config.Aliases) == 0 {
+	if len(aliases) == 0 {
 		fmt.Println("No aliases defined.")
 		return nil
 	}
@@ -46,7 +36,7 @@ func (cmd *Command) Run() error {
 
 	var rows [][]string
 
-	for name, command := range config.Aliases {
+	for name, command := range aliases {
 		rows = append(rows, []string{
 			name,
 			command,
