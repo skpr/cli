@@ -37,11 +37,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/version"
 	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/skpr/cli/internal/color"
-)
-
-const (
-	// GroupAliases is the ID for the alias command group.
-	GroupAliases = "aliases"
+	skprcommand "github.com/skpr/cli/internal/command"
 )
 
 const cmdExample = `
@@ -80,29 +76,40 @@ func main() {
 		os.Exit(1)
 	}
 
+	skprcommand.AddGroupsToCommand(cmd)
+
 	cmd.AddCommand(alias.NewCommand())
+
 	cmd.AddCommand(backup.NewCommand())
+	cmd.AddCommand(restore.NewCommand())
+
 	cmd.AddCommand(config.NewCommand())
-	cmd.AddCommand(create.NewCommand())
-	cmd.AddCommand(cron.NewCommand())
-	cmd.AddCommand(daemon.NewCommand())
-	cmd.AddCommand(deletecmd.NewCommand())
+
+	cmd.AddCommand(pkg.NewCommand())
 	cmd.AddCommand(deploy.NewCommand())
-	cmd.AddCommand(execcmd.NewCommand())
+	cmd.AddCommand(create.NewCommand())
+	cmd.AddCommand(deletecmd.NewCommand())
 	cmd.AddCommand(info.NewCommand())
 	cmd.AddCommand(list.NewCommand())
-	cmd.AddCommand(login.NewCommand())
-	cmd.AddCommand(logout.NewCommand())
-	cmd.AddCommand(mysql.NewCommand())
-	cmd.AddCommand(pkg.NewCommand())
-	cmd.AddCommand(purge.NewCommand())
-	cmd.AddCommand(restore.NewCommand())
-	cmd.AddCommand(rsync.NewCommand())
-	cmd.AddCommand(shell.NewCommand())
-	cmd.AddCommand(version.NewCommand())
 	cmd.AddCommand(release.NewCommand())
 	cmd.AddCommand(validate.NewCommand())
+
+	cmd.AddCommand(cron.NewCommand())
+	cmd.AddCommand(daemon.NewCommand())
+
+	cmd.AddCommand(execcmd.NewCommand())
+	cmd.AddCommand(shell.NewCommand())
+	cmd.AddCommand(rsync.NewCommand())
+
+	cmd.AddCommand(login.NewCommand())
+	cmd.AddCommand(logout.NewCommand())
+
+	cmd.AddCommand(mysql.NewCommand())
 	cmd.AddCommand(filesystem.NewCommand())
+
+	cmd.AddCommand(purge.NewCommand())
+
+	cmd.AddCommand(version.NewCommand())
 
 	// Experimental commands.
 	featureFlags, err := userConfig.LoadFeatureFlags()
@@ -128,17 +135,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	cmd.AddGroup(&cobra.Group{
-		ID:    GroupAliases,
-		Title: "Alias Commands",
-	})
-
 	for k, v := range aliases {
 		cmd.AddCommand(&cobra.Command{
 			Use:                   k,
 			Short:                 fmt.Sprintf("Command: %s", v),
 			DisableFlagsInUseLine: true,
-			GroupID:               GroupAliases,
+			GroupID:               skprcommand.GroupAlias,
 			RunE: func(cmd *cobra.Command, args []string) error {
 				e := exec.Command(binPath, strings.Split(v, " ")...)
 				e.Stdin = os.Stdin

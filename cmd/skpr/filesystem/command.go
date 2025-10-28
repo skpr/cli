@@ -5,6 +5,7 @@ import (
 
 	"github.com/skpr/cli/cmd/skpr/filesystem/backup"
 	"github.com/skpr/cli/cmd/skpr/filesystem/restore"
+	skprcommand "github.com/skpr/cli/internal/command"
 )
 
 var (
@@ -18,6 +19,7 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Perform filesystem tasks for an environment",
 		Long:                  cmdLong,
+		GroupID:               skprcommand.GroupDataStorage,
 	}
 
 	cmd.AddCommand(backup.NewCommand())

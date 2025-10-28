@@ -5,6 +5,7 @@ import (
 
 	"github.com/skpr/cli/cmd/skpr/purge/create"
 	"github.com/skpr/cli/cmd/skpr/purge/list"
+	skprcommand "github.com/skpr/cli/internal/command"
 )
 
 var (
@@ -26,6 +27,7 @@ func NewCommand() *cobra.Command {
 		Short:                 "Perform MySQL tasks for an environment",
 		Long:                  cmdLong,
 		Example:               cmdExample,
+		GroupID:               skprcommand.GroupCDN,
 	}
 
 	cmd.AddCommand(create.NewCommand())

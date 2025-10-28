@@ -3,6 +3,7 @@ package login
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1login "github.com/skpr/cli/internal/command/login"
 )
 
@@ -20,6 +21,7 @@ func NewCommand() *cobra.Command {
 		Short:                 "Login to the Skpr cluster.",
 		Args:                  cobra.NoArgs,
 		Long:                  cmdLong,
+		GroupID:               skprcommand.GroupAuthentication,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return command.Run(cmd.Context())
 		},

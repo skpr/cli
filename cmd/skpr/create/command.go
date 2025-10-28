@@ -3,6 +3,7 @@ package create
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1create "github.com/skpr/cli/internal/command/create"
 )
 
@@ -25,6 +26,7 @@ func NewCommand() *cobra.Command {
 		Short:                 "Create a new environment.",
 		Long:                  cmdLong,
 		Example:               cmdExample,
+		GroupID:               skprcommand.GroupLifecycle,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			command.Version = args[1]

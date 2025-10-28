@@ -3,6 +3,7 @@ package list
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1list "github.com/skpr/cli/internal/command/list"
 )
 
@@ -20,6 +21,7 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Overview of all environments and their current status",
 		Long:                  cmdLong,
+		GroupID:               skprcommand.GroupLifecycle,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return command.Run(cmd.Context())
 		},

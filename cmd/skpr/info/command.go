@@ -3,6 +3,7 @@ package info
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1info "github.com/skpr/cli/internal/command/info"
 )
 
@@ -20,6 +21,7 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Get a detailed overview of an environment",
 		Long:                  cmdLong,
+		GroupID:               skprcommand.GroupLifecycle,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Name = args[0]
 			return command.Run(cmd.Context())

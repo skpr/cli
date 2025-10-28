@@ -3,6 +3,7 @@ package validate
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1list "github.com/skpr/cli/internal/command/validate"
 )
 
@@ -20,6 +21,7 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Validate the configuration of a specific environment.",
 		Long:                  cmdLong,
+		GroupID:               skprcommand.GroupLifecycle,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			return command.Run(cmd.Context())

@@ -3,6 +3,7 @@ package shell
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1shell "github.com/skpr/cli/internal/command/shell"
 )
 
@@ -28,6 +29,7 @@ func NewCommand() *cobra.Command {
 		Short:                 "Execute a multiple shell commands in a session",
 		Args:                  cobra.ExactArgs(1),
 		Long:                  cmdLong,
+		GroupID:               skprcommand.GroupSecureShell,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			return command.Run(cmd.Context())

@@ -7,6 +7,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/cron/list"
 	"github.com/skpr/cli/cmd/skpr/cron/resume"
 	"github.com/skpr/cli/cmd/skpr/cron/suspend"
+	skprcommand "github.com/skpr/cli/internal/command"
 )
 
 var (
@@ -20,6 +21,7 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Cron operations.",
 		Long:                  cmdLong,
+		GroupID:               skprcommand.GroupBackground,
 	}
 
 	cmd.AddCommand(job.NewCommand())

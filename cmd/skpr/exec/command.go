@@ -3,6 +3,7 @@ package exec
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1exec "github.com/skpr/cli/internal/command/exec"
 )
 
@@ -25,6 +26,7 @@ func NewCommand() *cobra.Command {
 		Short:                 "Execute a single shell command",
 		Long:                  cmdLong,
 		Example:               cmdExample,
+		GroupID:               skprcommand.GroupSecureShell,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			command.Command = args[1:]

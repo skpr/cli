@@ -3,6 +3,7 @@ package rsync
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1rsync "github.com/skpr/cli/internal/command/rsync"
 )
 
@@ -25,6 +26,7 @@ func NewCommand() *cobra.Command {
 		Args:                  cobra.ExactArgs(2),
 		Long:                  cmdLong,
 		Example:               cmdExample,
+		GroupID:               skprcommand.GroupSecureShell,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Source = args[0]
 			command.Destination = args[1]

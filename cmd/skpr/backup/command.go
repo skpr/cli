@@ -5,6 +5,7 @@ import (
 
 	"github.com/skpr/cli/cmd/skpr/backup/create"
 	"github.com/skpr/cli/cmd/skpr/backup/list"
+	"github.com/skpr/cli/internal/command"
 )
 
 var (
@@ -18,6 +19,7 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Backup application data. Databases, Files etc",
 		Long:                  cmdLong,
+		GroupID:               command.GroupDisasterRecovery,
 	}
 
 	cmd.AddCommand(create.NewCommand())
