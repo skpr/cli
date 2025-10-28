@@ -16,7 +16,7 @@ func NewCommand() *cobra.Command {
 		Args:                  cobra.MinimumNArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Open dashboards for an environment in browser.",
-		GroupID:               skprcommand.GroupAuthentication,
+		GroupID:               skprcommand.GroupDebug,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			return command.Run(cmd.Context())
