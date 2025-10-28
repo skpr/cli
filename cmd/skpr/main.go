@@ -20,6 +20,7 @@ import (
 	deletecmd "github.com/skpr/cli/cmd/skpr/delete"
 	"github.com/skpr/cli/cmd/skpr/deploy"
 	execcmd "github.com/skpr/cli/cmd/skpr/exec"
+	"github.com/skpr/cli/cmd/skpr/filesystem"
 	"github.com/skpr/cli/cmd/skpr/info"
 	"github.com/skpr/cli/cmd/skpr/list"
 	"github.com/skpr/cli/cmd/skpr/login"
@@ -93,6 +94,7 @@ func main() {
 	cmd.AddCommand(version.NewCommand())
 	cmd.AddCommand(release.NewCommand())
 	cmd.AddCommand(validate.NewCommand())
+	cmd.AddCommand(filesystem.NewCommand())
 
 	// Add user set aliases to the root command.
 	err := addAliases(cmd)
