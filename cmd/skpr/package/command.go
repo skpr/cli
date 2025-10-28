@@ -3,6 +3,7 @@ package pkg
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1package "github.com/skpr/cli/internal/command/package"
 )
 
@@ -33,6 +34,7 @@ func NewCommand() *cobra.Command {
 		Short:                 "Package a release for deployment",
 		Long:                  cmdLong,
 		Example:               cmdExample,
+		GroupID:               skprcommand.GroupLifecycle,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Params.Version = args[0]
 			return command.Run(cmd.Context())

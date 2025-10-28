@@ -3,6 +3,7 @@ package trace
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1trace "github.com/skpr/cli/internal/command/trace"
 )
 
@@ -26,6 +27,7 @@ func NewCommand() *cobra.Command {
 		Short:                 "Trace requests as they flow through your application",
 		Long:                  cmdLong,
 		Example:               cmdExample,
+		GroupID:               skprcommand.GroupDebug,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			return command.Run(cmd.Context())

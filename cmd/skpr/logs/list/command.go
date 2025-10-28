@@ -1,14 +1,17 @@
-package validate
+package list
 
 import (
 	"github.com/spf13/cobra"
 
-	skprcommand "github.com/skpr/cli/internal/command"
-	v1list "github.com/skpr/cli/internal/command/validate"
+	v1list "github.com/skpr/cli/internal/command/logs/list"
 )
 
 var (
-	cmdLong = `Validate the configuration of a specific environment.`
+	cmdLong = `List the streams of a running application.`
+
+	cmdExample = `
+  # List the streams of a running application.
+  skpr logs list dev`
 )
 
 // NewCommand creates a new cobra.Command for 'list' sub command
@@ -16,12 +19,12 @@ func NewCommand() *cobra.Command {
 	command := v1list.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "validate",
+		Use:                   "list <environment>",
 		Args:                  cobra.ExactArgs(1),
 		DisableFlagsInUseLine: true,
-		Short:                 "Validate the configuration of a specific environment.",
+		Short:                 "List the streams of a running application",
 		Long:                  cmdLong,
-		GroupID:               skprcommand.GroupLifecycle,
+		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			return command.Run(cmd.Context())

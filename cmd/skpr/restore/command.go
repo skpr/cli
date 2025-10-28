@@ -5,6 +5,7 @@ import (
 
 	"github.com/skpr/cli/cmd/skpr/restore/create"
 	"github.com/skpr/cli/cmd/skpr/restore/list"
+	"github.com/skpr/cli/internal/command"
 )
 
 var (
@@ -20,13 +21,13 @@ var (
 
 // NewCommand creates a new cobra.Command for 'restore' sub command
 func NewCommand() *cobra.Command {
-
 	cmd := &cobra.Command{
 		Use:                   "restore",
 		DisableFlagsInUseLine: true,
 		Short:                 "Restore application data. Databases, Files etc",
 		Long:                  cmdLong,
 		Example:               cmdExample,
+		GroupID:               command.GroupDisasterRecovery,
 	}
 
 	cmd.AddCommand(create.NewCommand())

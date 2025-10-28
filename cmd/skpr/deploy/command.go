@@ -3,6 +3,7 @@ package deploy
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1deploy "github.com/skpr/cli/internal/command/deploy"
 )
 
@@ -25,6 +26,7 @@ func NewCommand() *cobra.Command {
 		Short:                 "Deploy a release to an environment",
 		Long:                  cmdLong,
 		Example:               cmdExample,
+		GroupID:               skprcommand.GroupLifecycle,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			command.Version = args[1]

@@ -5,6 +5,7 @@ import (
 
 	"github.com/skpr/cli/cmd/skpr/release/info"
 	"github.com/skpr/cli/cmd/skpr/release/list"
+	skprcommand "github.com/skpr/cli/internal/command"
 )
 
 var (
@@ -30,6 +31,7 @@ func NewCommand() *cobra.Command {
 		Short:                 "Review releases which have been packaged for this project",
 		Long:                  cmdLong,
 		Example:               cmdExample,
+		GroupID:               skprcommand.GroupLifecycle,
 	}
 
 	cmd.AddCommand(info.NewCommand())

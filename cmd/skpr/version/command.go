@@ -3,6 +3,7 @@ package version
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1version "github.com/skpr/cli/internal/command/version"
 )
 
@@ -32,6 +33,7 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Print client and server version information",
 		Long:                  cmdLong,
+		GroupID:               skprcommand.GroupOther,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return command.Run(cmd.Context(), GitVersion, BuildDate)
 		},

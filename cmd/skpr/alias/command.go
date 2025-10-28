@@ -6,6 +6,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/alias/delete"
 	"github.com/skpr/cli/cmd/skpr/alias/list"
 	"github.com/skpr/cli/cmd/skpr/alias/set"
+	skprcommand "github.com/skpr/cli/internal/command"
 )
 
 var (
@@ -36,6 +37,7 @@ func NewCommand() *cobra.Command {
 		Short:                 "Create your own subcommands",
 		Long:                  cmdLong,
 		Example:               cmdExample,
+		GroupID:               skprcommand.GroupAlias,
 	}
 
 	cmd.AddCommand(delete.NewCommand())

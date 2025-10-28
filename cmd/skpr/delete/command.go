@@ -3,6 +3,7 @@ package delete
 import (
 	"github.com/spf13/cobra"
 
+	skprcommand "github.com/skpr/cli/internal/command"
 	v1delete "github.com/skpr/cli/internal/command/delete"
 )
 
@@ -25,6 +26,7 @@ func NewCommand() *cobra.Command {
 		Short:                 "Delete a previously deployed environment",
 		Long:                  cmdLong,
 		Example:               cmdExample,
+		GroupID:               skprcommand.GroupLifecycle,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Name = args[0]
 			return command.Run(cmd.Context())

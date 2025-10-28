@@ -7,6 +7,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/config/get"
 	"github.com/skpr/cli/cmd/skpr/config/list"
 	"github.com/skpr/cli/cmd/skpr/config/set"
+	skprcommand "github.com/skpr/cli/internal/command"
 )
 
 var (
@@ -20,6 +21,7 @@ func NewCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Short:                 "Manage application connection details, secrets, toggles and more",
 		Long:                  cmdLong,
+		GroupID:               skprcommand.GroupLifecycle,
 	}
 
 	cmd.AddCommand(get.NewCommand())
