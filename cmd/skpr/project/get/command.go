@@ -1,14 +1,12 @@
 package get
 
 import (
-	v1get "github.com/skpr/cli/internal/command/project/get"
 	"github.com/spf13/cobra"
+
+	v1get "github.com/skpr/cli/internal/command/project/get"
 )
 
 var (
-	cmdLong = `
-  Get the contact for a project.`
-
 	cmdExample = `
   # Get project details
   skpr project get`
@@ -21,8 +19,7 @@ func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "get",
 		DisableFlagsInUseLine: true,
-		Short:                 "Get contact for a project.",
-		Long:                  cmdLong,
+		Short:                 "Get contact for the current project.",
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return command.Run(cmd.Context())
