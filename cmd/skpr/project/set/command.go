@@ -1,14 +1,12 @@
 package set
 
 import (
-	v1set "github.com/skpr/cli/internal/command/project/set"
 	"github.com/spf13/cobra"
+
+	v1set "github.com/skpr/cli/internal/command/project/set"
 )
 
 var (
-	cmdLong = `
-  Set an attribute for the project.`
-
 	cmdExample = `
   # Set the contact for the project.
   skpr project set contact my-new-contact@example.com
@@ -22,11 +20,10 @@ func NewCommand() *cobra.Command {
 	command := v1set.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "set [key] [value]",
+		Use:                   "set <key> <value>",
 		Args:                  cobra.ExactArgs(2),
 		DisableFlagsInUseLine: true,
-		Short:                 "Set an attribute for the project.",
-		Long:                  cmdLong,
+		Short:                 "Set an attribute for the current project.",
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Key = args[0]

@@ -2,13 +2,15 @@ package get
 
 import (
 	"context"
-	"github.com/skpr/api/pb"
-	"github.com/skpr/cli/internal/table"
 	"io"
 	"os"
 	"strings"
 
+	"github.com/skpr/api/pb"
+
 	"github.com/skpr/cli/internal/client"
+	"github.com/skpr/cli/internal/project"
+	"github.com/skpr/cli/internal/table"
 )
 
 // Command for getting a config.
@@ -36,18 +38,20 @@ func (cmd *Command) Run(ctx context.Context) error {
 }
 
 // Print the table...
-func Print(w io.Writer, project *pb.Project) error {
+func Print(w io.Writer, item *pb.Project) error {
 	header := []string{
 		"Attribute",
 		"Value",
 	}
 
 	rows := [][]string{
-		{"ID", project.ID},
-		{"Name", project.Name},
-		{"Version", project.Version},
-		{"Tags", strings.Join(project.Tags, ", ")},
-		{"Contact", project.Contact},
+		{"ID", item.ID},
+		{"Name", item.Name},
+		{"Contact", item.Contact},
+		{"Version", item.Version},
+		{"Environments", strings.Join(project.ListEnvironmentsByName(item), ", ")},
+		{"Size", item.Size},
+		{"Tags", strings.Join(item.Tags, ", ")},
 	}
 
 	return table.Print(w, header, rows)
