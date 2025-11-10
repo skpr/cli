@@ -12,13 +12,12 @@ import (
 	"strings"
 	"time"
 
-	dockertypes "github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/build"
 	imagetypes "github.com/docker/docker/api/types/image"
 	registrytypes "github.com/docker/docker/api/types/registry"
 	"github.com/docker/docker/client"
-	"golang.org/x/sync/errgroup"
-
 	"github.com/egym-playground/go-prefix-writer/prefixer"
+	"golang.org/x/sync/errgroup"
 
 	"github.com/skpr/cli/internal/buildpack/utils/image"
 	"github.com/skpr/cli/internal/color"
@@ -27,9 +26,9 @@ import (
 // DockerClientInterface provides an interface that allows us to test the builder.
 // This mirrors the subset of the official Docker SDK we use.
 type DockerClientInterface interface {
-	ImageBuild(ctx context.Context, buildContext io.Reader, options dockertypes.ImageBuildOptions) (dockertypes.ImageBuildResponse, error)
+	ImageBuild(ctx context.Context, buildContext io.Reader, options build.ImageBuildOptions) (build.ImageBuildResponse, error)
 	ImagePush(ctx context.Context, ref string, options imagetypes.PushOptions) (io.ReadCloser, error)
-	ImageInspectWithRaw(ctx context.Context, image string) (dockertypes.ImageInspect, []byte, error)
+	ImageInspectWithRaw(ctx context.Context, image string) (imagetypes.InspectResponse, []byte, error)
 }
 
 // Builder is the docker image builder.
@@ -131,7 +130,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 		context.Background(),
 		params.Context,
 		compileDockerfile,
-		dockertypes.ImageBuildOptions{
+		build.ImageBuildOptions{
 			Tags:       []string{compileRef},
 			Dockerfile: compileDockerfile,
 			Remove:     true,
@@ -185,7 +184,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 				ctx,
 				params.Context,
 				pb.dockerfile,
-				dockertypes.ImageBuildOptions{
+				build.ImageBuildOptions{
 					Tags:       []string{pb.imageRef},
 					Dockerfile: pb.dockerfile,
 					Remove:     true,
@@ -282,7 +281,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 }
 
 // buildOne creates a tar build context from contextDir and streams the build output to out.
-func (b *Builder) buildOne(ctx context.Context, contextDir, dockerfile string, opts dockertypes.ImageBuildOptions, out io.Writer) error {
+func (b *Builder) buildOne(ctx context.Context, contextDir, dockerfile string, opts build.ImageBuildOptions, out io.Writer) error {
 	rc, err := tarDirectory(contextDir)
 	if err != nil {
 		return fmt.Errorf("failed to archive build context: %w", err)

@@ -9,13 +9,14 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/containerd/errdefs"
 	imagetypes "github.com/docker/docker/api/types/image"
 	dockregistry "github.com/docker/docker/api/types/registry"
 	dockclient "github.com/docker/docker/client"
-	"github.com/docker/docker/errdefs"
 	"github.com/gosuri/uilive"
 	"github.com/pkg/errors"
 	"github.com/skpr/api/pb"
+
 	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
 	"github.com/skpr/cli/internal/client"
 	skprlog "github.com/skpr/cli/internal/log"
@@ -96,7 +97,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 		// Lookup the ID of the current (pre-pull) image so we can delete it after we pull the new one.
 		var oldID string
-		if insp, _, err := dc.ImageInspectWithRaw(ctx, imageName); err == nil {
+		if insp, err := dc.ImageInspect(ctx, imageName); err == nil {
 			oldID = insp.ID
 		} else if !errdefs.IsNotFound(err) {
 			return err
@@ -122,7 +123,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 
 		// Inspect current image to compare IDs.
-		cur, _, err := dc.ImageInspectWithRaw(ctx, imageName)
+		cur, err := dc.ImageInspect(ctx, imageName)
 		if err != nil {
 			return err
 		}
