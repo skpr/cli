@@ -17,6 +17,7 @@ import (
 	registrytypes "github.com/docker/docker/api/types/registry"
 	"github.com/docker/docker/client"
 	"github.com/egym-playground/go-prefix-writer/prefixer"
+	"github.com/moby/moby/api/types/jsonstream"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/skpr/cli/internal/buildpack/utils/image"
@@ -123,13 +124,15 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 
 	// Build the compile image first; it's the base for others.
 	compileRef := image.Name(params.Registry, params.Version, ImageNameCompile)
-	compileOut := prefixWithTime(params.Writer, ImageNameCompile, start)
 
 	fmt.Fprintf(params.Writer, "Building image: %s\n", compileRef)
+
+	tagParts := strings.Split(compileRef, ":")
+	localOut := prefixWithTime(params.Writer, tagParts[1], start)
+
 	if err := b.buildOne(
 		context.Background(),
 		params.Context,
-		compileDockerfile,
 		build.ImageBuildOptions{
 			Tags:       []string{compileRef},
 			Dockerfile: compileDockerfile,
@@ -137,11 +140,11 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 			BuildArgs:  buildArgs,
 			Platform:   params.Platform,
 		},
-		compileOut,
+		localOut,
 	); err != nil {
 		return resp, err
 	}
-	fmt.Fprintf(params.Writer, "Built compile image in %s\n", time.Since(start).Round(time.Second))
+	fmt.Fprintf(params.Writer, "Built %s image in %s\n", compileRef, time.Since(start).Round(time.Second))
 
 	resp.Images = append(resp.Images, Image{
 		Name: ImageNameCompile,
@@ -175,15 +178,18 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 	bg, ctx := errgroup.WithContext(context.Background())
 	for _, pb := range builds {
 		pb := pb
-		out := prefixWithTime(params.Writer, pb.imageRef, start)
 
 		fmt.Fprintf(params.Writer, "Building image: %s\n", pb.imageRef)
+
+		localStart := time.Now()
+
+		tagParts := strings.Split(pb.imageRef, ":")
+		localOut := prefixWithTime(params.Writer, tagParts[1], localStart)
+
 		bg.Go(func() error {
-			localStart := time.Now()
 			err := b.buildOne(
 				ctx,
 				params.Context,
-				pb.dockerfile,
 				build.ImageBuildOptions{
 					Tags:       []string{pb.imageRef},
 					Dockerfile: pb.dockerfile,
@@ -191,12 +197,12 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 					BuildArgs:  buildArgs,
 					Platform:   params.Platform,
 				},
-				out,
+				localOut,
 			)
 			if err != nil {
 				return err
 			}
-			fmt.Fprintf(params.Writer, "Built %s image in %s\n", pb.imageRef, time.Since(localStart).Round(time.Second))
+			fmt.Fprintf(params.Writer, "Built %s image in %s\n", pb.imageRef, time.Since(start).Round(time.Second))
 			return nil
 		})
 	}
@@ -281,7 +287,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 }
 
 // buildOne creates a tar build context from contextDir and streams the build output to out.
-func (b *Builder) buildOne(ctx context.Context, contextDir, dockerfile string, opts build.ImageBuildOptions, out io.Writer) error {
+func (b *Builder) buildOne(ctx context.Context, contextDir string, opts build.ImageBuildOptions, out io.Writer) error {
 	rc, err := tarDirectory(contextDir)
 	if err != nil {
 		return fmt.Errorf("failed to archive build context: %w", err)
@@ -295,8 +301,27 @@ func (b *Builder) buildOne(ctx context.Context, contextDir, dockerfile string, o
 	defer resp.Body.Close()
 
 	// Stream the daemon's JSON log stream to the provided writer.
-	_, copyErr := io.Copy(out, resp.Body)
-	return copyErr
+	decoder := json.NewDecoder(resp.Body)
+
+	for {
+		var msg jsonstream.Message
+		if err := decoder.Decode(&msg); err == io.EOF {
+			break
+		} else if err != nil {
+			return err
+		}
+
+		if msg.Stream != "" {
+			if _, err = io.WriteString(out, msg.Stream); err != nil {
+				return err
+			}
+		}
+		if msg.Error != nil {
+			return msg.Error
+		}
+	}
+
+	return nil
 }
 
 // Helper function to prefix all output for a stream.

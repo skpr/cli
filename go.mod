@@ -28,6 +28,7 @@ require (
 	github.com/jinzhu/now v1.1.5
 	github.com/jwalton/gchalk v1.3.0
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
+	github.com/moby/moby/api v1.52.0
 	github.com/notaryproject/notation-core-go v1.3.0
 	github.com/notaryproject/notation-go v1.3.2
 	github.com/olekukonko/ts v0.0.0-20171002115256-78ecb04241c0
