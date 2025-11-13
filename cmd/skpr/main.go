@@ -37,6 +37,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/trace"
 	"github.com/skpr/cli/cmd/skpr/validate"
 	"github.com/skpr/cli/cmd/skpr/version"
+	aliastemplate "github.com/skpr/cli/internal/alias"
 	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/skpr/cli/internal/color"
 	skprcommand "github.com/skpr/cli/internal/command"
@@ -141,11 +142,13 @@ func main() {
 	for k, v := range aliases {
 		cmd.AddCommand(&cobra.Command{
 			Use:                   k,
+			Args:                  cobra.ExactArgs(aliastemplate.CountTemplateArgs(v)),
 			Short:                 fmt.Sprintf("Command: %s", v),
 			DisableFlagsInUseLine: true,
 			GroupID:               skprcommand.GroupAlias,
 			RunE: func(cmd *cobra.Command, args []string) error {
-				e := exec.Command(binPath, strings.Split(v, " ")...)
+				template := aliastemplate.ExpandTemplate(v, args)
+				e := exec.Command(binPath, strings.Split(template, " ")...)
 				e.Stdin = os.Stdin
 				e.Stdout = os.Stdout
 				e.Stderr = os.Stderr
