@@ -7,11 +7,29 @@ import (
 )
 
 func TestExpandTemplate(t *testing.T) {
-	alias := "exec $1 -- drush uli"
-	args := []string{"dev"}
+	alias := "mysql image pull dev"
+	args := []string{}
 
 	result := ExpandTemplate(alias, args)
+	assert.Equal(t, "mysql image pull dev", result)
+
+	alias = "exec $1 -- drush uli"
+	args = []string{"dev"}
+
+	result = ExpandTemplate(alias, args)
 	assert.Equal(t, "exec dev -- drush uli", result)
+
+	alias = "exec $1 -- drush status $1"
+	args = []string{"dev"}
+
+	result = ExpandTemplate(alias, args)
+	assert.Equal(t, "exec dev -- drush status dev", result)
+
+	alias = "exec $1 -- drush php:exec $2"
+	args = []string{"dev", "phpinfo()"}
+
+	result = ExpandTemplate(alias, args)
+	assert.Equal(t, "exec dev -- drush php:exec phpinfo()", result)
 }
 
 func TestCountTemplateArgs(t *testing.T) {
