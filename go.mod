@@ -11,8 +11,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentity v1.33.10
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.57.11
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.51.2
-	github.com/aws/aws-sdk-go-v2/service/signer v1.31.10
-	github.com/aws/aws-signer-notation-plugin v1.0.2292
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/fang v0.4.3
 	github.com/charmbracelet/lipgloss/v2 v2.0.0-beta1
@@ -26,7 +24,6 @@ require (
 	github.com/jinzhu/now v1.1.5
 	github.com/jwalton/gchalk v1.3.0
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
-	github.com/notaryproject/notation-core-go v1.3.0
 	github.com/notaryproject/notation-go v1.3.2
 	github.com/olekukonko/ts v0.0.0-20171002115256-78ecb04241c0
 	github.com/pkg/errors v0.9.1
@@ -47,7 +44,6 @@ require (
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
-	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.13 // indirect
@@ -74,12 +70,7 @@ require (
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
-	github.com/fxamacker/cbor/v2 v2.8.0 // indirect
-	github.com/go-asn1-ber/asn1-ber v1.5.7 // indirect
-	github.com/go-ldap/ldap/v3 v3.4.10 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jwalton/go-supportscolor v1.2.0 // indirect
@@ -104,8 +95,6 @@ require (
 	github.com/muesli/mango-pflag v0.1.0 // indirect
 	github.com/muesli/roff v0.1.0 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
-	github.com/notaryproject/notation-plugin-framework-go v1.0.0 // indirect
-	github.com/notaryproject/tspclient-go v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
@@ -113,8 +102,6 @@ require (
 	github.com/sahilm/fuzzy v0.1.1 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.9 // indirect
-	github.com/veraison/go-cose v1.3.0 // indirect
-	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	golang.org/x/net v0.45.0 // indirect
 	golang.org/x/sys v0.37.0 // indirect
