@@ -19,7 +19,6 @@ import (
 type DockerClientInterface interface {
 	BuildImage(options docker.BuildImageOptions) error
 	PushImage(options docker.PushImageOptions, auth docker.AuthConfiguration) error
-	InspectImage(name string) (*docker.Image, error)
 }
 
 // Builder is the docker image builder.
@@ -121,12 +120,6 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 		Platform:     params.Platform,
 	}
 
-	resp.Images = append(resp.Images, Image{
-		Name: ImageNameCompile,
-		Type: ImageTypeCompile,
-		Tag:  compileBuild.Name,
-	})
-
 	// We need to build the 'compile' image first.
 	fmt.Fprintf(params.Writer, "Building image: %s\n", compileBuild.Name)
 	err := b.dockerClient.BuildImage(compileBuild)
@@ -204,15 +197,10 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 
 	var pushes []docker.PushImageOptions
 
-	for imageName := range dockerfiles {
-		// Compile image is only for building, so we don't push.
-		if imageName == ImageNameCompile {
-			continue
-		}
-
+	for _, buildImage := range resp.Images {
 		pushes = append(pushes, docker.PushImageOptions{
 			Name: params.Registry,
-			Tag:  image.Tag(params.Version, imageName),
+			Tag:  image.Tag(params.Version, buildImage.Name),
 		})
 	}
 
@@ -246,33 +234,6 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 		return resp, err
 	}
 
-	var images []Image
-
-	for _, respImage := range resp.Images {
-		// Compile image is only for building, so we don't push.
-		if respImage.Name == ImageNameCompile {
-			continue
-		}
-
-		fmt.Fprintf(params.Writer, "Fetching digest for: %s\n", respImage.Name)
-
-		inspect, err := b.dockerClient.InspectImage(image.Name(params.Registry, params.Version, respImage.Name))
-		if err != nil {
-			return resp, fmt.Errorf("failed to inspect image %q: %w", respImage.Name, err)
-		}
-
-		digest, err := getDigest(inspect.RepoDigests)
-		if err != nil {
-			return resp, fmt.Errorf("failed to get digest for image %q: %w", respImage.Name, err)
-		}
-
-		respImage.Digest = digest
-
-		images = append(images, respImage)
-	}
-
-	resp.Images = images
-
 	fmt.Fprintf(params.Writer, "Build complete in: %s\n", time.Since(start).Round(time.Second))
 
 	return resp, nil
@@ -281,21 +242,4 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 // Helper function to prefix all output for a stream.
 func prefixWithTime(w io.Writer, name string, start time.Time) io.Writer {
 	return prefixer.New(w, newPrefixer(color.Wrap(strings.ToUpper(name)), start).PrefixFunc())
-}
-
-// Return a digest from a list of digests.
-func getDigest(digests []string) (string, error) {
-	if len(digests) == 0 {
-		return "", fmt.Errorf("digest not found")
-	}
-
-	// Take the first one off the list.
-	// https://notaryproject.dev/docs/quickstart-guides/quickstart-sign-image-artifact/#add-an-image-to-the-oci-compatible-registry
-	sl := strings.Split(digests[0], "@")
-
-	if len(sl) != 2 {
-		return "", fmt.Errorf("invalid digest format")
-	}
-
-	return sl[1], nil
 }
