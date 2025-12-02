@@ -1,14 +1,12 @@
 package buildpack
 
 import (
-	"archive/tar"
 	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -16,7 +14,9 @@ import (
 	imagetypes "github.com/docker/docker/api/types/image"
 	registrytypes "github.com/docker/docker/api/types/registry"
 	"github.com/egym-playground/go-prefix-writer/prefixer"
+	"github.com/moby/go-archive"
 	"github.com/moby/moby/api/types/jsonstream"
+	"github.com/moby/patternmatcher/ignorefile"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/skpr/cli/internal/buildpack/utils/image"
@@ -65,13 +65,14 @@ type Image struct {
 
 // Params used for building the applications.
 type Params struct {
-	Auth      registrytypes.AuthConfig
-	Writer    io.Writer
-	Context   string
-	Registry  string
-	NoPush    bool
-	Version   string
-	BuildArgs map[string]string
+	Auth       registrytypes.AuthConfig
+	Writer     io.Writer
+	Context    string
+	IgnoreFile string
+	Registry   string
+	NoPush     bool
+	Version    string
+	BuildArgs  map[string]string
 }
 
 // Dockerfiles the docker build files.
@@ -99,8 +100,13 @@ func NewBuilder(dockerClient DockerClientInterface) *Builder {
 }
 
 // Build the images.
-func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, error) {
+func (b *Builder) Build(ctx context.Context, dockerfiles Dockerfiles, params Params) (BuildResponse, error) {
 	var resp BuildResponse
+
+	excludePatterns, err := loadIgnoreFilePatterns(params.IgnoreFile)
+	if err != nil {
+		return resp, fmt.Errorf("failed to parse ignore file: %w", err)
+	}
 
 	compileDockerfile, ok := dockerfiles[ImageNameCompile]
 	if !ok {
@@ -128,8 +134,9 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 	localOut := prefixWithTime(params.Writer, ImageNameCompile, start)
 
 	if err := b.buildImage(
-		context.Background(),
+		ctx,
 		params.Context,
+		excludePatterns,
 		build.ImageBuildOptions{
 			Tags:       []string{compileRef},
 			Dockerfile: compileDockerfile,
@@ -172,7 +179,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 	}
 
 	// Parallel runtime builds.
-	bg, ctx := errgroup.WithContext(context.Background())
+	bg, ctx := errgroup.WithContext(ctx)
 	for _, pb := range builds {
 		pb := pb
 
@@ -186,6 +193,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 			err := b.buildImage(
 				ctx,
 				params.Context,
+				excludePatterns,
 				build.ImageBuildOptions{
 					Tags:       []string{pb.imageRef},
 					Dockerfile: pb.dockerfile,
@@ -231,7 +239,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 	}
 
 	// Parallel pushes.
-	pg, ctx := errgroup.WithContext(context.Background())
+	pg, ctx := errgroup.WithContext(ctx)
 	for _, p := range pushes {
 		p := p
 		fmt.Fprintf(params.Writer, "Pushing image: %s\n", p.ref)
@@ -268,7 +276,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 		}
 		fmt.Fprintf(params.Writer, "Fetching digest for: %s\n", respImage.Name)
 
-		inspect, _, err := b.dockerClient.ImageInspectWithRaw(context.Background(), image.Name(params.Registry, params.Version, respImage.Name))
+		inspect, _, err := b.dockerClient.ImageInspectWithRaw(ctx, image.Name(params.Registry, params.Version, respImage.Name))
 		if err != nil {
 			return resp, fmt.Errorf("failed to inspect image %q: %w", respImage.Name, err)
 		}
@@ -287,14 +295,15 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 }
 
 // buildOne creates a tar build context from contextDir and streams the build output to out.
-func (b *Builder) buildImage(ctx context.Context, contextDir string, opts build.ImageBuildOptions, out io.Writer) error {
-	rc, err := tarDirectory(contextDir)
+func (b *Builder) buildImage(ctx context.Context, contextDir string, contextExclude []string, opts build.ImageBuildOptions, out io.Writer) error {
+	buildCtx, err := archive.TarWithOptions(contextDir, &archive.TarOptions{
+		ExcludePatterns: contextExclude,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to archive build context: %w", err)
 	}
-	defer rc.Close()
 
-	resp, err := b.dockerClient.ImageBuild(ctx, rc, opts)
+	resp, err := b.dockerClient.ImageBuild(ctx, buildCtx, opts)
 	if err != nil {
 		return err
 	}
@@ -339,54 +348,6 @@ func encodeRegistryAuth(cfg registrytypes.AuthConfig) (string, error) {
 	return base64.URLEncoding.EncodeToString(b), nil
 }
 
-// tarDirectory creates a tar archive (as ReadCloser) from the given directory.
-func tarDirectory(root string) (io.ReadCloser, error) {
-	pr, pw := io.Pipe()
-	go func() {
-		tw := tar.NewWriter(pw)
-		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-			rel, err := filepath.Rel(root, path)
-			if err != nil {
-				return err
-			}
-			rel = filepath.ToSlash(rel)
-			if rel == "." {
-				return nil
-			}
-			hdr, err := tar.FileInfoHeader(info, "")
-			if err != nil {
-				return err
-			}
-			hdr.Name = rel
-
-			if err := tw.WriteHeader(hdr); err != nil {
-				return err
-			}
-			if info.Mode().IsRegular() {
-				f, err := os.Open(path)
-				if err != nil {
-					return err
-				}
-				defer f.Close()
-				if _, err := io.Copy(tw, f); err != nil {
-					return err
-				}
-			}
-			return nil
-		})
-
-		closeErr := tw.Close()
-		if err == nil {
-			err = closeErr
-		}
-		_ = pw.CloseWithError(err)
-	}()
-	return pr, nil
-}
-
 func handleMessages(in io.ReadCloser, out io.Writer) error {
 	// Stream the daemon's JSON log stream to the provided writer.
 	decoder := json.NewDecoder(in)
@@ -412,4 +373,24 @@ func handleMessages(in io.ReadCloser, out io.Writer) error {
 	}
 
 	return nil
+}
+
+// Loads and returns a list of ignore file patterns from the specified file.
+func loadIgnoreFilePatterns(filePath string) ([]string, error) {
+	f, err := os.Open(filePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+
+		return nil, fmt.Errorf("unable to open ignore file: %w", err)
+	}
+	defer f.Close()
+
+	patterns, err := ignorefile.ReadAll(f)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing ignore file: %w", err)
+	}
+
+	return patterns, nil
 }

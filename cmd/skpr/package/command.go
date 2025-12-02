@@ -43,6 +43,7 @@ func NewCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&command.Region, "region", "ap-southeast-2", "Region which the AWS ECR registry resides.")
 	cmd.Flags().StringVar(&command.Params.Context, "context", ".", "The context to use for the package command.")
+	cmd.Flags().StringVar(&command.Params.IgnoreFile, "ignore-file", ".dockerignore", "A file containing patterns to exclude from the build context.")
 	cmd.Flags().BoolVar(&command.Params.NoPush, "no-push", command.Params.NoPush, "Do not push the image to the registry.")
 	cmd.Flags().BoolVar(&command.PrintManifest, "print-manifest", command.PrintManifest, "Print the manifest to stdout.")
 	cmd.Flags().StringVar(&command.PackageDir, "dir", ".skpr/package", "The location of the package directory.")

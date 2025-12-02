@@ -114,7 +114,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 	builder := buildpack.NewBuilder(dc)
 
-	resp, err := builder.Build(dockerfiles, cmd.Params)
+	resp, err := builder.Build(ctx, dockerfiles, cmd.Params)
 	if err != nil {
 		return err
 	}
