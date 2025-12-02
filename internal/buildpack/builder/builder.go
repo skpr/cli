@@ -31,16 +31,6 @@ type BuildResponse struct {
 	Images []Image `json:"images"`
 }
 
-// ImageType used to identify what a built image is used for.
-type ImageType string
-
-const (
-	// ImageTypeCompile is used to identify images which were built during the "compile" phase.
-	ImageTypeCompile ImageType = "compile"
-	// ImageTypeRuntime is used to identify images which were built for "runtime".
-	ImageTypeRuntime ImageType = "runtime"
-)
-
 // Image build has been built.
 type Image struct {
 	// Name of the image.
