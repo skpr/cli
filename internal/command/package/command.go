@@ -34,7 +34,6 @@ type Command struct {
 	Params        buildpack.Params
 	PrintManifest bool
 	BuildArgs     []string
-	Platform      string
 	Debug         bool
 }
 
@@ -63,7 +62,6 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 	cmd.Params.Registry = project.Registry.Application
 	cmd.Params.Writer = os.Stderr
-	cmd.Params.Platform = cmd.Platform
 
 	// Use official Docker SDK auth config
 	cmd.Params.Auth = dockregistry.AuthConfig{

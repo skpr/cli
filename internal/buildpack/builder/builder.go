@@ -15,7 +15,6 @@ import (
 	"github.com/docker/docker/api/types/build"
 	imagetypes "github.com/docker/docker/api/types/image"
 	registrytypes "github.com/docker/docker/api/types/registry"
-	"github.com/docker/docker/client"
 	"github.com/egym-playground/go-prefix-writer/prefixer"
 	"github.com/moby/moby/api/types/jsonstream"
 	"golang.org/x/sync/errgroup"
@@ -73,7 +72,6 @@ type Params struct {
 	NoPush    bool
 	Version   string
 	BuildArgs map[string]string
-	Platform  string // e.g. "linux/amd64"
 }
 
 // Dockerfiles the docker build files.
@@ -127,10 +125,9 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 
 	fmt.Fprintf(params.Writer, "Building image: %s\n", compileRef)
 
-	tagParts := strings.Split(compileRef, ":")
-	localOut := prefixWithTime(params.Writer, tagParts[1], start)
+	localOut := prefixWithTime(params.Writer, ImageNameCompile, start)
 
-	if err := b.buildOne(
+	if err := b.buildImage(
 		context.Background(),
 		params.Context,
 		build.ImageBuildOptions{
@@ -138,7 +135,6 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 			Dockerfile: compileDockerfile,
 			Remove:     true,
 			BuildArgs:  buildArgs,
-			Platform:   params.Platform,
 		},
 		localOut,
 	); err != nil {
@@ -160,13 +156,14 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 
 	// Prepare runtime builds.
 	type pendingBuild struct {
+		name       string
 		imageRef   string
 		dockerfile string
 	}
 	var builds []pendingBuild
 	for imageName, dockerfile := range dockerfiles {
 		ref := image.Name(params.Registry, params.Version, imageName)
-		builds = append(builds, pendingBuild{imageRef: ref, dockerfile: dockerfile})
+		builds = append(builds, pendingBuild{name: imageName, imageRef: ref, dockerfile: dockerfile})
 		resp.Images = append(resp.Images, Image{
 			Name: imageName,
 			Type: ImageTypeRuntime,
@@ -183,11 +180,10 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 
 		localStart := time.Now()
 
-		tagParts := strings.Split(pb.imageRef, ":")
-		localOut := prefixWithTime(params.Writer, tagParts[1], localStart)
+		localOut := prefixWithTime(params.Writer, pb.name, localStart)
 
 		bg.Go(func() error {
-			err := b.buildOne(
+			err := b.buildImage(
 				ctx,
 				params.Context,
 				build.ImageBuildOptions{
@@ -195,7 +191,6 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 					Dockerfile: pb.dockerfile,
 					Remove:     true,
 					BuildArgs:  buildArgs,
-					Platform:   params.Platform,
 				},
 				localOut,
 			)
@@ -216,7 +211,8 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 
 	// Prepare pushes (skip compile).
 	type pendingPush struct {
-		ref string // full "registry/repo:tag"
+		name string
+		ref  string // full "registry/repo:tag"
 	}
 	var pushes []pendingPush
 	for imageName := range dockerfiles {
@@ -224,7 +220,8 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 			continue
 		}
 		pushes = append(pushes, pendingPush{
-			ref: fmt.Sprintf("%s:%s", params.Registry, image.Tag(params.Version, imageName)),
+			name: imageName,
+			ref:  fmt.Sprintf("%s:%s", params.Registry, image.Tag(params.Version, imageName)),
 		})
 	}
 
@@ -238,7 +235,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 	for _, p := range pushes {
 		p := p
 		fmt.Fprintf(params.Writer, "Pushing image: %s\n", p.ref)
-		out := prefixWithTime(params.Writer, "push "+p.ref, start)
+		out := prefixWithTime(params.Writer, "push "+p.name, start)
 
 		pg.Go(func() error {
 			localStart := time.Now()
@@ -249,9 +246,12 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 				return err
 			}
 			defer rc.Close()
-			if _, err := io.Copy(out, rc); err != nil {
+
+			err = handleMessages(rc, out)
+			if err != nil {
 				return err
 			}
+
 			fmt.Fprintf(params.Writer, "Pushed %s image in %s\n", p.ref, time.Since(localStart).Round(time.Second))
 			return nil
 		})
@@ -287,7 +287,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 }
 
 // buildOne creates a tar build context from contextDir and streams the build output to out.
-func (b *Builder) buildOne(ctx context.Context, contextDir string, opts build.ImageBuildOptions, out io.Writer) error {
+func (b *Builder) buildImage(ctx context.Context, contextDir string, opts build.ImageBuildOptions, out io.Writer) error {
 	rc, err := tarDirectory(contextDir)
 	if err != nil {
 		return fmt.Errorf("failed to archive build context: %w", err)
@@ -300,25 +300,9 @@ func (b *Builder) buildOne(ctx context.Context, contextDir string, opts build.Im
 	}
 	defer resp.Body.Close()
 
-	// Stream the daemon's JSON log stream to the provided writer.
-	decoder := json.NewDecoder(resp.Body)
-
-	for {
-		var msg jsonstream.Message
-		if err := decoder.Decode(&msg); err == io.EOF {
-			break
-		} else if err != nil {
-			return err
-		}
-
-		if msg.Stream != "" {
-			if _, err = io.WriteString(out, msg.Stream); err != nil {
-				return err
-			}
-		}
-		if msg.Error != nil {
-			return msg.Error
-		}
+	err = handleMessages(resp.Body, out)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -403,7 +387,29 @@ func tarDirectory(root string) (io.ReadCloser, error) {
 	return pr, nil
 }
 
-// Optional: construct a real Docker client compatible with this interface.
-func NewDockerSDKClient() (*client.Client, error) {
-	return client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+func handleMessages(in io.ReadCloser, out io.Writer) error {
+	// Stream the daemon's JSON log stream to the provided writer.
+	decoder := json.NewDecoder(in)
+
+	for {
+		var msg jsonstream.Message
+		if err := decoder.Decode(&msg); err == io.EOF {
+			break
+		} else if err != nil {
+			return err
+		}
+
+		// TODO: Possibly stream out progress.
+
+		if msg.Stream != "" {
+			if _, err := io.WriteString(out, msg.Stream); err != nil {
+				return err
+			}
+		}
+		if msg.Error != nil {
+			return msg.Error
+		}
+	}
+
+	return nil
 }
