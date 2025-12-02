@@ -239,7 +239,7 @@ func (b *Builder) Build(ctx context.Context, dockerfiles Dockerfiles, params Par
 	}
 
 	// Parallel pushes.
-	pg, ctx := errgroup.WithContext(ctx)
+	pg, ctx := errgroup.WithContext(context.TODO())
 	for _, p := range pushes {
 		p := p
 		fmt.Fprintf(params.Writer, "Pushing image: %s\n", p.ref)
@@ -276,7 +276,7 @@ func (b *Builder) Build(ctx context.Context, dockerfiles Dockerfiles, params Par
 		}
 		fmt.Fprintf(params.Writer, "Fetching digest for: %s\n", respImage.Name)
 
-		inspect, _, err := b.dockerClient.ImageInspectWithRaw(ctx, image.Name(params.Registry, params.Version, respImage.Name))
+		inspect, _, err := b.dockerClient.ImageInspectWithRaw(context.TODO(), image.Name(params.Registry, params.Version, respImage.Name))
 		if err != nil {
 			return resp, fmt.Errorf("failed to inspect image %q: %w", respImage.Name, err)
 		}
