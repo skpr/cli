@@ -140,10 +140,6 @@ func (cmd *Command) Run(ctx context.Context) error {
 	}
 
 	for _, image := range resp.Images {
-		if image.Type == buildpack.ImageTypeCompile {
-			continue
-		}
-
 		request.Images = append(request.Images, &pb.ReleaseImage{
 			Name: image.Name,
 			URI:  image.Tag,

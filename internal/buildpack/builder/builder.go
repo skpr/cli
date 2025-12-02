@@ -45,12 +45,8 @@ const (
 type Image struct {
 	// Name of the image.
 	Name string `json:"name"`
-	// Type of image that has been built.
-	Type ImageType `json:"type"`
 	// Tag used to push image.
 	Tag string `json:"tag"`
-	// Digest of the image.
-	Digest string `json:"digest"`
 }
 
 // Params used for building the applications.
@@ -156,7 +152,6 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 		// Add to the manifest.
 		resp.Images = append(resp.Images, Image{
 			Name: imageName,
-			Type: ImageTypeRuntime,
 			Tag:  build.Name,
 		})
 	}
