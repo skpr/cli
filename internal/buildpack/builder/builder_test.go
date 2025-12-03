@@ -35,7 +35,7 @@ func TestBuild(t *testing.T) {
 		Auth:     types.Auth{},
 	}
 
-	builder, err := NewBuilder()
+	builder, err := NewBuilder(dockerClient)
 	assert.NoError(t, err)
 
 	have, err := builder.Build(context.TODO(), dockerFiles, params)

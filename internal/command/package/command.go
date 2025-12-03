@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"os"
 
+	docker "github.com/fsouza/go-dockerclient"
 	"github.com/skpr/api/pb"
 
-	buildpack "github.com/skpr/cli/internal/buildpack/builder/docker"
+	goclientbuilder "github.com/skpr/cli/internal/buildpack/builder"
+	dockerbuilder "github.com/skpr/cli/internal/buildpack/builder/docker"
 	"github.com/skpr/cli/internal/buildpack/types"
 	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
@@ -76,12 +78,6 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	// See if we're using default builder.
-	userConfig, _ := user.NewClient()
-	featureFlags, _ := userConfig.LoadFeatureFlags()
-
-	fmt.Printf("builder: %s\n", featureFlags.Builder)
-
 	cmd.Params.Writer = os.Stderr
 
 	// Convert build args from slice to map.
@@ -100,7 +96,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	builder, err := buildpack.NewBuilder()
+	builder, err := getBuilder()
 	if err != nil {
 		return err
 	}
@@ -154,4 +150,26 @@ func (cmd *Command) Run(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func getBuilder() (types.Builder, error) {
+	// See if we're using default builder.
+	userConfig, _ := user.NewClient()
+	featureFlags, _ := userConfig.LoadFeatureFlags()
+
+	if featureFlags.Builder == user.ConfigPackageBuilderDocker {
+		builder, err := dockerbuilder.NewBuilder()
+		return builder, err
+	}
+
+	if featureFlags.Builder != "" && featureFlags.Builder != user.ConfigPackageBuilderLegacy {
+		return nil, fmt.Errorf("unknown builder: %s", featureFlags.Builder)
+	}
+
+	dockerclient, err := docker.NewClientFromEnv()
+	if err != nil {
+		return nil, fmt.Errorf("failed to setup Docker client: %w", err)
+	}
+
+	return goclientbuilder.NewBuilder(dockerclient)
 }

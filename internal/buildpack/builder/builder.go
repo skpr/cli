@@ -26,12 +26,7 @@ type Builder struct {
 }
 
 // NewBuilder creates a new Builder.
-func NewBuilder() (*Builder, error) {
-	dockerclient, err := docker.NewClientFromEnv()
-	if err != nil {
-		return nil, fmt.Errorf("failed to setup Docker client: %w", err)
-	}
-
+func NewBuilder(dockerclient DockerClientInterface) (*Builder, error) {
 	return &Builder{
 		dockerClient: dockerclient,
 	}, nil
