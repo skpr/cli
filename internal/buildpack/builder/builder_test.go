@@ -2,12 +2,14 @@ package buildpack
 
 import (
 	"bytes"
+	"context"
 	"testing"
 
-	docker "github.com/fsouza/go-dockerclient"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/skpr/cli/internal/buildpack/builder/mock"
+	"github.com/skpr/cli/internal/buildpack/types"
+	"github.com/skpr/cli/internal/buildpack/utils/finder"
 )
 
 func TestBuild(t *testing.T) {
@@ -16,7 +18,7 @@ func TestBuild(t *testing.T) {
 	dockerClient.BuildWg.Add(4)
 	dockerClient.PushWg.Add(3)
 
-	dockerFiles := make(Dockerfiles)
+	dockerFiles := make(finder.Dockerfiles)
 	dockerFiles["compile"] = ".skpr/package/compile/Dockerfile"
 	dockerFiles["cli"] = ".skpr/package/cli/Dockerfile"
 	dockerFiles["app"] = ".skpr/package/app/Dockerfile"
@@ -24,21 +26,23 @@ func TestBuild(t *testing.T) {
 
 	var b bytes.Buffer
 
-	params := Params{
+	params := types.Params{
 		Writer:   &b,
 		Registry: "foo",
 		Version:  "222",
 		Context:  "bar",
 		NoPush:   false,
-		Auth:     docker.AuthConfiguration{},
+		Auth:     types.Auth{},
 	}
 
-	builder := NewBuilder(dockerClient)
-	have, err := builder.Build(dockerFiles, params)
+	builder, err := NewBuilder()
 	assert.NoError(t, err)
 
-	want := BuildResponse{
-		Images: []Image{
+	have, err := builder.Build(context.TODO(), dockerFiles, params)
+	assert.NoError(t, err)
+
+	want := types.BuildResponse{
+		Images: []types.Image{
 			{
 				Name: "cli",
 				Tag:  "foo:222-cli",

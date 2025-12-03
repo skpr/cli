@@ -47,7 +47,6 @@ func NewCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&command.PrintManifest, "print-manifest", command.PrintManifest, "Print the manifest to stdout.")
 	cmd.Flags().StringVar(&command.PackageDir, "dir", ".skpr/package", "The location of the package directory.")
 	cmd.Flags().StringSliceVar(&command.BuildArgs, "build-arg", []string{}, "Additional build arguments.")
-	cmd.Flags().StringVar(&command.Platform, "platform", "linux/amd64", "The platform to build for.")
 	cmd.Flags().BoolVar(&command.Debug, "debug", command.Debug, "Enable debug output.")
 
 	return cmd

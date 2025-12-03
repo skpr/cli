@@ -16,8 +16,16 @@ type Config struct {
 
 // ConfigExperimental holds experimental feature flags.
 type ConfigExperimental struct {
-	Trace bool `yaml:"trace,omitempty"`
+	Trace   bool                 `yaml:"trace,omitempty"`
+	Builder ConfigPackageBuilder `yaml:"builder,omitempty"`
 }
+
+type ConfigPackageBuilder string
+
+const (
+	ConfigPackageBuilderLegacy ConfigPackageBuilder = "legacy"
+	ConfigPackageBuilderDocker ConfigPackageBuilder = "docker"
+)
 
 // Aliases maps alias names to commands.
 type Aliases map[string]string

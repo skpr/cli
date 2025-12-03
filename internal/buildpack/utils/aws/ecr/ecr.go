@@ -8,9 +8,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
-	docker "github.com/fsouza/go-dockerclient"
 	"github.com/pkg/errors"
 
+	"github.com/skpr/cli/internal/buildpack/types"
 	skprcredentials "github.com/skpr/cli/internal/client/credentials"
 )
 
@@ -25,8 +25,8 @@ func IsRegistry(registry string) bool {
 
 // UpgradeAuth to use an AWS IAM token for authentication..
 // https://docs.aws.amazon.com/cli/latest/reference/ecr/get-login.html
-func UpgradeAuth(ctx context.Context, url string, creds skprcredentials.Credentials) (docker.AuthConfiguration, error) {
-	var auth docker.AuthConfiguration
+func UpgradeAuth(ctx context.Context, url string, creds skprcredentials.Credentials) (types.Auth, error) {
+	var auth types.Auth
 
 	region, err := extractRegionFromURL(url)
 	if err != nil {
