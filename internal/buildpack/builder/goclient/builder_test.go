@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/skpr/cli/internal/auth"
 	"github.com/skpr/cli/internal/buildpack/builder/goclient/mock"
 	"github.com/skpr/cli/internal/buildpack/types"
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
@@ -32,7 +33,7 @@ func TestBuild(t *testing.T) {
 		Version:  "222",
 		Context:  "bar",
 		NoPush:   false,
-		Auth:     types.Auth{},
+		Auth:     auth.Auth{},
 	}
 
 	builder, err := NewBuilder(dockerClient)

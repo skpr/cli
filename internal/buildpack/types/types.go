@@ -1,6 +1,10 @@
 package types
 
-import "io"
+import (
+	"io"
+
+	"github.com/skpr/cli/internal/auth"
+)
 
 // BuildResponse is returned by the build operation.
 type BuildResponse struct {
@@ -15,14 +19,9 @@ type Image struct {
 	Tag string `json:"tag"`
 }
 
-type Auth struct {
-	Username string
-	Password string
-}
-
 // Params used for building the applications.
 type Params struct {
-	Auth       Auth
+	Auth       auth.Auth
 	Writer     io.Writer
 	Context    string
 	IgnoreFile string
