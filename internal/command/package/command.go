@@ -5,17 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 
-	docker "github.com/fsouza/go-dockerclient"
 	"github.com/skpr/api/pb"
 
-	buildpack "github.com/skpr/cli/internal/buildpack/builder"
+	buildpack "github.com/skpr/cli/internal/buildpack/builder/docker"
+	"github.com/skpr/cli/internal/buildpack/types"
 	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/client/config"
+	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/skpr/cli/internal/slice"
 )
 
@@ -23,10 +22,9 @@ import (
 type Command struct {
 	Region        string
 	PackageDir    string
-	Params        buildpack.Params
+	Params        types.Params
 	PrintManifest bool
 	BuildArgs     []string
-	Platform      string
 	Debug         bool
 }
 
@@ -63,12 +61,11 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 		cmd.Params.Registry = project.Registry.Application
 
-		cmd.Params.Auth = docker.AuthConfiguration{
+		cmd.Params.Auth = types.Auth{
 			Username: client.Credentials.Username,
 			Password: client.Credentials.Password,
 		}
 
-		// @todo, Consider abstracting this if another registry + credentials pair is required.
 		if ecr.IsRegistry(cmd.Params.Registry) {
 			auth, err := ecr.UpgradeAuth(ctx, cmd.Params.Registry, client.Credentials)
 			if err != nil {
@@ -79,8 +76,13 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
+	// See if we're using default builder.
+	userConfig, _ := user.NewClient()
+	featureFlags, _ := userConfig.LoadFeatureFlags()
+
+	fmt.Printf("builder: %s\n", featureFlags.Builder)
+
 	cmd.Params.Writer = os.Stderr
-	cmd.Params.Platform = cmd.Platform
 
 	// Convert build args from slice to map.
 	//   eg. --build-arg=KEY=VALUE to map[string]string{"KEY": "VALUE"}
@@ -98,21 +100,12 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	// Print deprecation notice.
-	for key, path := range dockerfiles {
-		if strings.HasSuffix(path, ".dockerfile") {
-			fmt.Printf("[DEPRECATED] Dockerfile location %q is deprecated. Use \"%s/%s/Dockerfile\" instead.\n", path, filepath.Dir(path), key)
-		}
-	}
-
-	dockerclient, err := docker.NewClientFromEnv()
+	builder, err := buildpack.NewBuilder()
 	if err != nil {
-		return fmt.Errorf("failed to setup Docker client: %w", err)
+		return err
 	}
 
-	builder := buildpack.NewBuilder(dockerclient)
-
-	resp, err := builder.Build(dockerfiles, cmd.Params)
+	resp, err := builder.Build(ctx, dockerfiles, cmd.Params)
 	if err != nil {
 		return err
 	}

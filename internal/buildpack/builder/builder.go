@@ -3,16 +3,15 @@ package buildpack
 import (
 	"context"
 	"fmt"
-	"io"
-	"strings"
 	"time"
 
-	"github.com/egym-playground/go-prefix-writer/prefixer"
 	docker "github.com/fsouza/go-dockerclient"
 	"golang.org/x/sync/errgroup"
 
+	"github.com/skpr/cli/internal/buildpack/types"
+	"github.com/skpr/cli/internal/buildpack/utils/finder"
 	"github.com/skpr/cli/internal/buildpack/utils/image"
-	"github.com/skpr/cli/internal/color"
+	"github.com/skpr/cli/internal/buildpack/utils/prefixer"
 )
 
 // DockerClientInterface provides an interface that allows us to test the builder.
@@ -26,63 +25,30 @@ type Builder struct {
 	dockerClient DockerClientInterface
 }
 
-// BuildResponse is returned by the build operation.
-type BuildResponse struct {
-	Images []Image `json:"images"`
-}
-
-// Image build has been built.
-type Image struct {
-	// Name of the image.
-	Name string `json:"name"`
-	// Tag used to push image.
-	Tag string `json:"tag"`
-}
-
-// Params used for building the applications.
-type Params struct {
-	Auth      docker.AuthConfiguration
-	Writer    io.Writer
-	Context   string
-	Registry  string
-	NoPush    bool
-	Version   string
-	BuildArgs map[string]string
-	Platform  string
-}
-
-// Dockerfiles the docker build files.
-type Dockerfiles map[string]string
-
-const (
-	// ImageNameCompile is used for compiling the application.
-	ImageNameCompile = "compile"
-
-	// BuildArgCompileImage is used for referencing the compile image.
-	BuildArgCompileImage = "COMPILE_IMAGE"
-	// BuildArgVersion is used for providing the version identifier of the application.
-	BuildArgVersion = "SKPR_VERSION"
-)
-
 // NewBuilder creates a new Builder.
-func NewBuilder(dockerClient DockerClientInterface) *Builder {
-	return &Builder{
-		dockerClient: dockerClient,
+func NewBuilder() (*Builder, error) {
+	dockerclient, err := docker.NewClientFromEnv()
+	if err != nil {
+		return nil, fmt.Errorf("failed to setup Docker client: %w", err)
 	}
+
+	return &Builder{
+		dockerClient: dockerclient,
+	}, nil
 }
 
 // Build the images.
-func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, error) {
-	var resp BuildResponse
+func (b *Builder) Build(ctx context.Context, dockerfiles finder.Dockerfiles, params types.Params) (types.BuildResponse, error) {
+	var resp types.BuildResponse
 
-	compileDockerfile, ok := dockerfiles[ImageNameCompile]
+	compileDockerfile, ok := dockerfiles[types.ImageNameCompile]
 	if !ok {
-		return resp, fmt.Errorf("%q is a required dockerfile", ImageNameCompile)
+		return resp, fmt.Errorf("%q is a required dockerfile", types.ImageNameCompile)
 	}
 
 	args := []docker.BuildArg{
 		{
-			Name:  BuildArgVersion,
+			Name:  types.BuildArgVersion,
 			Value: params.Version,
 		},
 	}
@@ -98,12 +64,11 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 
 	// We build the compile image first, as it is the base image for other images.
 	compileBuild := docker.BuildImageOptions{
-		Name:         image.Name(params.Registry, params.Version, ImageNameCompile),
+		Name:         image.Name(params.Registry, params.Version, types.ImageNameCompile),
 		Dockerfile:   compileDockerfile,
 		ContextDir:   params.Context,
-		OutputStream: prefixWithTime(params.Writer, ImageNameCompile, start),
+		OutputStream: prefixer.WrapWriterWithPrefixer(params.Writer, types.ImageNameCompile, start),
 		BuildArgs:    args,
-		Platform:     params.Platform,
 	}
 
 	// We need to build the 'compile' image first.
@@ -115,13 +80,13 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 	fmt.Fprintf(params.Writer, "Built compile image in %s\n", time.Since(start).Round(time.Second))
 
 	// Remove compile from list of dockerfiles.
-	delete(dockerfiles, ImageNameCompile)
+	delete(dockerfiles, types.ImageNameCompile)
 
 	// Adds compile image identifier to the runtime images as an arg.
 	// That allows runtime images to copy over the compiled code.
 	args = append(args, docker.BuildArg{
-		Name:  BuildArgCompileImage,
-		Value: image.Name(params.Registry, params.Version, ImageNameCompile),
+		Name:  types.BuildArgCompileImage,
+		Value: image.Name(params.Registry, params.Version, types.ImageNameCompile),
 	})
 
 	var builds []docker.BuildImageOptions
@@ -131,22 +96,21 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 			Name:         image.Name(params.Registry, params.Version, imageName),
 			Dockerfile:   dockerfile,
 			ContextDir:   params.Context,
-			OutputStream: prefixWithTime(params.Writer, imageName, start),
+			OutputStream: prefixer.WrapWriterWithPrefixer(params.Writer, imageName, start),
 			BuildArgs:    args,
-			Platform:     params.Platform,
 		}
 
 		// Add to the builder list.
 		builds = append(builds, build)
 
 		// Add to the manifest.
-		resp.Images = append(resp.Images, Image{
+		resp.Images = append(resp.Images, types.Image{
 			Name: imageName,
 			Tag:  build.Name,
 		})
 	}
 
-	bg, ctx := errgroup.WithContext(context.Background())
+	bg, ctx := errgroup.WithContext(ctx)
 
 	for _, build := range builds {
 		// https://golang.org/doc/faq#closures_and_goroutines
@@ -189,7 +153,12 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 		})
 	}
 
-	pg, ctx := errgroup.WithContext(context.Background())
+	pg, ctx := errgroup.WithContext(ctx)
+
+	auth := docker.AuthConfiguration{
+		Username: params.Auth.Username,
+		Password: params.Auth.Password,
+	}
 
 	for _, push := range pushes {
 		// https://golang.org/doc/faq#closures_and_goroutines
@@ -203,7 +172,7 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 		pg.Go(func() error {
 			start = time.Now()
 
-			err = b.dockerClient.PushImage(push, params.Auth)
+			err = b.dockerClient.PushImage(push, auth)
 			if err != nil {
 				return err
 			}
@@ -222,9 +191,4 @@ func (b *Builder) Build(dockerfiles Dockerfiles, params Params) (BuildResponse, 
 	fmt.Fprintf(params.Writer, "Build complete in: %s\n", time.Since(start).Round(time.Second))
 
 	return resp, nil
-}
-
-// Helper function to prefix all output for a stream.
-func prefixWithTime(w io.Writer, name string, start time.Time) io.Writer {
-	return prefixer.New(w, newPrefixer(color.Wrap(strings.ToUpper(name)), start).PrefixFunc())
 }
