@@ -9,6 +9,7 @@ import (
 	docker "github.com/fsouza/go-dockerclient"
 	"github.com/skpr/api/pb"
 
+	"github.com/skpr/cli/internal/auth"
 	dockerbuilder "github.com/skpr/cli/internal/buildpack/builder/docker"
 	goclientbuilder "github.com/skpr/cli/internal/buildpack/builder/goclient"
 	"github.com/skpr/cli/internal/buildpack/types"
@@ -63,7 +64,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 		cmd.Params.Registry = project.Registry.Application
 
-		cmd.Params.Auth = types.Auth{
+		cmd.Params.Auth = auth.Auth{
 			Username: client.Credentials.Username,
 			Password: client.Credentials.Password,
 		}
