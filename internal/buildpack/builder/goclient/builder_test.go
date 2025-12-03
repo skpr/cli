@@ -1,4 +1,4 @@
-package buildpack
+package goclient
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/skpr/cli/internal/buildpack/builder/mock"
+	"github.com/skpr/cli/internal/buildpack/builder/goclient/mock"
 	"github.com/skpr/cli/internal/buildpack/types"
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
 )

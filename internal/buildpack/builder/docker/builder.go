@@ -24,16 +24,9 @@ import (
 	"github.com/skpr/cli/internal/buildpack/utils/prefixer"
 )
 
-// DockerClientInterface provides an interface that allows us to test the builder.
-// This mirrors the subset of the official Docker SDK we use.
-type DockerClientInterface interface {
-	ImageBuild(ctx context.Context, buildContext io.Reader, options build.ImageBuildOptions) (build.ImageBuildResponse, error)
-	ImagePush(ctx context.Context, ref string, options imagetypes.PushOptions) (io.ReadCloser, error)
-}
-
 // Builder is the docker image builder.
 type Builder struct {
-	dockerClient DockerClientInterface
+	dockerClient *dockclient.Client
 }
 
 // NewBuilder creates a new Builder.

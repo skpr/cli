@@ -9,8 +9,8 @@ import (
 	docker "github.com/fsouza/go-dockerclient"
 	"github.com/skpr/api/pb"
 
-	goclientbuilder "github.com/skpr/cli/internal/buildpack/builder"
 	dockerbuilder "github.com/skpr/cli/internal/buildpack/builder/docker"
+	goclientbuilder "github.com/skpr/cli/internal/buildpack/builder/goclient"
 	"github.com/skpr/cli/internal/buildpack/types"
 	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
