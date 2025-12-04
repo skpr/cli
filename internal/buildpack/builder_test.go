@@ -14,9 +14,7 @@ import (
 
 func TestBuild(t *testing.T) {
 
-	dockerClient := &mockclient.DockerClient{}
-	dockerClient.BuildWg.Add(4)
-	dockerClient.PushWg.Add(3)
+	dockerClient := mockclient.New()
 
 	dockerFiles := make(finder.Dockerfiles)
 	dockerFiles["compile"] = ".skpr/package/compile/Dockerfile"

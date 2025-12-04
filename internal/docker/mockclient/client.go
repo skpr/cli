@@ -3,15 +3,19 @@ package mockclient
 import (
 	"context"
 	"io"
-	"sync"
 )
 
-// DockerClient provides a mockclient client.
+// DockerClient provides a mock client.
 type DockerClient struct {
-	BuildWg  sync.WaitGroup
-	PushWg   sync.WaitGroup
 	buildNum int
 	pushNum  int
+}
+
+func New() *DockerClient {
+	return &DockerClient{
+		buildNum: 0,
+		pushNum:  0,
+	}
 }
 
 func (c *DockerClient) ImageId(ctx context.Context, name string) (string, error) {
@@ -23,7 +27,6 @@ func (c *DockerClient) PullImage(ctx context.Context, repository, tag string, wr
 }
 
 func (c *DockerClient) PushImage(ctx context.Context, repository, tag string, writer io.Writer) error {
-	c.PushWg.Done()
 	c.pushNum++
 	return nil
 }
@@ -33,19 +36,16 @@ func (c *DockerClient) RemoveImage(ctx context.Context, id string) error {
 }
 
 func (c *DockerClient) BuildImage(ctx context.Context, dockerfile string, dockerContext string, ref string, excludePatterns []string, buildArgs map[string]string, writer io.Writer) error {
-	c.BuildWg.Done()
 	c.buildNum++
 	return nil
 }
 
 // BuildCount returns the build count.
 func (c *DockerClient) BuildCount() int {
-	c.BuildWg.Wait()
 	return c.buildNum
 }
 
 // PushCount returns the push count.
 func (c *DockerClient) PushCount() int {
-	c.PushWg.Wait()
 	return c.pushNum
 }
