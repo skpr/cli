@@ -6,18 +6,19 @@ import (
 	"fmt"
 	"os"
 
-	docker "github.com/fsouza/go-dockerclient"
 	"github.com/skpr/api/pb"
 
 	"github.com/skpr/cli/internal/auth"
-	dockerbuilder "github.com/skpr/cli/internal/buildpack/builder/docker"
-	goclientbuilder "github.com/skpr/cli/internal/buildpack/builder/goclient"
+	dockerbuilder "github.com/skpr/cli/internal/buildpack/builder"
 	"github.com/skpr/cli/internal/buildpack/types"
 	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/client/config"
 	"github.com/skpr/cli/internal/client/config/user"
+	"github.com/skpr/cli/internal/docker"
+	"github.com/skpr/cli/internal/docker/dockerclient"
+	"github.com/skpr/cli/internal/docker/goclient"
 	"github.com/skpr/cli/internal/slice"
 )
 
@@ -40,6 +41,8 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 
 		cmd.Params.Registry = fmt.Sprintf("localhost/skpr/%s", config.Project)
+
+		cmd.Params.Auth = auth.Auth{}
 	} else {
 		ctx, client, err := client.New(ctx)
 		if err != nil {
@@ -97,7 +100,12 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	builder, err := getBuilder()
+	dc, err := getClient(cmd.Params.Auth)
+	if err != nil {
+		return err
+	}
+
+	builder, err := dockerbuilder.NewBuilder(dc)
 	if err != nil {
 		return err
 	}
@@ -153,24 +161,19 @@ func (cmd *Command) Run(ctx context.Context) error {
 	return nil
 }
 
-func getBuilder() (types.Builder, error) {
+func getClient(auth auth.Auth) (docker.DockerClient, error) {
 	// See if we're using default builder.
 	userConfig, _ := user.NewClient()
 	featureFlags, _ := userConfig.LoadFeatureFlags()
 
 	if featureFlags.Builder == user.ConfigPackageBuilderDocker {
-		builder, err := dockerbuilder.NewBuilder()
-		return builder, err
+		c, err := dockerclient.New(auth)
+		return c, err
 	}
 
 	if featureFlags.Builder != "" && featureFlags.Builder != user.ConfigPackageBuilderLegacy {
-		return nil, fmt.Errorf("unknown builder: %s", featureFlags.Builder)
+		return nil, fmt.Errorf("unknown docker client: %s", featureFlags.Builder)
 	}
 
-	dockerclient, err := docker.NewClientFromEnv()
-	if err != nil {
-		return nil, fmt.Errorf("failed to setup Docker client: %w", err)
-	}
-
-	return goclientbuilder.NewBuilder(dockerclient)
+	return goclient.New(auth)
 }

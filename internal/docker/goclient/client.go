@@ -2,6 +2,7 @@ package goclient
 
 import (
 	"context"
+	"fmt"
 	"io"
 
 	dockerclient "github.com/fsouza/go-dockerclient"
@@ -45,6 +46,7 @@ func (c *Client) PullImage(ctx context.Context, repository, tag string, writer i
 		OutputStream: writer,
 		Repository:   repository,
 		Tag:          tag,
+		Context:      ctx,
 	}
 
 	clientAuth := dockerclient.AuthConfiguration{
@@ -52,15 +54,34 @@ func (c *Client) PullImage(ctx context.Context, repository, tag string, writer i
 		Password: c.Auth.Password,
 	}
 
-	err := c.Client.PullImage(opts, clientAuth)
-	if err != nil {
-		return err
-	}
+	return c.Client.PullImage(opts, clientAuth)
+}
 
-	return nil
+func (c *Client) PushImage(ctx context.Context, repository, tag string, writer io.Writer) error {
+	return fmt.Errorf("not implemented")
 }
 
 func (c *Client) RemoveImage(ctx context.Context, id string) error {
 	err := c.Client.RemoveImage(id)
 	return err
+}
+
+func (c *Client) BuildImage(ctx context.Context, dockerfile string, dockerContext string, ref string, excludePatterns []string, buildArgs map[string]string, writer io.Writer) error {
+	args := []dockerclient.BuildArg{}
+	for k, v := range buildArgs {
+		args = append(args, dockerclient.BuildArg{
+			Name:  k,
+			Value: v,
+		})
+	}
+
+	build := dockerclient.BuildImageOptions{
+		Context:      ctx,
+		Name:         ref,
+		Dockerfile:   dockerfile,
+		ContextDir:   dockerContext,
+		OutputStream: writer,
+		BuildArgs:    args,
+	}
+	return c.Client.BuildImage(build)
 }
