@@ -166,11 +166,6 @@ func handleMessages(in io.ReadCloser, out io.Writer) error {
 		}
 
 		// TODO: Possibly stream out progress.
-		if msg.Status != "" {
-			if _, err := io.WriteString(out, msg.Status+"\n"); err != nil {
-				return err
-			}
-		}
 		if msg.Stream != "" {
 			if _, err := io.WriteString(out, msg.Stream); err != nil {
 				return err
