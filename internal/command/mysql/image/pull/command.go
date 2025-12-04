@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"os"
 
-	docker "github.com/fsouza/go-dockerclient"
 	"github.com/gosuri/uilive"
 	"github.com/pkg/errors"
 	"github.com/skpr/api/pb"
@@ -14,6 +13,10 @@ import (
 	"github.com/skpr/cli/internal/auth"
 	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
 	"github.com/skpr/cli/internal/client"
+	"github.com/skpr/cli/internal/client/config/user"
+	"github.com/skpr/cli/internal/docker"
+	"github.com/skpr/cli/internal/docker/dockerclient"
+	"github.com/skpr/cli/internal/docker/goclient"
 	skprlog "github.com/skpr/cli/internal/log"
 )
 
@@ -70,13 +73,14 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	dockerclient, err := docker.NewClientFromEnv()
+	c, err := getClient(auth)
 	if err != nil {
-		return errors.Wrap(err, "failed to setup Docker client")
+		return errors.Wrap(err, "failed to create Docker client")
 	}
 
 	writer := uilive.New()
 	writer.Start()
+	defer writer.Stop()
 
 	for _, database := range cmd.Params.Databases {
 		tag := fmt.Sprintf("%s-%s", database, DefaultTagSuffix)
@@ -86,45 +90,34 @@ func (cmd *Command) Run(ctx context.Context) error {
 		logger.Info(fmt.Sprintf("Pulling: %s", imageName))
 
 		// Lookup the ID of the current image so we can delete it after we pull the image one.
-		cleanup, err := dockerclient.InspectImage(imageName)
-		if err != nil && !errors.Is(err, docker.ErrNoSuchImage) {
-			return err
-		}
-
-		opts := docker.PullImageOptions{
-			OutputStream: writer,
-			Repository:   getRepositoryResp.Repository,
-			Tag:          tag,
-		}
-
-		clientAuth := docker.AuthConfiguration{
-			Username: auth.Username,
-			Password: auth.Password,
-		}
-
-		err = dockerclient.PullImage(opts, clientAuth)
+		cleanupId, err := c.ImageId(context.TODO(), imageName)
 		if err != nil {
 			return err
 		}
 
-		// Check if there was an old images which
-		if cleanup == nil {
+		err = c.PullImage(context.TODO(), getRepositoryResp.Repository, tag, writer)
+		if err != nil {
+			return err
+		}
+
+		// Check if there was an old image before cleaning up.
+		if cleanupId == "" {
 			continue
 		}
 
-		current, err := dockerclient.InspectImage(imageName)
+		currentId, err := c.ImageId(context.TODO(), imageName)
 		if err != nil {
 			return err
 		}
 
 		// Don't cleanup the old image if it was the latest and never needed to be updated.
-		if cleanup.ID == current.ID {
+		if cleanupId == currentId {
 			continue
 		}
 
-		logger.Info(fmt.Sprintf("Cleaning up old image with: %s", cleanup.ID))
+		logger.Info(fmt.Sprintf("Cleaning up old image with: %s", cleanupId))
 
-		err = dockerclient.RemoveImage(cleanup.ID)
+		err = c.RemoveImage(context.TODO(), cleanupId)
 		if err != nil {
 			return err
 		}
@@ -132,7 +125,22 @@ func (cmd *Command) Run(ctx context.Context) error {
 		logger.Info(fmt.Sprintf("Successfully pulled image: %s:%s", getRepositoryResp.Repository, tag))
 	}
 
-	writer.Stop()
-
 	return nil
+}
+
+func getClient(auth auth.Auth) (docker.DockerClient, error) {
+	// See if we're using default builder.
+	userConfig, _ := user.NewClient()
+	featureFlags, _ := userConfig.LoadFeatureFlags()
+
+	if featureFlags.Builder == user.ConfigPackageBuilderDocker {
+		c, err := dockerclient.New(auth)
+		return c, err
+	}
+
+	if featureFlags.Builder != "" && featureFlags.Builder != user.ConfigPackageBuilderLegacy {
+		return nil, fmt.Errorf("unknown docker client: %s", featureFlags.Builder)
+	}
+
+	return goclient.New(auth)
 }

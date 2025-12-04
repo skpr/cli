@@ -1,0 +1,66 @@
+package goclient
+
+import (
+	"context"
+	"io"
+
+	dockerclient "github.com/fsouza/go-dockerclient"
+	"github.com/pkg/errors"
+
+	"github.com/skpr/cli/internal/auth"
+)
+
+type Client struct {
+	Auth   auth.Auth
+	Client *dockerclient.Client
+}
+
+func New(auth auth.Auth) (*Client, error) {
+	client, err := dockerclient.NewClientFromEnv()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to setup Docker client")
+	}
+
+	return &Client{
+		Auth:   auth,
+		Client: client,
+	}, nil
+}
+
+func (c *Client) ImageId(ctx context.Context, name string) (string, error) {
+	resp, err := c.Client.InspectImage(name)
+	if err != nil && !errors.Is(err, dockerclient.ErrNoSuchImage) {
+		return "", err
+	}
+
+	if resp == nil {
+		return "", nil
+	}
+
+	return resp.ID, nil
+}
+
+func (c *Client) PullImage(ctx context.Context, repository, tag string, writer io.Writer) error {
+	opts := dockerclient.PullImageOptions{
+		OutputStream: writer,
+		Repository:   repository,
+		Tag:          tag,
+	}
+
+	clientAuth := dockerclient.AuthConfiguration{
+		Username: c.Auth.Username,
+		Password: c.Auth.Password,
+	}
+
+	err := c.Client.PullImage(opts, clientAuth)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) RemoveImage(ctx context.Context, id string) error {
+	err := c.Client.RemoveImage(id)
+	return err
+}
