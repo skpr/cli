@@ -14,10 +14,7 @@ import (
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/client/config"
-	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/skpr/cli/internal/docker"
-	"github.com/skpr/cli/internal/docker/dockerclient"
-	"github.com/skpr/cli/internal/docker/goclient"
 	"github.com/skpr/cli/internal/slice"
 )
 
@@ -99,7 +96,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	dc, err := getClient(cmd.Params.Auth)
+	dc, err := docker.GetClientFromUserConfig(cmd.Params.Auth)
 	if err != nil {
 		return err
 	}
@@ -158,21 +155,4 @@ func (cmd *Command) Run(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func getClient(auth auth.Auth) (docker.DockerClient, error) {
-	// See if we're using default builder.
-	userConfig, _ := user.NewClient()
-	featureFlags, _ := userConfig.LoadFeatureFlags()
-
-	if featureFlags.Builder == user.ConfigPackageBuilderDocker {
-		c, err := dockerclient.New(auth)
-		return c, err
-	}
-
-	if featureFlags.Builder != "" && featureFlags.Builder != user.ConfigPackageBuilderLegacy {
-		return nil, fmt.Errorf("unknown docker client: %s", featureFlags.Builder)
-	}
-
-	return goclient.New(auth)
 }
