@@ -25,7 +25,7 @@ type ConfigPackageBuilder string
 const (
 	ConfigPackageClientLegacy ConfigPackageBuilder = "legacy"
 	ConfigPackageClientDocker ConfigPackageBuilder = "docker"
-	ConfigPackageClientMock   ConfigPackageBuilder = "mock"
+	ConfigPackageClientMock   ConfigPackageBuilder = "mockclient"
 )
 
 // Aliases maps alias names to commands.

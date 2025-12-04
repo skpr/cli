@@ -7,9 +7,9 @@ import (
 	"os"
 
 	"github.com/skpr/api/pb"
-	dockerbuilder "github.com/skpr/cli/internal/buildpack"
 
 	"github.com/skpr/cli/internal/auth"
+	"github.com/skpr/cli/internal/buildpack"
 	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
 	"github.com/skpr/cli/internal/client"
@@ -22,7 +22,7 @@ import (
 type Command struct {
 	Region        string
 	PackageDir    string
-	Params        dockerbuilder.Params
+	Params        buildpack.Params
 	PrintManifest bool
 	BuildArgs     []string
 	Debug         bool
@@ -101,7 +101,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return err
 	}
 
-	builder, err := dockerbuilder.NewBuilder(dc)
+	builder, err := buildpack.NewBuilder(dc)
 	if err != nil {
 		return err
 	}

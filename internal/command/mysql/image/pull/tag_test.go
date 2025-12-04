@@ -12,7 +12,7 @@ import (
 // ImageListClient is a client for mocking the ImageListClient type.
 type ImageListMockClient struct{}
 
-// ImageList is a mock implementation of the ImageListClient interface.
+// ImageList is a mockclient implementation of the ImageListClient interface.
 func (c *ImageListMockClient) ImageList(ctx context.Context, in *pb.ImageListRequest, opts ...grpc.CallOption) (*pb.ImageListResponse, error) {
 	return &pb.ImageListResponse{
 		List: []*pb.ImageStatus{
