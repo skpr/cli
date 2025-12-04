@@ -2,7 +2,6 @@ package buildpack
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,7 +10,7 @@ import (
 
 	"github.com/docker/docker/api/types/build"
 	imagetypes "github.com/docker/docker/api/types/image"
-	dockregistry "github.com/docker/docker/api/types/registry"
+	"github.com/docker/docker/api/types/registry"
 	dockclient "github.com/docker/docker/client"
 	"github.com/moby/go-archive"
 	"github.com/moby/moby/api/types/jsonstream"
@@ -22,6 +21,7 @@ import (
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
 	"github.com/skpr/cli/internal/buildpack/utils/image"
 	"github.com/skpr/cli/internal/buildpack/utils/prefixer"
+	"github.com/skpr/cli/internal/docker/dockerclient"
 )
 
 // Builder is the docker image builder.
@@ -163,11 +163,11 @@ func (b *Builder) Build(ctx context.Context, dockerfiles finder.Dockerfiles, par
 			ref:  fmt.Sprintf("%s:%s", params.Registry, image.Tag(params.Version, buildImage.Tag)),
 		})
 	}
-	auth := dockregistry.AuthConfig{
+	auth := registry.AuthConfig{
 		Username: params.Auth.Username,
 		Password: params.Auth.Password,
 	}
-	authHdr, err := encodeRegistryAuth(auth)
+	authHdr, err := dockerclient.EncodeRegistryAuth(auth)
 	if err != nil {
 		return resp, fmt.Errorf("failed to encode registry auth: %w", err)
 	}
@@ -227,16 +227,6 @@ func (b *Builder) buildImage(ctx context.Context, contextDir string, contextExcl
 	}
 
 	return nil
-}
-
-// encodeRegistryAuth converts a registrytypes.AuthConfig into the base64-encoded JSON
-// expected by the Docker Engine API for ImagePush.
-func encodeRegistryAuth(cfg dockregistry.AuthConfig) (string, error) {
-	b, err := json.Marshal(cfg)
-	if err != nil {
-		return "", err
-	}
-	return base64.URLEncoding.EncodeToString(b), nil
 }
 
 func handleMessages(in io.ReadCloser, out io.Writer) error {

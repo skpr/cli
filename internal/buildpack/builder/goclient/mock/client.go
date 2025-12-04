@@ -6,7 +6,7 @@ import (
 	docker "github.com/fsouza/go-dockerclient"
 )
 
-// DockerClient provides a mock docker client.
+// DockerClient provides a mock dockerclient client.
 type DockerClient struct {
 	BuildWg  sync.WaitGroup
 	PushWg   sync.WaitGroup

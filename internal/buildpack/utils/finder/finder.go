@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// Dockerfiles the docker build files.
+// Dockerfiles the dockerclient build files.
 type Dockerfiles map[string]string
 
 // dockerfileSuffix is the suffix for legacy dockerfiles.
