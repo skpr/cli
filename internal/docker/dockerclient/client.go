@@ -14,9 +14,9 @@ import (
 	"github.com/moby/go-archive"
 	"github.com/moby/moby/api/types/jsonstream"
 	"github.com/pkg/errors"
-	"github.com/skpr/cli/internal/buildpack/utils/image"
 
 	"github.com/skpr/cli/internal/auth"
+	"github.com/skpr/cli/internal/buildpack/utils/image"
 )
 
 type Client struct {

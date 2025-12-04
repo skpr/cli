@@ -1,9 +1,9 @@
 package pkg
 
 import (
-	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/spf13/cobra"
 
+	"github.com/skpr/cli/internal/client/config/user"
 	skprcommand "github.com/skpr/cli/internal/command"
 	v1package "github.com/skpr/cli/internal/command/package"
 )

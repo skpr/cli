@@ -6,6 +6,7 @@ import (
 
 	dockerclient "github.com/fsouza/go-dockerclient"
 	"github.com/pkg/errors"
+
 	"github.com/skpr/cli/internal/auth"
 )
 
