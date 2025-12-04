@@ -96,7 +96,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	dc, err := docker.GetClientFromUserConfig(cmd.Params.Auth)
+	dc, err := docker.NewClientFromUserConfig(cmd.Params.Auth)
 	if err != nil {
 		return err
 	}

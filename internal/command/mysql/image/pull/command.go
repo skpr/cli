@@ -70,7 +70,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	c, err := docker.GetClientFromUserConfig(auth)
+	c, err := docker.NewClientFromUserConfig(auth)
 	if err != nil {
 		return errors.Wrap(err, "failed to create Docker client")
 	}
