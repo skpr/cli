@@ -31,7 +31,7 @@ func NewClientFromUserConfig(auth auth.Auth) (DockerClient, error) {
 	case user.ConfigPackageClientDocker:
 		return dockerclient.New(auth)
 	case user.ConfigPackageClientMock:
-		return &mockclient.DockerClient{}, nil
+		return mockclient.New(), nil
 	}
 
 	if featureFlags.DockerClient != "" {
