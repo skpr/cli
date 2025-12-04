@@ -2,12 +2,10 @@ package goclient
 
 import (
 	"context"
-	"fmt"
 	"io"
 
 	dockerclient "github.com/fsouza/go-dockerclient"
 	"github.com/pkg/errors"
-
 	"github.com/skpr/cli/internal/auth"
 )
 
@@ -41,10 +39,10 @@ func (c *Client) ImageId(ctx context.Context, name string) (string, error) {
 	return resp.ID, nil
 }
 
-func (c *Client) PullImage(ctx context.Context, repository, tag string, writer io.Writer) error {
+func (c *Client) PullImage(ctx context.Context, registry, tag string, writer io.Writer) error {
 	opts := dockerclient.PullImageOptions{
 		OutputStream: writer,
-		Repository:   repository,
+		Repository:   registry,
 		Tag:          tag,
 		Context:      ctx,
 	}
@@ -57,8 +55,20 @@ func (c *Client) PullImage(ctx context.Context, repository, tag string, writer i
 	return c.Client.PullImage(opts, clientAuth)
 }
 
-func (c *Client) PushImage(ctx context.Context, repository, tag string, writer io.Writer) error {
-	return fmt.Errorf("not implemented")
+func (c *Client) PushImage(ctx context.Context, registry, tag string, writer io.Writer) error {
+	opts := dockerclient.PushImageOptions{
+		Context:      ctx,
+		OutputStream: writer,
+		Name:         registry,
+		Tag:          tag,
+	}
+
+	clientAuth := dockerclient.AuthConfiguration{
+		Username: c.Auth.Username,
+		Password: c.Auth.Password,
+	}
+
+	return c.Client.PushImage(opts, clientAuth)
 }
 
 func (c *Client) RemoveImage(ctx context.Context, id string) error {

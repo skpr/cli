@@ -48,7 +48,7 @@ func (b *Builder) Build(ctx context.Context, dockerfiles finder.Dockerfiles, par
 	start := time.Now()
 
 	// Build the compile image first; it's the base for others.
-	compileRef := image.Name(params.Registry, params.Version, ImageNameCompile)
+	compileRef := image.Name(params.Registry, image.Tag(params.Version, ImageNameCompile))
 
 	fmt.Fprintf(params.Writer, "Building image: %s\n", compileRef)
 
@@ -74,7 +74,7 @@ func (b *Builder) Build(ctx context.Context, dockerfiles finder.Dockerfiles, par
 	}
 	var builds []pendingBuild
 	for imageName, dockerfile := range dockerfiles {
-		ref := image.Name(params.Registry, params.Version, imageName)
+		ref := image.Name(params.Registry, image.Tag(params.Version, imageName))
 		builds = append(builds, pendingBuild{name: imageName, imageRef: ref, dockerfile: dockerfile})
 		resp.Images = append(resp.Images, Image{
 			Name: imageName,
@@ -111,14 +111,16 @@ func (b *Builder) Build(ctx context.Context, dockerfiles finder.Dockerfiles, par
 
 	// Prepare pushes (skip compile).
 	type pendingPush struct {
-		Name string
-		Tag  string // full "registry/repo:tag"
+		Name     string
+		Registry string
+		Tag      string
 	}
 	var pushes []pendingPush
 	for _, buildImage := range resp.Images {
 		pushes = append(pushes, pendingPush{
-			Name: params.Registry,
-			Tag:  image.Tag(params.Version, buildImage.Name),
+			Name:     buildImage.Name,
+			Registry: params.Registry,
+			Tag:      image.Tag(params.Version, buildImage.Name),
 		})
 	}
 
@@ -127,17 +129,17 @@ func (b *Builder) Build(ctx context.Context, dockerfiles finder.Dockerfiles, par
 	for _, p := range pushes {
 		p := p
 
-		fmt.Fprintf(params.Writer, "Pushing image: %s:%s\n", p.Name, p.Tag)
+		fmt.Fprintf(params.Writer, "Pushing image: %s:%s\n", p.Registry, p.Tag)
 		out := prefixer.WrapWriterWithPrefixer(params.Writer, "push "+p.Name, start)
 
 		pg.Go(func() error {
 			localStart := time.Now()
-			err := b.Client.PushImage(ctx, p.Name, p.Tag, out)
+			err := b.Client.PushImage(ctx, p.Registry, p.Tag, out)
 			if err != nil {
 				return err
 			}
 
-			fmt.Fprintf(params.Writer, "Pushed %s:%s image in %s\n", p.Name, p.Tag, time.Since(localStart).Round(time.Second))
+			fmt.Fprintf(params.Writer, "Pushed %s:%s image in %s\n", p.Registry, p.Tag, time.Since(localStart).Round(time.Second))
 			return nil
 		})
 	}

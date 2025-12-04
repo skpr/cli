@@ -22,11 +22,11 @@ func (c *DockerClient) ImageId(ctx context.Context, name string) (string, error)
 	return "sha@111222333444555666", nil
 }
 
-func (c *DockerClient) PullImage(ctx context.Context, repository, tag string, writer io.Writer) error {
+func (c *DockerClient) PullImage(ctx context.Context, registry, tag string, writer io.Writer) error {
 	return nil
 }
 
-func (c *DockerClient) PushImage(ctx context.Context, repository, tag string, writer io.Writer) error {
+func (c *DockerClient) PushImage(ctx context.Context, registry, tag string, writer io.Writer) error {
 	c.pushNum++
 	return nil
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/moby/go-archive"
 	"github.com/moby/moby/api/types/jsonstream"
 	"github.com/pkg/errors"
+	"github.com/skpr/cli/internal/buildpack/utils/image"
 
 	"github.com/skpr/cli/internal/auth"
 )
@@ -46,7 +47,7 @@ func (c *Client) ImageId(ctx context.Context, name string) (string, error) {
 	return "", nil
 }
 
-func (c *Client) PullImage(ctx context.Context, repository, tag string, writer io.Writer) error {
+func (c *Client) PullImage(ctx context.Context, registry, tag string, writer io.Writer) error {
 	auth := dockregistry.AuthConfig{
 		Username: c.Auth.Username,
 		Password: c.Auth.Password,
@@ -56,7 +57,7 @@ func (c *Client) PullImage(ctx context.Context, repository, tag string, writer i
 		return errors.Wrap(err, "failed to encode registry auth")
 	}
 
-	imageName := fmt.Sprintf("%s:%s", repository, tag)
+	imageName := image.Name(registry, tag)
 
 	rc, err := c.Client.ImagePull(ctx, imageName, imagetypes.PullOptions{
 		RegistryAuth: authHdr,
@@ -74,7 +75,7 @@ func (c *Client) PullImage(ctx context.Context, repository, tag string, writer i
 	return nil
 }
 
-func (c *Client) PushImage(ctx context.Context, repository, tag string, writer io.Writer) error {
+func (c *Client) PushImage(ctx context.Context, registry, tag string, writer io.Writer) error {
 	auth := dockregistry.AuthConfig{
 		Username: c.Auth.Username,
 		Password: c.Auth.Password,
@@ -84,7 +85,7 @@ func (c *Client) PushImage(ctx context.Context, repository, tag string, writer i
 		return errors.Wrap(err, "failed to encode registry auth")
 	}
 
-	imageName := fmt.Sprintf("%s:%s", repository, tag)
+	imageName := image.Name(registry, tag)
 
 	rc, err := c.Client.ImagePush(ctx, imageName, imagetypes.PushOptions{
 		RegistryAuth: authHdr,
