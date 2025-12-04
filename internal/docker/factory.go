@@ -19,7 +19,7 @@ type DockerClient interface {
 	BuildImage(ctx context.Context, dockerfile string, dockerContext string, ref string, excludePatterns []string, buildArgs map[string]string, writer io.Writer) error
 }
 
-func GetClientFromUserConfig(auth auth.Auth) (DockerClient, error) {
+func NewClientFromUserConfig(auth auth.Auth) (DockerClient, error) {
 	// See if we're using default builder.
 	userConfig, _ := user.NewClient()
 	featureFlags, _ := userConfig.LoadFeatureFlags()
