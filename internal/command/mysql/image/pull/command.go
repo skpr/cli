@@ -97,6 +97,8 @@ func (cmd *Command) Run(ctx context.Context) error {
 			return err
 		}
 
+		logger.Info(fmt.Sprintf("Successfully pulled image: %s:%s", getRepositoryResp.Repository, tag))
+
 		// Check if there was an old image before cleaning up.
 		if cleanupId == "" {
 			continue
@@ -109,7 +111,6 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 		// Don't cleanup the old image if it was the latest and never needed to be updated.
 		if cleanupId == currentId {
-			logger.Info(fmt.Sprintf("Image is up to date: %s", imageName))
 			continue
 		}
 
@@ -119,8 +120,6 @@ func (cmd *Command) Run(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-
-		logger.Info(fmt.Sprintf("Successfully pulled image: %s:%s", getRepositoryResp.Repository, tag))
 	}
 
 	return nil
