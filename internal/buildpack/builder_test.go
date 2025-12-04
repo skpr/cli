@@ -1,4 +1,4 @@
-package goclient
+package buildpack
 
 import (
 	"bytes"
@@ -8,9 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/skpr/cli/internal/auth"
-	"github.com/skpr/cli/internal/buildpack/builder/goclient/mock"
-	"github.com/skpr/cli/internal/buildpack/types"
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
+	"github.com/skpr/cli/internal/docker/mock"
 )
 
 func TestBuild(t *testing.T) {
@@ -27,13 +26,14 @@ func TestBuild(t *testing.T) {
 
 	var b bytes.Buffer
 
-	params := types.Params{
-		Writer:   &b,
-		Registry: "foo",
-		Version:  "222",
-		Context:  "bar",
-		NoPush:   false,
-		Auth:     auth.Auth{},
+	params := Params{
+		Writer:    &b,
+		Registry:  "foo",
+		Version:   "222",
+		Context:   "bar",
+		NoPush:    false,
+		BuildArgs: map[string]string{},
+		Auth:      auth.Auth{},
 	}
 
 	builder, err := NewBuilder(dockerClient)
@@ -42,8 +42,8 @@ func TestBuild(t *testing.T) {
 	have, err := builder.Build(context.TODO(), dockerFiles, params)
 	assert.NoError(t, err)
 
-	want := types.BuildResponse{
-		Images: []types.Image{
+	want := BuildResponse{
+		Images: []Image{
 			{
 				Name: "cli",
 				Tag:  "foo:222-cli",
