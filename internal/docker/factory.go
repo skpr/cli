@@ -9,6 +9,7 @@ import (
 	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/skpr/cli/internal/docker/dockerclient"
 	"github.com/skpr/cli/internal/docker/goclient"
+	"github.com/skpr/cli/internal/docker/mockclient"
 )
 
 type DockerClient interface {
@@ -24,15 +25,16 @@ func NewClientFromUserConfig(auth auth.Auth) (DockerClient, error) {
 	userConfig, _ := user.NewClient()
 	featureFlags, _ := userConfig.LoadFeatureFlags()
 
-	if featureFlags.DockerClient == user.ConfigPackageClientDocker {
-		c, err := dockerclient.New(auth)
-		return c, err
-	} else if featureFlags.DockerClient == user.ConfigPackageClientMock {
-		c, err := dockerclient.New(auth)
-		return c, err
+	switch featureFlags.DockerClient {
+	case user.ConfigPackageClientLegacy:
+		return goclient.New(auth)
+	case user.ConfigPackageClientDocker:
+		return dockerclient.New(auth)
+	case user.ConfigPackageClientMock:
+		return &mockclient.DockerClient{}, nil
 	}
 
-	if featureFlags.DockerClient != "" && featureFlags.DockerClient != user.ConfigPackageClientLegacy {
+	if featureFlags.DockerClient != "" {
 		return nil, fmt.Errorf("unknown docker client: %s", featureFlags.DockerClient)
 	}
 

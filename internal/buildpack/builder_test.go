@@ -9,12 +9,12 @@ import (
 
 	"github.com/skpr/cli/internal/auth"
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
-	"github.com/skpr/cli/internal/docker/mock"
+	"github.com/skpr/cli/internal/docker/mockclient"
 )
 
 func TestBuild(t *testing.T) {
 
-	dockerClient := &mock.DockerClient{}
+	dockerClient := &mockclient.DockerClient{}
 	dockerClient.BuildWg.Add(4)
 	dockerClient.PushWg.Add(3)
 

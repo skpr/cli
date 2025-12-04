@@ -1,4 +1,4 @@
-package mock
+package mockclient
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-// DockerClient provides a mock dockerclient client.
+// DockerClient provides a mockclient client.
 type DockerClient struct {
 	BuildWg  sync.WaitGroup
 	PushWg   sync.WaitGroup
