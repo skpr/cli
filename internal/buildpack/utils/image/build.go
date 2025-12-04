@@ -5,8 +5,8 @@ import (
 )
 
 // Name of the Docker image.
-func Name(registry, version, suffix string) string {
-	return fmt.Sprintf("%s:%s", registry, Tag(version, suffix))
+func Name(registry, tag string) string {
+	return fmt.Sprintf("%s:%s", registry, tag)
 }
 
 // Tag assigned to a Docker image.
