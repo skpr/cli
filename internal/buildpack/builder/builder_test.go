@@ -40,22 +40,16 @@ func TestBuild(t *testing.T) {
 	want := BuildResponse{
 		Images: []Image{
 			{
-				Name:   "cli",
-				Type:   ImageTypeRuntime,
-				Tag:    "foo:222-cli",
-				Digest: "111222333444555666",
+				Name: "cli",
+				Tag:  "foo:222-cli",
 			},
 			{
-				Name:   "app",
-				Type:   ImageTypeRuntime,
-				Tag:    "foo:222-app",
-				Digest: "111222333444555666",
+				Name: "app",
+				Tag:  "foo:222-app",
 			},
 			{
-				Name:   "web",
-				Type:   ImageTypeRuntime,
-				Tag:    "foo:222-web",
-				Digest: "111222333444555666",
+				Name: "web",
+				Tag:  "foo:222-web",
 			},
 		},
 	}
