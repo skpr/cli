@@ -7,10 +7,9 @@ import (
 	"os"
 
 	"github.com/skpr/api/pb"
+	dockerbuilder "github.com/skpr/cli/internal/buildpack"
 
 	"github.com/skpr/cli/internal/auth"
-	dockerbuilder "github.com/skpr/cli/internal/buildpack/builder"
-	"github.com/skpr/cli/internal/buildpack/types"
 	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
 	"github.com/skpr/cli/internal/client"
@@ -26,7 +25,7 @@ import (
 type Command struct {
 	Region        string
 	PackageDir    string
-	Params        types.Params
+	Params        dockerbuilder.Params
 	PrintManifest bool
 	BuildArgs     []string
 	Debug         bool

@@ -9,7 +9,6 @@ import (
 	"github.com/moby/patternmatcher/ignorefile"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/skpr/cli/internal/buildpack/types"
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
 	"github.com/skpr/cli/internal/buildpack/utils/image"
 	"github.com/skpr/cli/internal/buildpack/utils/prefixer"
@@ -29,31 +28,31 @@ func NewBuilder(c docker.DockerClient) (*Builder, error) {
 }
 
 // Build the images.
-func (b *Builder) Build(ctx context.Context, dockerfiles finder.Dockerfiles, params types.Params) (types.BuildResponse, error) {
-	var resp types.BuildResponse
+func (b *Builder) Build(ctx context.Context, dockerfiles finder.Dockerfiles, params Params) (BuildResponse, error) {
+	var resp BuildResponse
 
 	excludePatterns, err := loadIgnoreFilePatterns(params.IgnoreFile)
 	if err != nil {
 		return resp, fmt.Errorf("failed to parse ignore file: %w", err)
 	}
 
-	compileDockerfile, ok := dockerfiles[types.ImageNameCompile]
+	compileDockerfile, ok := dockerfiles[ImageNameCompile]
 	if !ok {
-		return resp, fmt.Errorf("%q is a required dockerfile", types.ImageNameCompile)
+		return resp, fmt.Errorf("%q is a required dockerfile", ImageNameCompile)
 	}
 
 	// Build the build args.
 	buildArgs := params.BuildArgs
-	buildArgs[types.BuildArgVersion] = params.Version
+	buildArgs[BuildArgVersion] = params.Version
 
 	start := time.Now()
 
 	// Build the compile image first; it's the base for others.
-	compileRef := image.Name(params.Registry, params.Version, types.ImageNameCompile)
+	compileRef := image.Name(params.Registry, params.Version, ImageNameCompile)
 
 	fmt.Fprintf(params.Writer, "Building image: %s\n", compileRef)
 
-	localOut := prefixer.WrapWriterWithPrefixer(params.Writer, types.ImageNameCompile, start)
+	localOut := prefixer.WrapWriterWithPrefixer(params.Writer, ImageNameCompile, start)
 	err = b.Client.BuildImage(ctx, compileDockerfile, params.Context, compileRef, excludePatterns, buildArgs, localOut)
 	if err != nil {
 		return resp, err
@@ -62,10 +61,10 @@ func (b *Builder) Build(ctx context.Context, dockerfiles finder.Dockerfiles, par
 	fmt.Fprintf(params.Writer, "Built %s image in %s\n", compileRef, time.Since(start).Round(time.Second))
 
 	// Remove compile from list of dockerfiles.
-	delete(dockerfiles, types.ImageNameCompile)
+	delete(dockerfiles, ImageNameCompile)
 
 	// Adds compile image identifier to the runtime images as an arg.
-	buildArgs[types.BuildArgCompileImage] = compileRef
+	buildArgs[BuildArgCompileImage] = compileRef
 
 	// Prepare runtime builds.
 	type pendingBuild struct {
@@ -77,7 +76,7 @@ func (b *Builder) Build(ctx context.Context, dockerfiles finder.Dockerfiles, par
 	for imageName, dockerfile := range dockerfiles {
 		ref := image.Name(params.Registry, params.Version, imageName)
 		builds = append(builds, pendingBuild{name: imageName, imageRef: ref, dockerfile: dockerfile})
-		resp.Images = append(resp.Images, types.Image{
+		resp.Images = append(resp.Images, Image{
 			Name: imageName,
 			Tag:  ref,
 		})
