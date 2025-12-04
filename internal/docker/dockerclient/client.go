@@ -64,6 +64,7 @@ func (c *Client) PullImage(ctx context.Context, repository, tag string, writer i
 	if err != nil {
 		return err
 	}
+	defer rc.Close()
 
 	err = handleMessages(rc, writer)
 	if err != nil {
@@ -91,6 +92,7 @@ func (c *Client) PushImage(ctx context.Context, repository, tag string, writer i
 	if err != nil {
 		return err
 	}
+	defer rc.Close()
 
 	err = handleMessages(rc, writer)
 	if err != nil {
@@ -163,7 +165,11 @@ func handleMessages(in io.ReadCloser, out io.Writer) error {
 		}
 
 		// TODO: Possibly stream out progress.
-
+		if msg.Status != "" {
+			if _, err := io.WriteString(out, msg.Status+"\n"); err != nil {
+				return err
+			}
+		}
 		if msg.Stream != "" {
 			if _, err := io.WriteString(out, msg.Stream); err != nil {
 				return err
