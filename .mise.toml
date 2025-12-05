@@ -10,6 +10,8 @@ LGFLAGS="-extldflags '-static'"
 SKPR_API="localhost:50051?insecure=true"
 SKPR_SSH="localhost:2222"
 SKPR_PROJECT="drupal"
+SKPR_USERNAME="local"
+SKPR_PASSWORD="local"
 
 [tasks.vendor]
 description = "Vendor resets the main module's vendor directory to include all packages needed to build the application"

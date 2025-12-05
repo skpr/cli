@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/skpr/api/pb"
@@ -70,20 +69,20 @@ func (cmd *Command) Run(ctx context.Context) error {
 					for _, f := range t.FunctionCalls {
 						fcalls = append(fcalls, trace.FunctionCall{
 							Name:      f.Name,
-							StartTime: f.StartTime,
-							Elapsed:   f.ElapsedTime,
+							StartTime: int64(f.StartTime.Nanos),
+							Elapsed:   int64(f.Elapsed.Nanos),
 						})
 					}
 
 					p.Send(events.Trace{
-						IngestionTime: time.Unix(t.Metadata.StartTime, 0),
+						IngestionTime: t.Metadata.StartTime.AsTime(),
 						Trace: trace.Trace{
 							Metadata: trace.Metadata{
 								RequestID: t.Metadata.RequestId,
 								URI:       t.Metadata.Uri,
 								Method:    t.Metadata.Method,
-								StartTime: t.Metadata.StartTime,
-								EndTime:   t.Metadata.EndTime,
+								StartTime: int64(t.Metadata.StartTime.Nanos),
+								EndTime:   int64(t.Metadata.EndTime.Nanos),
 							},
 							FunctionCalls: fcalls,
 						},

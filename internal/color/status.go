@@ -24,6 +24,11 @@ func ApplyColorToString(orig string) string {
 		return gchalk.WithHex(HexGreen).Sprintf("%s", orig)
 	case "Overridden":
 		return gchalk.WithHex(HexYellow).Sprintf("%s", orig)
+	// Events.
+	case "Warning":
+		return gchalk.WithHex(HexYellow).Sprintf("%s", orig)
+	case "Error":
+		return gchalk.WithHex(HexRed).Sprintf("%s", orig)
 	}
 
 	return orig
