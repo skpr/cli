@@ -166,3 +166,8 @@ func (c Client) Daemon() pb.DaemonClient {
 func (c Client) Trace() pb.TraceClient {
 	return pb.NewTraceClient(c.conn)
 }
+
+// Events client operations.
+func (c Client) Events() pb.EventsClient {
+	return pb.NewEventsClient(c.conn)
+}

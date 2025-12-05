@@ -20,6 +20,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/dashboard"
 	deletecmd "github.com/skpr/cli/cmd/skpr/delete"
 	"github.com/skpr/cli/cmd/skpr/deploy"
+	eventscmd "github.com/skpr/cli/cmd/skpr/events"
 	execcmd "github.com/skpr/cli/cmd/skpr/exec"
 	"github.com/skpr/cli/cmd/skpr/filesystem"
 	"github.com/skpr/cli/cmd/skpr/info"
@@ -90,6 +91,7 @@ func main() {
 	cmd.AddCommand(dashboard.NewCommand())
 	cmd.AddCommand(deploy.NewCommand())
 	cmd.AddCommand(deletecmd.NewCommand())
+	cmd.AddCommand(eventscmd.NewCommand())
 	cmd.AddCommand(execcmd.NewCommand())
 	cmd.AddCommand(filesystem.NewCommand())
 	cmd.AddCommand(info.NewCommand())
