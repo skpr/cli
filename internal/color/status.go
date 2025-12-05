@@ -29,6 +29,8 @@ func ApplyColorToString(orig string) string {
 		return gchalk.WithHex(HexYellow).Sprintf("%s", orig)
 	case "Error":
 		return gchalk.WithHex(HexRed).Sprintf("%s", orig)
+	case "Critical":
+		return gchalk.WithHex(HexRed).Sprintf("%s", orig)
 	}
 
 	return orig

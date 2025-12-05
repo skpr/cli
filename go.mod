@@ -27,7 +27,7 @@ require (
 	github.com/notaryproject/notation-go v1.3.2
 	github.com/olekukonko/ts v0.0.0-20171002115256-78ecb04241c0
 	github.com/pkg/errors v0.9.1
-	github.com/skpr/api v1.3.1
+	github.com/skpr/api v1.3.2
 	github.com/skpr/compass v1.7.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/spf13/cobra v1.10.1
