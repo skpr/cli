@@ -3,6 +3,7 @@ package pkg
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/skpr/cli/internal/client/config/user"
 	skprcommand "github.com/skpr/cli/internal/command"
 	v1package "github.com/skpr/cli/internal/command/package"
 )
@@ -47,8 +48,15 @@ func NewCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&command.PrintManifest, "print-manifest", command.PrintManifest, "Print the manifest to stdout.")
 	cmd.Flags().StringVar(&command.PackageDir, "dir", ".skpr/package", "The location of the package directory.")
 	cmd.Flags().StringSliceVar(&command.BuildArgs, "build-arg", []string{}, "Additional build arguments.")
-	cmd.Flags().StringVar(&command.Platform, "platform", "linux/amd64", "The platform to build for.")
 	cmd.Flags().BoolVar(&command.Debug, "debug", command.Debug, "Enable debug output.")
+
+	// See if we're using default builder.
+	userConfig, _ := user.NewClient()
+	featureFlags, _ := userConfig.LoadFeatureFlags()
+
+	if featureFlags.DockerClient == user.ConfigPackageClientDocker {
+		cmd.Flags().StringVar(&command.Params.IgnoreFile, "ignore-file", ".dockerignore", "A file containing patterns to exclude from the build context.")
+	}
 
 	return cmd
 }
