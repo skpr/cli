@@ -80,6 +80,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Experimental commands.
+	featureFlags, err := userConfig.LoadFeatureFlags()
+	if err != nil {
+		fmt.Println("Failed to load feature flags:", err)
+		os.Exit(1)
+	}
+
 	skprcommand.AddGroupsToCommand(cmd)
 
 	cmd.AddCommand(alias.NewCommand())
@@ -99,8 +106,8 @@ func main() {
 	cmd.AddCommand(login.NewCommand())
 	cmd.AddCommand(logout.NewCommand())
 	cmd.AddCommand(logs.NewCommand())
-	cmd.AddCommand(mysql.NewCommand())
-	cmd.AddCommand(pkg.NewCommand())
+	cmd.AddCommand(mysql.NewCommand(featureFlags))
+	cmd.AddCommand(pkg.NewCommand(featureFlags))
 	cmd.AddCommand(purge.NewCommand())
 	cmd.AddCommand(release.NewCommand())
 	cmd.AddCommand(restore.NewCommand())
@@ -115,13 +122,6 @@ func main() {
 	// Hide the completions command.
 	cmd.CompletionOptions = cobra.CompletionOptions{
 		HiddenDefaultCmd: true,
-	}
-
-	// Experimental commands.
-	featureFlags, err := userConfig.LoadFeatureFlags()
-	if err != nil {
-		fmt.Println("Failed to load feature flags:", err)
-		os.Exit(1)
 	}
 
 	if featureFlags.Trace {

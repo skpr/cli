@@ -14,6 +14,7 @@ import (
 	"github.com/skpr/cli/internal/buildpack/utils/finder"
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/client/config"
+	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/skpr/cli/internal/docker"
 	"github.com/skpr/cli/internal/slice"
 )
@@ -26,6 +27,7 @@ type Command struct {
 	PrintManifest bool
 	BuildArgs     []string
 	Debug         bool
+	FeatureFlags  user.ConfigExperimental
 }
 
 // Run the command.
@@ -96,7 +98,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	dc, err := docker.NewClientFromUserConfig(cmd.Params.Auth)
+	dc, err := docker.NewClientFromUserConfig(cmd.Params.Auth, cmd.FeatureFlags)
 	if err != nil {
 		return err
 	}

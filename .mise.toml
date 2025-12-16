@@ -32,7 +32,6 @@ depends = ["vendor"]
 [tasks."lint"]
 description = "Linting automatically checks code for errors and style issues"
 run = "golangci-lint run"
-depends = ["tidy"]
 
 [tasks.test]
 description = "Checks to verify code correctness"

@@ -24,7 +24,7 @@ var (
 )
 
 // NewCommand creates a new cobra.Command for 'package' sub command
-func NewCommand() *cobra.Command {
+func NewCommand(featureFlags user.ConfigExperimental) *cobra.Command {
 	command := v1package.Command{}
 
 	cmd := &cobra.Command{
@@ -38,6 +38,7 @@ func NewCommand() *cobra.Command {
 		GroupID:               skprcommand.GroupLifecycle,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Params.Version = args[0]
+			command.FeatureFlags = featureFlags
 			return command.Run(cmd.Context())
 		},
 	}
@@ -49,10 +50,6 @@ func NewCommand() *cobra.Command {
 	cmd.Flags().StringVar(&command.PackageDir, "dir", ".skpr/package", "The location of the package directory.")
 	cmd.Flags().StringSliceVar(&command.BuildArgs, "build-arg", []string{}, "Additional build arguments.")
 	cmd.Flags().BoolVar(&command.Debug, "debug", command.Debug, "Enable debug output.")
-
-	// See if we're using default builder.
-	userConfig, _ := user.NewClient()
-	featureFlags, _ := userConfig.LoadFeatureFlags()
 
 	if featureFlags.DockerClient == user.ConfigPackageClientDocker {
 		cmd.Flags().StringVar(&command.Params.IgnoreFile, "ignore-file", ".dockerignore", "A file containing patterns to exclude from the build context.")

@@ -13,6 +13,7 @@ import (
 	"github.com/skpr/cli/internal/auth"
 	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
 	"github.com/skpr/cli/internal/client"
+	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/skpr/cli/internal/docker"
 	skprlog "github.com/skpr/cli/internal/log"
 )
@@ -29,10 +30,11 @@ type Command struct {
 
 // Params provided to this command.
 type Params struct {
-	Environment string
-	Databases   []string
-	ID          string
-	Tag         string
+	Environment  string
+	Databases    []string
+	ID           string
+	Tag          string
+	FeatureFlags user.ConfigExperimental
 }
 
 // Run the command.
@@ -70,7 +72,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	c, err := docker.NewClientFromUserConfig(auth)
+	c, err := docker.NewClientFromUserConfig(auth, cmd.Params.FeatureFlags)
 	if err != nil {
 		return errors.Wrap(err, "failed to create Docker client")
 	}
