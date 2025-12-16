@@ -22,18 +22,18 @@ type DockerClient interface {
 type DockerClientId string
 
 const (
-	ClientIdLegacy DockerClientId = "legacy"
-	ClientIdDocker DockerClientId = "docker"
-	ClientIdMock   DockerClientId = "mock"
+	DockerClientIdLegacy DockerClientId = "legacy"
+	DockerClientIdDocker DockerClientId = "docker"
+	DockerClientIdMock   DockerClientId = "mock"
 )
 
 func NewClientFromUserConfig(auth auth.Auth, clientId DockerClientId) (DockerClient, error) {
 	switch clientId {
-	case ClientIdLegacy:
+	case DockerClientIdLegacy:
 		return goclient.New(auth)
-	case ClientIdDocker:
+	case DockerClientIdDocker:
 		return dockerclient.New(auth)
-	case ClientIdMock:
+	case DockerClientIdMock:
 		return mockclient.New(), nil
 	}
 

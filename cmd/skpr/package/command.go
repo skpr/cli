@@ -51,7 +51,7 @@ func NewCommand(clientId docker.DockerClientId) *cobra.Command {
 	cmd.Flags().StringSliceVar(&command.BuildArgs, "build-arg", []string{}, "Additional build arguments.")
 	cmd.Flags().BoolVar(&command.Debug, "debug", command.Debug, "Enable debug output.")
 
-	if clientId == docker.ClientIdDocker {
+	if clientId == docker.DockerClientIdDocker {
 		cmd.Flags().StringVar(&command.Params.IgnoreFile, "ignore-file", ".dockerignore", "A file containing patterns to exclude from the build context.")
 	}
 
