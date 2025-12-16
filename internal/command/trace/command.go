@@ -3,15 +3,14 @@ package trace
 import (
 	"context"
 	"fmt"
-	"io"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/skpr/api/pb"
-	"github.com/skpr/compass/cli/app"
-	"github.com/skpr/compass/cli/app/events"
-	applogger "github.com/skpr/compass/cli/app/logger"
-	"github.com/skpr/compass/trace"
+	"github.com/skpr/compass/tracing/cli/app"
+	"github.com/skpr/compass/tracing/cli/app/events"
+	applogger "github.com/skpr/compass/tracing/cli/app/logger"
+	"github.com/skpr/compass/tracing/trace"
 	"golang.org/x/sync/errgroup"
+	"io"
 
 	"github.com/skpr/cli/internal/client"
 )
@@ -82,7 +81,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 								URI:       t.Metadata.Uri,
 								Method:    t.Metadata.Method,
 								StartTime: int64(t.Metadata.StartTime.Nanos),
-								EndTime:   int64(t.Metadata.EndTime.Nanos),
+								EndTime:   t.Metadata.EndTime.Seconds,
 							},
 							FunctionCalls: fcalls,
 						},

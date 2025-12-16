@@ -7,8 +7,8 @@ import (
 	"os/exec"
 	"strings"
 
+	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/fang"
-	"github.com/charmbracelet/lipgloss/v2"
 	"github.com/spf13/cobra"
 
 	"github.com/skpr/cli/cmd/skpr/alias"
