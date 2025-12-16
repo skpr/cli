@@ -81,7 +81,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 								URI:       t.Metadata.Uri,
 								Method:    t.Metadata.Method,
 								StartTime: int64(t.Metadata.StartTime.Nanos),
-								EndTime:   t.Metadata.EndTime.Seconds,
+								EndTime:   int64(t.Metadata.EndTime.Nanos),
 							},
 							FunctionCalls: fcalls,
 						},
