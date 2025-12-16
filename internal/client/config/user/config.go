@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 
 	"gopkg.in/yaml.v2"
+
+	"github.com/skpr/cli/internal/docker"
 )
 
 // Config represents the persistent user configuration.
@@ -16,17 +18,9 @@ type Config struct {
 
 // ConfigExperimental holds experimental feature flags.
 type ConfigExperimental struct {
-	Trace        bool                 `yaml:"trace,omitempty"`
-	DockerClient ConfigPackageBuilder `yaml:"docker-client,omitempty"`
+	Trace        bool                  `yaml:"trace,omitempty"`
+	DockerClient docker.DockerClientId `yaml:"docker-client,omitempty"`
 }
-
-type ConfigPackageBuilder string
-
-const (
-	ConfigPackageClientLegacy ConfigPackageBuilder = "legacy"
-	ConfigPackageClientDocker ConfigPackageBuilder = "docker"
-	ConfigPackageClientMock   ConfigPackageBuilder = "mock"
-)
 
 // Aliases maps alias names to commands.
 type Aliases map[string]string

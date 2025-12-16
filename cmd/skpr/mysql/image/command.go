@@ -6,7 +6,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/mysql/image/create"
 	"github.com/skpr/cli/cmd/skpr/mysql/image/list"
 	"github.com/skpr/cli/cmd/skpr/mysql/image/pull"
-	"github.com/skpr/cli/internal/client/config/user"
+	"github.com/skpr/cli/internal/docker"
 )
 
 var (
@@ -21,7 +21,7 @@ var (
 )
 
 // NewCommand creates a new cobra.Command for 'image' sub command
-func NewCommand(featureFlags user.ConfigExperimental) *cobra.Command {
+func NewCommand(clientId docker.DockerClientId) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "image",
 		DisableFlagsInUseLine: true,
@@ -32,7 +32,7 @@ func NewCommand(featureFlags user.ConfigExperimental) *cobra.Command {
 
 	cmd.AddCommand(create.NewCommand())
 	cmd.AddCommand(list.NewCommand())
-	cmd.AddCommand(pull.NewCommand(featureFlags))
+	cmd.AddCommand(pull.NewCommand(clientId))
 
 	return cmd
 }

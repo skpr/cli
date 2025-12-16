@@ -6,8 +6,8 @@ import (
 	"github.com/skpr/cli/cmd/skpr/mysql/backup"
 	img "github.com/skpr/cli/cmd/skpr/mysql/image"
 	"github.com/skpr/cli/cmd/skpr/mysql/restore"
-	"github.com/skpr/cli/internal/client/config/user"
 	skprcommand "github.com/skpr/cli/internal/command"
+	"github.com/skpr/cli/internal/docker"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 )
 
 // NewCommand creates a new cobra.Command for 'mysql' sub command
-func NewCommand(featureFlags user.ConfigExperimental) *cobra.Command {
+func NewCommand(clientId docker.DockerClientId) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "mysql",
 		DisableFlagsInUseLine: true,
@@ -24,7 +24,7 @@ func NewCommand(featureFlags user.ConfigExperimental) *cobra.Command {
 		GroupID:               skprcommand.GroupDataStorage,
 	}
 
-	cmd.AddCommand(img.NewCommand(featureFlags))
+	cmd.AddCommand(img.NewCommand(clientId))
 	cmd.AddCommand(backup.NewCommand())
 	cmd.AddCommand(restore.NewCommand())
 

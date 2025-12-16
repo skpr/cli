@@ -3,8 +3,8 @@ package pull
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/skpr/cli/internal/client/config/user"
 	v1pull "github.com/skpr/cli/internal/command/mysql/image/pull"
+	"github.com/skpr/cli/internal/docker"
 )
 
 var (
@@ -16,7 +16,7 @@ var (
 )
 
 // NewCommand creates a new cobra.Command for 'list' sub command
-func NewCommand(featureFlags user.ConfigExperimental) *cobra.Command {
+func NewCommand(clientId docker.DockerClientId) *cobra.Command {
 	command := v1pull.Command{}
 
 	cmd := &cobra.Command{
@@ -28,7 +28,7 @@ func NewCommand(featureFlags user.ConfigExperimental) *cobra.Command {
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Params.Environment = args[0]
-			command.Params.FeatureFlags = featureFlags
+			command.ClientId = clientId
 
 			if len(args) > 1 {
 				command.Params.Databases = args[1:]

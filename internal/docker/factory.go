@@ -6,7 +6,6 @@ import (
 	"io"
 
 	"github.com/skpr/cli/internal/auth"
-	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/skpr/cli/internal/docker/dockerclient"
 	"github.com/skpr/cli/internal/docker/goclient"
 	"github.com/skpr/cli/internal/docker/mockclient"
@@ -20,18 +19,26 @@ type DockerClient interface {
 	BuildImage(ctx context.Context, dockerfile string, dockerContext string, ref string, excludePatterns []string, buildArgs map[string]string, writer io.Writer) error
 }
 
-func NewClientFromUserConfig(auth auth.Auth, featureFlags user.ConfigExperimental) (DockerClient, error) {
-	switch featureFlags.DockerClient {
-	case user.ConfigPackageClientLegacy:
+type DockerClientId string
+
+const (
+	ClientIdLegacy DockerClientId = "legacy"
+	ClientIdDocker DockerClientId = "docker"
+	ClientIdMock   DockerClientId = "mock"
+)
+
+func NewClientFromUserConfig(auth auth.Auth, clientId DockerClientId) (DockerClient, error) {
+	switch clientId {
+	case ClientIdLegacy:
 		return goclient.New(auth)
-	case user.ConfigPackageClientDocker:
+	case ClientIdDocker:
 		return dockerclient.New(auth)
-	case user.ConfigPackageClientMock:
+	case ClientIdMock:
 		return mockclient.New(), nil
 	}
 
-	if featureFlags.DockerClient != "" {
-		return nil, fmt.Errorf("unknown docker client: %s", featureFlags.DockerClient)
+	if clientId != "" {
+		return nil, fmt.Errorf("unknown docker client: %s", clientId)
 	}
 
 	return goclient.New(auth)
