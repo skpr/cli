@@ -6,13 +6,12 @@ import (
 	"io"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"golang.org/x/sync/errgroup"
-
 	"github.com/skpr/api/pb"
 	"github.com/skpr/compass/tracing/cli/app"
 	"github.com/skpr/compass/tracing/cli/app/events"
 	applogger "github.com/skpr/compass/tracing/cli/app/logger"
 	"github.com/skpr/compass/tracing/trace"
+	"golang.org/x/sync/errgroup"
 
 	"github.com/skpr/cli/internal/client"
 )
