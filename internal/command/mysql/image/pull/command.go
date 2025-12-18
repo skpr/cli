@@ -6,13 +6,14 @@ import (
 	"log/slog"
 	"os"
 
-	docker "github.com/fsouza/go-dockerclient"
 	"github.com/gosuri/uilive"
 	"github.com/pkg/errors"
 	"github.com/skpr/api/pb"
 
+	"github.com/skpr/cli/internal/auth"
 	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
 	"github.com/skpr/cli/internal/client"
+	"github.com/skpr/cli/internal/docker"
 	skprlog "github.com/skpr/cli/internal/log"
 )
 
@@ -23,7 +24,8 @@ const (
 
 // Command to pull a database image.
 type Command struct {
-	Params Params
+	Params   Params
+	ClientId docker.DockerClientId
 }
 
 // Params provided to this command.
@@ -56,7 +58,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to get repository: %w", err)
 	}
 
-	auth := docker.AuthConfiguration{
+	auth := auth.Auth{
 		Username: client.Credentials.Username,
 		Password: client.Credentials.Password,
 	}
@@ -69,13 +71,14 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 	}
 
-	dockerclient, err := docker.NewClientFromEnv()
+	c, err := docker.NewClientFromUserConfig(auth, cmd.ClientId)
 	if err != nil {
-		return errors.Wrap(err, "failed to setup Docker client")
+		return errors.Wrap(err, "failed to create Docker client")
 	}
 
 	writer := uilive.New()
 	writer.Start()
+	defer writer.Stop()
 
 	for _, database := range cmd.Params.Databases {
 		tag := fmt.Sprintf("%s-%s", database, DefaultTagSuffix)
@@ -85,48 +88,39 @@ func (cmd *Command) Run(ctx context.Context) error {
 		logger.Info(fmt.Sprintf("Pulling: %s", imageName))
 
 		// Lookup the ID of the current image so we can delete it after we pull the image one.
-		cleanup, err := dockerclient.InspectImage(imageName)
-		if err != nil && !errors.Is(err, docker.ErrNoSuchImage) {
-			return err
-		}
-
-		opts := docker.PullImageOptions{
-			OutputStream: writer,
-			Repository:   getRepositoryResp.Repository,
-			Tag:          tag,
-		}
-
-		err = dockerclient.PullImage(opts, auth)
+		cleanupId, err := c.ImageId(context.TODO(), imageName)
 		if err != nil {
 			return err
 		}
 
-		// Check if there was an old images which
-		if cleanup == nil {
+		err = c.PullImage(context.TODO(), getRepositoryResp.Repository, tag, writer)
+		if err != nil {
+			return err
+		}
+
+		currentId, err := c.ImageId(context.TODO(), imageName)
+		if err != nil {
+			return err
+		}
+
+		if cleanupId == currentId {
+			logger.Info(fmt.Sprintf("Image is up to date: %s", imageName))
+		} else {
+			logger.Info(fmt.Sprintf("Successfully pulled image: %s", imageName))
+		}
+
+		// If it's a fresh image or the same image as the current one, skip deleting it.
+		if cleanupId == "" || cleanupId == currentId {
 			continue
 		}
 
-		current, err := dockerclient.InspectImage(imageName)
+		logger.Info(fmt.Sprintf("Cleaning up old image with: %s", cleanupId))
+
+		err = c.RemoveImage(context.TODO(), cleanupId)
 		if err != nil {
 			return err
 		}
-
-		// Don't cleanup the old image if it was the latest and never needed to be updated.
-		if cleanup.ID == current.ID {
-			continue
-		}
-
-		logger.Info(fmt.Sprintf("Cleaning up old image with: %s", cleanup.ID))
-
-		err = dockerclient.RemoveImage(cleanup.ID)
-		if err != nil {
-			return err
-		}
-
-		logger.Info(fmt.Sprintf("Successfully pulled image: %s:%s", getRepositoryResp.Repository, tag))
 	}
-
-	writer.Stop()
 
 	return nil
 }

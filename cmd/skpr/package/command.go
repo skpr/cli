@@ -5,6 +5,7 @@ import (
 
 	skprcommand "github.com/skpr/cli/internal/command"
 	v1package "github.com/skpr/cli/internal/command/package"
+	"github.com/skpr/cli/internal/docker"
 )
 
 var (
@@ -23,7 +24,7 @@ var (
 )
 
 // NewCommand creates a new cobra.Command for 'package' sub command
-func NewCommand() *cobra.Command {
+func NewCommand(clientId docker.DockerClientId) *cobra.Command {
 	command := v1package.Command{}
 
 	cmd := &cobra.Command{
@@ -37,6 +38,7 @@ func NewCommand() *cobra.Command {
 		GroupID:               skprcommand.GroupLifecycle,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Params.Version = args[0]
+			command.ClientId = clientId
 			return command.Run(cmd.Context())
 		},
 	}
@@ -47,8 +49,11 @@ func NewCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&command.PrintManifest, "print-manifest", command.PrintManifest, "Print the manifest to stdout.")
 	cmd.Flags().StringVar(&command.PackageDir, "dir", ".skpr/package", "The location of the package directory.")
 	cmd.Flags().StringSliceVar(&command.BuildArgs, "build-arg", []string{}, "Additional build arguments.")
-	cmd.Flags().StringVar(&command.Platform, "platform", "linux/amd64", "The platform to build for.")
 	cmd.Flags().BoolVar(&command.Debug, "debug", command.Debug, "Enable debug output.")
+
+	if clientId == docker.DockerClientIdDocker {
+		cmd.Flags().StringVar(&command.Params.IgnoreFile, "ignore-file", ".dockerignore", "A file containing patterns to exclude from the build context.")
+	}
 
 	return cmd
 }

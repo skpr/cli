@@ -5,16 +5,17 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/skpr/cli/internal/buildpack/builder"
 )
+
+// Dockerfiles the dockerclient build files.
+type Dockerfiles map[string]string
 
 // dockerfileSuffix is the suffix for legacy dockerfiles.
 const dockerfileSuffix = ".dockerfile"
 
 // FindDockerfiles finds the dockerfiles in the specified directory.
-func FindDockerfiles(packageDir string) (buildpack.Dockerfiles, error) {
-	dockerfiles := make(buildpack.Dockerfiles)
+func FindDockerfiles(packageDir string) (Dockerfiles, error) {
+	dockerfiles := make(Dockerfiles)
 	err := filepath.Walk(packageDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return fmt.Errorf("failed accessing path %q: %w", path, err)
@@ -34,6 +35,14 @@ func FindDockerfiles(packageDir string) (buildpack.Dockerfiles, error) {
 		}
 		return nil
 	})
+
+	// Print deprecation notice.
+	for key, path := range dockerfiles {
+		if strings.HasSuffix(path, ".dockerfile") {
+			fmt.Printf("[DEPRECATED] Dockerfile location %q is deprecated. Use \"%s/%s/Dockerfile\" instead.\n", path, filepath.Dir(path), key)
+		}
+	}
+
 	if err != nil {
 		return dockerfiles, err
 	}
