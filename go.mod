@@ -7,11 +7,11 @@ require (
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/aquasecurity/table v1.11.0
 	github.com/aws/aws-sdk-go-v2 v1.41.0
-	github.com/aws/aws-sdk-go-v2/config v1.32.5
-	github.com/aws/aws-sdk-go-v2/credentials v1.19.5
+	github.com/aws/aws-sdk-go-v2/config v1.32.6
+	github.com/aws/aws-sdk-go-v2/credentials v1.19.6
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentity v1.33.16
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.57.17
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.54.4
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.55.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/fang v0.4.4
 	github.com/containerd/errdefs v1.0.0
@@ -26,7 +26,7 @@ require (
 	github.com/jinzhu/now v1.1.5
 	github.com/jwalton/gchalk v1.3.0
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
-	github.com/moby/go-archive v0.1.0
+	github.com/moby/go-archive v0.2.0
 	github.com/moby/moby/api v1.52.0
 	github.com/moby/patternmatcher v0.6.0
 	github.com/olekukonko/ts v0.0.0-20171002115256-78ecb04241c0
@@ -41,7 +41,7 @@ require (
 	golang.org/x/oauth2 v0.34.0
 	golang.org/x/sync v0.19.0
 	golang.org/x/term v0.38.0
-	google.golang.org/grpc v1.77.0
+	google.golang.org/grpc v1.78.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -56,7 +56,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.16 // indirect
 	github.com/aws/aws-sdk-go-v2/service/signin v1.0.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.30.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.30.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.41.5 // indirect
 	github.com/aws/smithy-go v1.24.0 // indirect
