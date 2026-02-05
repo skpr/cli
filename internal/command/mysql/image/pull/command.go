@@ -80,9 +80,17 @@ func (cmd *Command) Run(ctx context.Context) error {
 	writer.Start()
 	defer writer.Stop()
 
-	for _, database := range cmd.Params.Databases {
-		tag := fmt.Sprintf("%s-%s", database, DefaultTagSuffix)
+	tags := []string{}
+	if cmd.Params.ID != "" {
+		tags = append(tags, cmd.Params.ID)
+	} else {
+		for _, database := range cmd.Params.Databases {
+			tag := fmt.Sprintf("%s-%s", database, DefaultTagSuffix)
+			tags = append(tags, tag)
+		}
+	}
 
+	for _, tag := range tags {
 		imageName := fmt.Sprintf("%s:%s", getRepositoryResp.Repository, tag)
 
 		logger.Info(fmt.Sprintf("Pulling: %s", imageName))
