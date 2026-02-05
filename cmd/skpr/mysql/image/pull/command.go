@@ -40,5 +40,7 @@ func NewCommand(clientId docker.DockerClientId) *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVar(&command.Params.ID, "id", command.Params.ID, "A specific image ID to pull")
+
 	return cmd
 }
