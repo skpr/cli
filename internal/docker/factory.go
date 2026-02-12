@@ -41,5 +41,5 @@ func NewClientFromUserConfig(auth auth.Auth, clientId DockerClientId) (DockerCli
 		return nil, fmt.Errorf("unknown docker client: %s", clientId)
 	}
 
-	return goclient.New(auth)
+	return dockerclient.New(auth)
 }
