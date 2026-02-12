@@ -8,13 +8,13 @@ import (
 
 	"github.com/skpr/api/pb"
 
-	"github.com/skpr/cli/internal/auth"
-	"github.com/skpr/cli/internal/buildpack"
-	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
-	"github.com/skpr/cli/internal/buildpack/utils/finder"
+	buildpack2 "github.com/skpr/cli/containers/buildpack"
+	"github.com/skpr/cli/containers/buildpack/utils/aws/ecr"
+	"github.com/skpr/cli/containers/buildpack/utils/finder"
+	"github.com/skpr/cli/containers/docker"
+	"github.com/skpr/cli/containers/docker/types"
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/client/config"
-	"github.com/skpr/cli/internal/docker"
 	"github.com/skpr/cli/internal/slice"
 )
 
@@ -22,7 +22,7 @@ import (
 type Command struct {
 	Region        string
 	PackageDir    string
-	Params        buildpack.Params
+	Params        buildpack2.Params
 	PrintManifest bool
 	BuildArgs     []string
 	Debug         bool
@@ -39,7 +39,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 		cmd.Params.Registry = fmt.Sprintf("localhost/skpr/%s", config.Project)
 
-		cmd.Params.Auth = auth.Auth{}
+		cmd.Params.Auth = types.Auth{}
 	} else {
 		ctx, client, err := client.New(ctx)
 		if err != nil {
@@ -64,7 +64,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 		cmd.Params.Registry = project.Registry.Application
 
-		cmd.Params.Auth = auth.Auth{
+		cmd.Params.Auth = types.Auth{
 			Username: client.Credentials.Username,
 			Password: client.Credentials.Password,
 		}
@@ -102,7 +102,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return err
 	}
 
-	builder, err := buildpack.NewBuilder(dc)
+	builder, err := buildpack2.NewBuilder(dc)
 	if err != nil {
 		return err
 	}

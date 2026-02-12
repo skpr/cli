@@ -7,7 +7,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/skpr/cli/internal/docker"
+	"github.com/skpr/cli/containers/docker"
 )
 
 // Config represents the persistent user configuration.

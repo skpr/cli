@@ -3,8 +3,8 @@ package pull
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/skpr/cli/containers/docker"
 	v1pull "github.com/skpr/cli/internal/command/mysql/image/pull"
-	"github.com/skpr/cli/internal/docker"
 )
 
 var (

@@ -10,10 +10,10 @@ import (
 	"github.com/pkg/errors"
 	"github.com/skpr/api/pb"
 
-	"github.com/skpr/cli/internal/auth"
-	"github.com/skpr/cli/internal/buildpack/utils/aws/ecr"
+	"github.com/skpr/cli/containers/buildpack/utils/aws/ecr"
+	"github.com/skpr/cli/containers/docker"
+	"github.com/skpr/cli/containers/docker/types"
 	"github.com/skpr/cli/internal/client"
-	"github.com/skpr/cli/internal/docker"
 	skprlog "github.com/skpr/cli/internal/log"
 )
 
@@ -58,7 +58,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to get repository: %w", err)
 	}
 
-	auth := auth.Auth{
+	auth := types.Auth{
 		Username: client.Credentials.Username,
 		Password: client.Credentials.Password,
 	}

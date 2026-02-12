@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/skpr/cli/internal/auth"
-	"github.com/skpr/cli/internal/docker/dockerclient"
-	"github.com/skpr/cli/internal/docker/goclient"
-	"github.com/skpr/cli/internal/docker/mockclient"
+	"github.com/skpr/cli/containers/docker/dockerclient"
+	"github.com/skpr/cli/containers/docker/goclient"
+	"github.com/skpr/cli/containers/docker/mockclient"
+	"github.com/skpr/cli/containers/docker/types"
 )
 
 type DockerClient interface {
@@ -27,7 +27,7 @@ const (
 	DockerClientIdMock   DockerClientId = "mock"
 )
 
-func NewClientFromUserConfig(auth auth.Auth, clientId DockerClientId) (DockerClient, error) {
+func NewClientFromUserConfig(auth types.Auth, clientId DockerClientId) (DockerClient, error) {
 	switch clientId {
 	case DockerClientIdLegacy:
 		return goclient.New(auth)

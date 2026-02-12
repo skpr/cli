@@ -3,9 +3,9 @@ package pkg
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/skpr/cli/containers/docker"
 	skprcommand "github.com/skpr/cli/internal/command"
 	v1package "github.com/skpr/cli/internal/command/package"
-	"github.com/skpr/cli/internal/docker"
 )
 
 var (

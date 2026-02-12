@@ -9,10 +9,10 @@ import (
 	"github.com/moby/patternmatcher/ignorefile"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/skpr/cli/internal/buildpack/utils/finder"
-	"github.com/skpr/cli/internal/buildpack/utils/image"
-	"github.com/skpr/cli/internal/buildpack/utils/prefixer"
-	"github.com/skpr/cli/internal/docker"
+	"github.com/skpr/cli/containers/buildpack/utils/finder"
+	"github.com/skpr/cli/containers/buildpack/utils/image"
+	"github.com/skpr/cli/containers/buildpack/utils/prefixer"
+	"github.com/skpr/cli/containers/docker"
 )
 
 // Builder is the docker image builder.

@@ -7,15 +7,15 @@ import (
 	dockerclient "github.com/fsouza/go-dockerclient"
 	"github.com/pkg/errors"
 
-	"github.com/skpr/cli/internal/auth"
+	"github.com/skpr/cli/containers/docker/types"
 )
 
 type Client struct {
-	Auth   auth.Auth
+	Auth   types.Auth
 	Client *dockerclient.Client
 }
 
-func New(auth auth.Auth) (*Client, error) {
+func New(auth types.Auth) (*Client, error) {
 	client, err := dockerclient.NewClientFromEnv()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to setup Docker client")

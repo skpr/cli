@@ -15,16 +15,16 @@ import (
 	"github.com/moby/moby/api/types/jsonstream"
 	"github.com/pkg/errors"
 
-	"github.com/skpr/cli/internal/auth"
-	"github.com/skpr/cli/internal/buildpack/utils/image"
+	"github.com/skpr/cli/containers/buildpack/utils/image"
+	"github.com/skpr/cli/containers/docker/types"
 )
 
 type Client struct {
-	Auth   auth.Auth
+	Auth   types.Auth
 	Client *dockclient.Client
 }
 
-func New(auth auth.Auth) (*Client, error) {
+func New(auth types.Auth) (*Client, error) {
 	client, err := dockclient.NewClientWithOpts(dockclient.FromEnv, dockclient.WithAPIVersionNegotiation())
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to setup Docker client")

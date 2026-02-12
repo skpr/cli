@@ -3,7 +3,7 @@ package buildpack
 import (
 	"io"
 
-	"github.com/skpr/cli/internal/auth"
+	"github.com/skpr/cli/containers/docker/types"
 )
 
 // BuildResponse is returned by the build operation.
@@ -21,7 +21,7 @@ type Image struct {
 
 // Params used for building the applications.
 type Params struct {
-	Auth       auth.Auth
+	Auth       types.Auth
 	Writer     io.Writer
 	Context    string
 	IgnoreFile string

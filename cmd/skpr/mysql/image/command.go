@@ -6,7 +6,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/mysql/image/create"
 	"github.com/skpr/cli/cmd/skpr/mysql/image/list"
 	"github.com/skpr/cli/cmd/skpr/mysql/image/pull"
-	"github.com/skpr/cli/internal/docker"
+	"github.com/skpr/cli/containers/docker"
 )
 
 var (
