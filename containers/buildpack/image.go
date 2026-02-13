@@ -13,6 +13,6 @@ type Image struct {
 }
 
 // Reference returns the image reference.
-func (i *Image) Reference() string {
-	return fmt.Sprintf("%d:%d", i.Name, i.Tag)
+func (in *Image) Reference() string {
+	return fmt.Sprintf("%s:%s", in.Name, in.Tag)
 }
