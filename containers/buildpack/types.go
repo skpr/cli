@@ -11,14 +11,6 @@ type BuildResponse struct {
 	Images []Image `json:"images"`
 }
 
-// Image build has been built.
-type Image struct {
-	// Name of the image.
-	Name string `json:"name"`
-	// Tag used to push image.
-	Tag string `json:"tag"`
-}
-
 // Params used for building the applications.
 type Params struct {
 	Auth       types.Auth
