@@ -1,9 +1,5 @@
 package buildpack
 
-import (
-	"fmt"
-)
-
 // Image build has been built.
 type Image struct {
 	// Name of the image.
@@ -14,5 +10,6 @@ type Image struct {
 
 // Reference returns the image reference.
 func (in *Image) Reference() string {
-	return fmt.Sprintf("%s:%s", in.Name, in.Tag)
+	// Known issue with naming of struct attributes. Keep Reference for downstream.
+	return in.Tag
 }
