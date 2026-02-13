@@ -12,7 +12,7 @@ type Image struct {
 	Tag string `json:"tag"`
 }
 
-// Refernce returns the image reference.
-func (i *Image) Refernce() string {
+// Reference returns the image reference.
+func (i *Image) Reference() string {
 	return fmt.Sprintf("%d:%d", i.Name, i.Tag)
 }
