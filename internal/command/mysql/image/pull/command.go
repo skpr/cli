@@ -65,7 +65,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 	// @todo, Consider abstracting this if another registry + credentials pair is required.
 	if ecr.IsRegistry(getRepositoryResp.Repository) {
-		auth, err = ecr.UpgradeAuth(ctx, getRepositoryResp.Repository, client.Credentials)
+		auth, err = ecr.UpgradeAuth(ctx, getRepositoryResp.Repository, auth)
 		if err != nil {
 			return errors.Wrap(err, "failed to upgrade AWS ECR authentication")
 		}
