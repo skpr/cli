@@ -11,7 +11,6 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/skpr/cli/containers/docker/types"
-	skprcredentials "github.com/skpr/cli/internal/client/credentials"
 )
 
 // Username to pass to the Docker registry.
@@ -25,7 +24,7 @@ func IsRegistry(registry string) bool {
 
 // UpgradeAuth to use an AWS IAM token for authentication..
 // https://docs.aws.amazon.com/cli/latest/reference/ecr/get-login.html
-func UpgradeAuth(ctx context.Context, url string, creds skprcredentials.Credentials) (types.Auth, error) {
+func UpgradeAuth(ctx context.Context, url string, creds types.Auth) (types.Auth, error) {
 	var auth types.Auth
 
 	region, err := extractRegionFromURL(url)
@@ -36,7 +35,7 @@ func UpgradeAuth(ctx context.Context, url string, creds skprcredentials.Credenti
 	cfg, err := config.LoadDefaultConfig(
 		ctx,
 		config.WithRegion(region),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(creds.Username, creds.Password, creds.Session)),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(creds.Username, creds.Password, "")),
 	)
 
 	if err != nil {
