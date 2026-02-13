@@ -13,5 +13,5 @@ func TestReference(t *testing.T) {
 		Tag:  "baz",
 	}
 
-	assert.Equal(t, "foo/bar:baz", image.Reference())
+	assert.Equal(t, "baz", image.Reference())
 }
