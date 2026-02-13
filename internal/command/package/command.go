@@ -70,7 +70,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 
 		if ecr.IsRegistry(cmd.Params.Registry) {
-			auth, err := ecr.UpgradeAuth(ctx, cmd.Params.Registry, client.Credentials)
+			auth, err := ecr.UpgradeAuth(ctx, cmd.Params.Registry, cmd.Params.Auth)
 			if err != nil {
 				return fmt.Errorf("failed to upgrade AWS ECR authentication: %w", err)
 			}
