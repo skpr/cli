@@ -35,7 +35,7 @@ func UpgradeAuth(ctx context.Context, url string, creds types.Auth) (types.Auth,
 	cfg, err := config.LoadDefaultConfig(
 		ctx,
 		config.WithRegion(region),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(creds.Username, creds.Password, "")),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(creds.Username, creds.Password, creds.Session)),
 	)
 
 	if err != nil {

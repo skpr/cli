@@ -61,6 +61,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 	auth := types.Auth{
 		Username: client.Credentials.Username,
 		Password: client.Credentials.Password,
+		Session:  client.Credentials.Session,
 	}
 
 	// @todo, Consider abstracting this if another registry + credentials pair is required.
