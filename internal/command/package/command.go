@@ -67,6 +67,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		cmd.Params.Auth = types.Auth{
 			Username: client.Credentials.Username,
 			Password: client.Credentials.Password,
+			Session:  client.Credentials.Session,
 		}
 
 		if ecr.IsRegistry(cmd.Params.Registry) {

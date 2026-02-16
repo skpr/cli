@@ -4,4 +4,5 @@ package types
 type Auth struct {
 	Username string
 	Password string
+	Session  string
 }
