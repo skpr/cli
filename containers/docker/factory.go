@@ -6,7 +6,6 @@ import (
 	"io"
 
 	"github.com/skpr/cli/containers/docker/dockerclient"
-	"github.com/skpr/cli/containers/docker/goclient"
 	"github.com/skpr/cli/containers/docker/mockclient"
 	"github.com/skpr/cli/containers/docker/types"
 )
@@ -22,15 +21,12 @@ type DockerClient interface {
 type DockerClientId string
 
 const (
-	DockerClientIdLegacy DockerClientId = "legacy"
 	DockerClientIdDocker DockerClientId = "docker"
 	DockerClientIdMock   DockerClientId = "mock"
 )
 
 func NewClientFromUserConfig(auth types.Auth, clientId DockerClientId) (DockerClient, error) {
 	switch clientId {
-	case DockerClientIdLegacy:
-		return goclient.New(auth)
 	case DockerClientIdDocker:
 		return dockerclient.New(auth)
 	case DockerClientIdMock:

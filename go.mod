@@ -18,7 +18,6 @@ require (
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/egym-playground/go-prefix-writer v0.0.0-20180609083313-7326ea162eca
 	github.com/fatih/color v1.18.0
-	github.com/fsouza/go-dockerclient v1.12.3
 	github.com/go-test/deep v1.1.1
 	github.com/gorilla/mux v1.8.1
 	github.com/gosuri/uilive v0.0.4
@@ -46,7 +45,6 @@ require (
 )
 
 require (
-	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.16 // indirect
