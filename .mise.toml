@@ -1,7 +1,7 @@
 [tools]
-go = "1.25"
+go = "1.26"
 "go:github.com/daixiang0/gci" = "latest"
-"ubi:golangci/golangci-lint" = "2.5"
+"ubi:golangci/golangci-lint" = "2.10"
 "ubi:goreleaser/goreleaser" = "2.12"
 
 [env]
