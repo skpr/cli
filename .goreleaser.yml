@@ -12,6 +12,7 @@ builds:
       - CGO_ENABLED=0
     goos: [ linux, darwin ]
     goarch: [ amd64, arm64 ]
+    goamd64: [ v1, v3 ]
 
   - id: skpr-rsh
     main: ./cmd/skpr-rsh
@@ -22,11 +23,12 @@ builds:
       - CGO_ENABLED=0
     goos: [ linux, darwin ]
     goarch: [ amd64, arm64 ]
+    goamd64: [ v1, v3 ]
 
 archives:
   - id: nix
     builds: [ skpr-cli, skpr-rsh ]
-    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ if eq .Os "darwin" }}macOS{{ else }}{{ .Os }}{{ end }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ if eq .Os "darwin" }}macOS{{ else }}{{ .Os }}{{ end }}_{{ .Arch }}{{ if eq .Arch "amd64" }}{{ with .Amd64 }}_{{ . }}{{ end }}{{ else }}{{ with .Arm }}_v{{ . }}{{ end }}{{ end }}'
     wrap_in_directory: true
     format: tar.gz
     files:

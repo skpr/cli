@@ -42,3 +42,6 @@ depends = ["vendor"]
 description = "Release the command line interface"
 run = "goreleaser"
 depends = ["vendor"]
+
+[tasks.snapshot-release]
+run = "goreleaser --snapshot --clean --verbose"
