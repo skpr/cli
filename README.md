@@ -47,15 +47,15 @@ You can download the binaries from the [Releases](https://github.com/skpr/cli/re
 #### MacOS
 
 ```
-curl -sSLO https://github.com/skpr/cli/releases/download/VERSION/skpr_darwin_amd64.tgz
-sudo tar -zxf skpr_darwin_amd64.tgz -C /usr/local/bin/
+curl -sSLO https://github.com/skpr/cli/releases/download/$VERSION/skpr_$VERSION_macOS_amd64.tgz
+sudo tar -zxf skpr_$VERSION_macOS_amd64.tgz -C /usr/local/bin/
 ```
 
 #### Linux
 
 ```
-curl -sSLO https://github.com/skpr/cli/releases/download/VERSION/skpr_linux_amd64.tgz
-sudo tar -zxf skpr_linux_amd64.tgz -C /usr/local/bin/
+curl -sSLO https://github.com/skpr/cli/releases/download/$VERSION/skpr_$VERSION_linux_amd64_v3.tgz
+sudo tar -zxf skpr_$VERSION_macOS_amd64.tgz -C /usr/local/bin/
 ```
 
 ## Documentation
