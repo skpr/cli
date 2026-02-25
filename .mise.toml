@@ -44,4 +44,5 @@ run = "goreleaser"
 depends = ["vendor"]
 
 [tasks.snapshot-release]
+description = "Create a snapshot release for local testing"
 run = "goreleaser --snapshot --clean --verbose"
