@@ -3,7 +3,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 main() {
-  ARCHS=(amd64 arm64)
+  ARCHS=(amd64 amd64v3 arm64)
 
   SUITE_DIR="dists/${SUITE:-stable}"
   COMPONENT_DIR="${SUITE_DIR}/${COMPONENTS-main}"
@@ -28,7 +28,7 @@ main() {
     echo "Suite: ${SUITE:-stable}"
     echo "Codename: ${SUITE:-stable}"
     echo "Version: 1.0"
-    echo "Architectures: amd64 arm64"
+    echo "Architectures: amd64 amd64v3 arm64"
     echo "Components: ${COMPONENTS:-main}"
     echo "Description: ${DESCRIPTION:-A repository for packages released by ${REPO_OWNER:-skpr}}"
     echo "Date: $(date -Ru)"

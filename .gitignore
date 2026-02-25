@@ -1,4 +1,5 @@
 /.idea
+/apt-repo
 /vendor
 /bin
 /dist
