@@ -28,7 +28,7 @@ builds:
 archives:
   - id: nix
     builds: [ skpr-cli, skpr-rsh ]
-    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ if eq .Os "darwin" }}macOS{{ else }}{{ .Os }}{{ end }}_{{ .Arch }}{{ if eq .Arch "amd64" }}{{ with .Amd64 }}_{{ . }}{{ end }}{{ else }}{{ with .Arm }}_v{{ . }}{{ end }}{{ end }}'
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ if eq .Os "darwin" }}macOS{{ else }}{{ .Os }}{{ end }}_{{ .Arch }}{{ if and (eq .Arch "amd64") (eq .Amd64 "v3") }}_v3{{ end }}'
     wrap_in_directory: true
     format: tar.gz
     files:
