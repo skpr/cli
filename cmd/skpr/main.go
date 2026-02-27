@@ -176,7 +176,7 @@ func MyColorScheme(ld lipgloss.LightDarkFunc) fang.ColorScheme {
 	)
 
 	secondary := ld(
-		lipgloss.Color(color.HexWhite), // light mode
+		lipgloss.Color(color.HexBlack), // light mode
 		lipgloss.Color(color.HexWhite), // dark mode
 	)
 
