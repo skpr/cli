@@ -13,4 +13,6 @@ const (
 	HexRed = "#ff6058"
 	// HexWhite is white.
 	HexWhite = "#ffffff"
+	// HexBlack is black.
+	HexBlack = "#000000"
 )
