@@ -9,3 +9,8 @@ updates:
       go-dependencies:
         patterns:
           - "*"
+    commit-message:
+      prefix: "build"
+      include: "scope"
+    cooldown:
+      default-days: 1
