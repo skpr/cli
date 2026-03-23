@@ -5,6 +5,8 @@ import (
 
 	"github.com/skpr/cli/cmd/skpr/release/info"
 	"github.com/skpr/cli/cmd/skpr/release/list"
+	"github.com/skpr/cli/cmd/skpr/release/pull"
+	"github.com/skpr/cli/containers/docker"
 	skprcommand "github.com/skpr/cli/internal/command"
 )
 
@@ -23,7 +25,7 @@ var (
 )
 
 // NewCommand creates a new cobra.Command for 'releases' sub command
-func NewCommand() *cobra.Command {
+func NewCommand(clientId docker.DockerClientId) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:                   "release",
@@ -36,6 +38,7 @@ func NewCommand() *cobra.Command {
 
 	cmd.AddCommand(info.NewCommand())
 	cmd.AddCommand(list.NewCommand())
+	cmd.AddCommand(pull.NewCommand(clientId))
 
 	return cmd
 }
