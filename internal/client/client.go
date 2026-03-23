@@ -171,3 +171,8 @@ func (c Client) Trace() pb.TraceClient {
 func (c Client) Events() pb.EventsClient {
 	return pb.NewEventsClient(c.conn)
 }
+
+// Metrics client operations.
+func (c Client) Metrics() pb.MetricsClient {
+	return pb.NewMetricsClient(c.conn)
+}
