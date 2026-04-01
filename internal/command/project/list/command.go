@@ -69,9 +69,8 @@ func Print(w io.Writer, list []*pb.Project) error {
 	return table.Print(w, header, rows)
 }
 
-// sortEnvs sorts the list putting the production envs last.
+// sortProjects sorts the list of projects by name in ascending order.
 func sortProjects(list []*pb.Project) {
-	// Ensure prod environments are listed last.
 	sort.Slice(list, func(i, j int) bool {
 		return list[i].Name < list[j].Name
 	})
