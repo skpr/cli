@@ -12,8 +12,9 @@ func ListEnvironmentsByName(project *pb.Project) []string {
 		project.Environments.Prod,
 	}
 
-	sort.Strings(project.Environments.NonProd)
-	environments = append(environments, project.Environments.NonProd...)
+	nonProd := append([]string(nil), project.Environments.NonProd...)
+	sort.Strings(nonProd)
+	environments = append(environments, nonProd...)
 
 	return environments
 }
