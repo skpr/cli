@@ -13,7 +13,7 @@ import (
 	"github.com/skpr/cli/internal/table"
 )
 
-// Command for getting a config.
+// Command for fetching and printing project details.
 type Command struct {
 }
 
