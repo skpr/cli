@@ -18,7 +18,7 @@ import (
 	skprlog "github.com/skpr/cli/internal/log"
 )
 
-// Command to pull a database image.
+// Command to pull release images.
 type Command struct {
 	Params   Params
 	ClientId docker.DockerClientId
