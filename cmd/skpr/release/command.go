@@ -21,7 +21,10 @@ var (
   skpr release info 1.0.0
 
   # Show information on a release in JSON format.
-  skpr release info 1.0.0 --json`
+  skpr release info 1.0.0 --json
+
+  # Pull release images.
+  skpr release pull 1.0.0`
 )
 
 // NewCommand creates a new cobra.Command for 'releases' sub command
