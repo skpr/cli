@@ -9,7 +9,7 @@ import (
 	"github.com/skpr/cli/internal/command"
 )
 
-// NewCommand creates a new cobra.Command for 'config' sub command
+// NewCommand creates a new cobra.Command for the top-level 'project' command
 func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "project",
