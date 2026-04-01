@@ -16,10 +16,8 @@ import (
 	"github.com/skpr/cli/internal/table"
 )
 
-// Command for setting config.
+// Command for listing projects.
 type Command struct {
-	Key   string
-	Value string
 }
 
 // Run the command.
