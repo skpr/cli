@@ -19,7 +19,7 @@ func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "get",
 		DisableFlagsInUseLine: true,
-		Short:                 "Get contact for the current project.",
+		Short:                 "Get full details for the current project.",
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return command.Run(cmd.Context())
