@@ -26,7 +26,8 @@ type Command struct {
 
 // Params provided to this command.
 type Params struct {
-	Name string
+	Name    string
+	Service string
 }
 
 // Run the command.
@@ -52,6 +53,11 @@ func (cmd *Command) Run(ctx context.Context) error {
 	}
 
 	for _, image := range release.Images {
+		if cmd.Params.Service != "" {
+			if image.Name != cmd.Params.Service {
+				continue
+			}
+		}
 		repository, tag, err := ParseImage(image.URI)
 		if err != nil {
 			return errors.Wrap(err, "failed to parse image reference")
