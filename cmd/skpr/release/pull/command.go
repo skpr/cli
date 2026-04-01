@@ -15,7 +15,7 @@ var (
   skpr release pull VERSION`
 )
 
-// NewCommand creates a new cobra.Command for 'list' sub command
+// NewCommand creates a new cobra.Command for 'pull' sub command
 func NewCommand(clientId docker.DockerClientId) *cobra.Command {
 	command := v1pull.Command{}
 
