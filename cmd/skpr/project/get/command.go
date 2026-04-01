@@ -18,6 +18,7 @@ func NewCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:                   "get",
+		Args:                  cobra.NoArgs,
 		DisableFlagsInUseLine: true,
 		Short:                 "Get full details for the current project.",
 		Example:               cmdExample,

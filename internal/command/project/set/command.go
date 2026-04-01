@@ -10,7 +10,7 @@ import (
 	"github.com/skpr/cli/internal/client"
 )
 
-// Command for setting config.
+// Command for setting project info.
 type Command struct {
 	Key   string
 	Value string
