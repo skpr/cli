@@ -52,6 +52,10 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return fmt.Errorf("could not get release: %w", err)
 	}
 
+	writer := uilive.New()
+	writer.Start()
+	defer writer.Stop()
+
 	for _, image := range release.Images {
 		if cmd.Params.Service != "" {
 			if image.Name != cmd.Params.Service {
@@ -81,10 +85,6 @@ func (cmd *Command) Run(ctx context.Context) error {
 		if err != nil {
 			return errors.Wrap(err, "failed to create Docker client")
 		}
-
-		writer := uilive.New()
-		writer.Start()
-		defer writer.Stop()
 
 		logger.Info(fmt.Sprintf("Pulling: %s", image.URI))
 
