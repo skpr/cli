@@ -30,6 +30,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/logs"
 	"github.com/skpr/cli/cmd/skpr/mysql"
 	pkg "github.com/skpr/cli/cmd/skpr/package"
+	"github.com/skpr/cli/cmd/skpr/project"
 	"github.com/skpr/cli/cmd/skpr/purge"
 	"github.com/skpr/cli/cmd/skpr/release"
 	"github.com/skpr/cli/cmd/skpr/restore"
@@ -108,6 +109,7 @@ func main() {
 	cmd.AddCommand(logs.NewCommand())
 	cmd.AddCommand(mysql.NewCommand(featureFlags.DockerClient))
 	cmd.AddCommand(pkg.NewCommand(featureFlags.DockerClient))
+	cmd.AddCommand(project.NewCommand())
 	cmd.AddCommand(purge.NewCommand())
 	cmd.AddCommand(release.NewCommand(featureFlags.DockerClient))
 	cmd.AddCommand(restore.NewCommand())
