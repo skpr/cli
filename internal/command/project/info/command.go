@@ -1,4 +1,4 @@
-package get
+package info
 
 import (
 	"context"
@@ -40,7 +40,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 // Print the table...
 func Print(w io.Writer, item *pb.Project) error {
 	header := []string{
-		"Attribute",
+		"Property",
 		"Value",
 	}
 

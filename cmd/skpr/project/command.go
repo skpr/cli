@@ -3,7 +3,7 @@ package project
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/skpr/cli/cmd/skpr/project/get"
+	"github.com/skpr/cli/cmd/skpr/project/info"
 	"github.com/skpr/cli/cmd/skpr/project/list"
 	"github.com/skpr/cli/cmd/skpr/project/set"
 	"github.com/skpr/cli/internal/command"
@@ -18,7 +18,7 @@ func NewCommand() *cobra.Command {
 		GroupID:               command.GroupLifecycle,
 	}
 
-	cmd.AddCommand(get.NewCommand())
+	cmd.AddCommand(info.NewCommand())
 	cmd.AddCommand(list.NewCommand())
 	cmd.AddCommand(set.NewCommand())
 
