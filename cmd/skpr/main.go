@@ -109,7 +109,7 @@ func main() {
 	cmd.AddCommand(mysql.NewCommand(featureFlags.DockerClient))
 	cmd.AddCommand(pkg.NewCommand(featureFlags.DockerClient))
 	cmd.AddCommand(purge.NewCommand())
-	cmd.AddCommand(release.NewCommand())
+	cmd.AddCommand(release.NewCommand(featureFlags.DockerClient))
 	cmd.AddCommand(restore.NewCommand())
 	cmd.AddCommand(rsync.NewCommand())
 	cmd.AddCommand(shell.NewCommand())

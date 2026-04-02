@@ -5,6 +5,8 @@ import (
 
 	"github.com/skpr/cli/cmd/skpr/release/info"
 	"github.com/skpr/cli/cmd/skpr/release/list"
+	"github.com/skpr/cli/cmd/skpr/release/pull"
+	"github.com/skpr/cli/containers/docker"
 	skprcommand "github.com/skpr/cli/internal/command"
 )
 
@@ -19,11 +21,14 @@ var (
   skpr release info 1.0.0
 
   # Show information on a release in JSON format.
-  skpr release info 1.0.0 --json`
+  skpr release info 1.0.0 --json
+
+  # Pull release images.
+  skpr release pull 1.0.0`
 )
 
 // NewCommand creates a new cobra.Command for 'releases' sub command
-func NewCommand() *cobra.Command {
+func NewCommand(clientId docker.DockerClientId) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:                   "release",
@@ -36,6 +41,7 @@ func NewCommand() *cobra.Command {
 
 	cmd.AddCommand(info.NewCommand())
 	cmd.AddCommand(list.NewCommand())
+	cmd.AddCommand(pull.NewCommand(clientId))
 
 	return cmd
 }
