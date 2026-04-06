@@ -41,6 +41,9 @@ release:
     owner: skpr
     name: cli
 
+changelog:
+  use: github-native
+
 brews:
   - name: skpr
     repository:
