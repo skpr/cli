@@ -156,6 +156,9 @@ func TestProto(t *testing.T) {
 				},
 			},
 		},
+		Metrics: Metrics{
+			Enabled: true,
+		},
 	}
 
 	want := &pb.Environment{
@@ -318,6 +321,9 @@ func TestProto(t *testing.T) {
 				},
 			},
 		},
+		Metrics: &pb.EnvironmentMetrics{
+			Enabled: true,
+		},
 	}
 
 	env, err := environment.Proto("dev", "v0.0.1")
@@ -342,4 +348,6 @@ func TestProto(t *testing.T) {
 	assert.Equal(t, want.Solr, env.Solr, "Solr is configured")
 	assert.Equal(t, want.Link, env.Link, "Links are configured")
 	assert.Equal(t, want.Volume, env.Volume, "Volumes are configured")
+
+	assert.Equal(t, want.Metrics, env.Metrics, "Metrics is configured")
 }

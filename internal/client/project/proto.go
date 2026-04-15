@@ -30,6 +30,9 @@ func (e Environment) Proto(name, version string) (*pb.Environment, error) {
 			Schedule: e.Backup.Schedule,
 			Suspend:  e.Backup.Suspend,
 		},
+		Metrics: &pb.EnvironmentMetrics{
+			Enabled: e.Metrics.Enabled,
+		},
 	}
 
 	for bvName, bvConfig := range e.Backup.Volume {

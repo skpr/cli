@@ -19,6 +19,7 @@ type Environment struct {
 	Backup     Backup                           `yaml:"backup"               json:"backup"`
 	Link       map[string]Link                  `yaml:"link"                 json:"link"`
 	Volumes    map[string]EnvironmentSpecVolume `yaml:"volumes"              json:"volumes"`
+	Metrics    Metrics                          `yaml:"metrics,omitempty"    json:"metrics,omitempty"`
 }
 
 // EnvironmentSpecVolume defines Volume configuration for this environemnt.
@@ -243,4 +244,9 @@ type BackupVolumePaths struct {
 type Link struct {
 	Project     string `yaml:"project,omitempty"     json:"project,omitempty"`
 	Environment string `yaml:"environment,omitempty" json:"environment,omitempty"`
+}
+
+// Metrics defines the spec for application metric collection.
+type Metrics struct {
+	Enabled bool `yaml:"enabled" json:"enabled"`
 }

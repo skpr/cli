@@ -30,7 +30,7 @@ require (
 	github.com/moby/patternmatcher v0.6.1
 	github.com/olekukonko/ts v0.0.0-20171002115256-78ecb04241c0
 	github.com/pkg/errors v0.9.1
-	github.com/skpr/api v1.5.1
+	github.com/skpr/api v1.5.2
 	github.com/skpr/compass/tracing v0.0.0-20251208094547-dafe383c3926
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/spf13/cobra v1.10.2
