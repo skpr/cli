@@ -25,7 +25,7 @@ func TestLoadFromDirectory(t *testing.T) {
 			Size: "small",
 			Services: Services{
 				MySQL: map[string]MySQL{
-					"default": MySQL{
+					"default": {
 						Image: MySQLImage{
 							Schedule: "0 20 * * *",
 						},
@@ -75,6 +75,9 @@ func TestLoadFromDirectory(t *testing.T) {
 			Backup: Backup{
 				Schedule: "@daily",
 			},
+			Metrics: Metrics{
+				Enabled: true,
+			},
 		},
 		"stg": {
 			Ingress: Ingress{
@@ -92,7 +95,7 @@ func TestLoadFromDirectory(t *testing.T) {
 			Size: "small",
 			Services: Services{
 				MySQL: map[string]MySQL{
-					"default": MySQL{
+					"default": {
 						Image: MySQLImage{
 							Schedule: "0 20 * * *",
 						},
@@ -160,7 +163,7 @@ func TestLoadFromDirectory(t *testing.T) {
 			Size: "large",
 			Services: Services{
 				MySQL: map[string]MySQL{
-					"default": MySQL{
+					"default": {
 						Image: MySQLImage{
 							Schedule: "0 20 * * *",
 						},
@@ -225,7 +228,7 @@ func TestLoadFromDirectory(t *testing.T) {
 			Size: "small",
 			Services: Services{
 				MySQL: map[string]MySQL{
-					"default": MySQL{
+					"default": {
 						Image: MySQLImage{
 							Schedule: "0 20 * * *",
 						},
@@ -279,12 +282,14 @@ func TestLoadFromDirectory(t *testing.T) {
 	}
 
 	for name, environment := range environments {
-		e, err := LoadFromDirectory("./testdata/.skpr", name)
-		assert.NoError(t, err)
+		t.Run(name, func(t *testing.T) {
+			e, err := LoadFromDirectory("./testdata/.skpr", name)
+			assert.NoError(t, err)
 
-		if diff := deep.Equal(environment, e); diff != nil {
-			t.Error(diff)
-		}
+			if diff := deep.Equal(environment, e); diff != nil {
+				t.Error(diff)
+			}
+		})
 	}
 
 }

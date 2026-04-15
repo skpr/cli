@@ -1,3 +1,6 @@
 ingress:
   routes:
     - dev.example.com
+
+metrics:
+  enabled: true
