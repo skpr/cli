@@ -2,20 +2,18 @@ package tail
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"slices"
 	"strings"
 
-	"github.com/TylerBrock/colorjson"
-	faithcolor "github.com/fatih/color"
 	"github.com/jwalton/gchalk"
 	"github.com/skpr/api/pb"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/color"
+	logshared "github.com/skpr/cli/internal/command/logs"
 )
 
 // Command to stream the logs for an environment.
@@ -85,7 +83,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 					return fmt.Errorf("fail to tail stream: %s: %w", stream, err)
 				}
 
-				message := prettyPrint(resp.Message, cmd.Indent)
+				message := logshared.PrettyPrint(resp.Message, cmd.Indent)
 
 				// Only prefix when there is more than one stream.
 				if len(cmd.Streams) > 1 {
@@ -100,28 +98,4 @@ func (cmd *Command) Run(ctx context.Context) error {
 	}
 
 	return e.Wait()
-}
-
-// Returns a pretty output for JSON messages.
-func prettyPrint(message string, indent bool) string {
-	var obj map[string]interface{}
-
-	err := json.Unmarshal([]byte(message), &obj)
-	if err != nil {
-		return message
-	}
-
-	formatter := colorjson.NewFormatter()
-	formatter.KeyColor = faithcolor.New(faithcolor.FgWhite).Add(faithcolor.Bold)
-
-	if indent {
-		formatter.Indent = 2
-	}
-
-	raw, err := formatter.Marshal(obj)
-	if err != nil {
-		return message
-	}
-
-	return string(raw)
 }
