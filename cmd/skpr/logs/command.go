@@ -4,6 +4,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/skpr/cli/cmd/skpr/logs/list"
+	"github.com/skpr/cli/cmd/skpr/logs/query"
+	"github.com/skpr/cli/cmd/skpr/logs/summary"
 	"github.com/skpr/cli/cmd/skpr/logs/tail"
 	skprcommand "github.com/skpr/cli/internal/command"
 )
@@ -25,6 +27,8 @@ func NewCommand() *cobra.Command {
 
 	cmd.AddCommand(list.NewCommand())
 	cmd.AddCommand(tail.NewCommand())
+	cmd.AddCommand(query.NewCommand())
+	cmd.AddCommand(summary.NewCommand())
 
 	return cmd
 }
