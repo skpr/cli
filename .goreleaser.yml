@@ -41,6 +41,21 @@ release:
     owner: skpr
     name: cli
 
+dockers_v2:
+  - id: skpr
+    ids:
+      - skpr-cli
+      - skpr-rsh
+    images:
+      - "ghcr.io/skpr/cli"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    tags:
+      - "{{ .Tag }}"
+      - "latest"
+    sbom: false
+
 changelog:
   use: github-native
 

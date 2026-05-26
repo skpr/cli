@@ -46,3 +46,8 @@ depends = ["vendor"]
 [tasks.snapshot-release]
 description = "Create a snapshot release for local testing"
 run = "goreleaser --snapshot --clean --verbose"
+
+[tasks.docker-snapshot]
+description = "Build and push a Docker image via goreleaser (no GitHub release)"
+run = "goreleaser release --config=.goreleaser.branch.yml --clean --skip=validate"
+depends = ["vendor"]

@@ -1,0 +1,42 @@
+project_name: skpr
+
+version: 2
+
+builds:
+  - id: skpr-cli
+    main: ./cmd/skpr
+    binary: skpr
+    ldflags:
+      - -extldflags '-static' -X github.com/skpr/cli/cmd/skpr/version.GitVersion={{.Version}} -X github.com/skpr/cli/cmd/skpr/version.BuildDate={{time "2006-01-02"}}
+    env:
+      - CGO_ENABLED=0
+    goos: [ linux ]
+    goarch: [ amd64, arm64 ]
+    goamd64: [ v1 ]
+
+  - id: skpr-rsh
+    main: ./cmd/skpr-rsh
+    binary: skpr-rsh
+    ldflags:
+      - -extldflags '-static'
+    env:
+      - CGO_ENABLED=0
+    goos: [ linux ]
+    goarch: [ amd64, arm64 ]
+    goamd64: [ v1 ]
+
+dockers_v2:
+  - id: skpr
+    ids:
+      - skpr-cli
+      - skpr-rsh
+    images:
+      - "ghcr.io/skpr/cli"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    tags:
+      - "{{ .Env.DOCKER_TAG_PRIMARY }}"
+      - "{{ .Env.DOCKER_TAG_SHA }}"
+      - "{{ .Env.DOCKER_TAG_EXTRA }}"
+    sbom: false
