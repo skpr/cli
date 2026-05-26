@@ -28,6 +28,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/login"
 	"github.com/skpr/cli/cmd/skpr/logout"
 	"github.com/skpr/cli/cmd/skpr/logs"
+	mcpcmd "github.com/skpr/cli/cmd/skpr/mcp"
 	"github.com/skpr/cli/cmd/skpr/mysql"
 	pkg "github.com/skpr/cli/cmd/skpr/package"
 	"github.com/skpr/cli/cmd/skpr/project"
@@ -107,6 +108,7 @@ func main() {
 	cmd.AddCommand(login.NewCommand())
 	cmd.AddCommand(logout.NewCommand())
 	cmd.AddCommand(logs.NewCommand())
+	cmd.AddCommand(mcpcmd.NewCommand(featureFlags.DockerClient))
 	cmd.AddCommand(mysql.NewCommand(featureFlags.DockerClient))
 	cmd.AddCommand(pkg.NewCommand(featureFlags.DockerClient))
 	cmd.AddCommand(project.NewCommand())
