@@ -25,6 +25,26 @@ builds:
     goarch: [ amd64, arm64 ]
     goamd64: [ v1, v3 ]
 
+dockers_v2:
+  - id: skpr-cli
+    dockerfile: Dockerfile
+    ids:
+      - skpr-cli
+      - skpr-rsh
+    images:
+      - "ghcr.io/skpr/cli"
+      - "docker.io/skpr/cli"
+    tags:
+      - "latest"
+      - "{{ .Commit }}"
+      - "{{ .Tag }}"
+    sbom: false
+    flags:
+      - "--pull"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+
 archives:
   - id: nix
     builds: [ skpr-cli, skpr-rsh ]
