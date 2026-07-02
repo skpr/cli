@@ -22,6 +22,7 @@ func (e Environment) Proto(name, version string) (*pb.Environment, error) {
 			Cookies:     e.Ingress.Cookies, // Depreciated.
 			Proxy:       protoProxy(e.Ingress.Proxy),
 			ErrorPages:  protoErrorPages(e.Ingress.ErrorPages),
+			Origin:      protoIngressOrigin(e.Ingress.Origin),
 		},
 		SMTP: &pb.SMTP{
 			Address: e.SMTP.From.Address,
@@ -128,6 +129,17 @@ func protoIngressCache(cache Cache) *pb.Cache {
 
 	return &pb.Cache{
 		Policy: cache.Policy,
+	}
+}
+
+// Helper function to convert ingress cache config to proto format.
+func protoIngressOrigin(origin Origin) *pb.Origin {
+	if origin.Policy == "" {
+		return nil
+	}
+
+	return &pb.Origin{
+		Policy: origin.Policy,
 	}
 }
 
