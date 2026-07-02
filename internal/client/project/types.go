@@ -76,10 +76,16 @@ type Ingress struct {
 	Cookies     []string              `yaml:"cookies,omitempty"     json:"cookies,omitempty"`
 	Proxy       IngressSpecProxyList  `yaml:"proxy,omitempty"       json:"proxy,omitempty"`
 	ErrorPages  IngressSpecErrorPages `yaml:"errorPages,omitempty"  json:"errorPages,omitempty"`
+	Origin      Origin                `yaml:"origin,omitempty"      json:"origin,omitempty"`
 }
 
 // Cache covers the cache policy to be included from CloudFront
 type Cache struct {
+	Policy string `yaml:"policy,omitempty" json:"policy,omitempty"`
+}
+
+// Origin covers the origin request policy to be included from CloudFront
+type Origin struct {
 	Policy string `yaml:"policy,omitempty" json:"policy,omitempty"`
 }
 
