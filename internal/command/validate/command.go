@@ -94,6 +94,11 @@ func PrintTable(ctx context.Context, w io.Writer, client *client.Client, proto *
 		rows = append(rows, row)
 	}
 
+	// Nothing to report - don't print an empty table.
+	if len(rows) == 0 {
+		return false, nil
+	}
+
 	err = table.Print(w, header, rows)
 	if err != nil {
 		return false, fmt.Errorf("failed to print table: %w", err)
