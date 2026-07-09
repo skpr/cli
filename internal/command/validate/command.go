@@ -65,7 +65,12 @@ func PrintTable(ctx context.Context, w io.Writer, client *client.Client, proto *
 		Environment: proto,
 	})
 	if err != nil {
-		return false, errors.Wrap(err, err.Error())
+		return false, errors.Wrap(err, "failed to validate environment")
+	}
+
+	// Nothing to report - don't print an empty table.
+	if len(resp.Findings) == 0 {
+		return false, nil
 	}
 
 	header := []string{
@@ -89,14 +94,11 @@ func PrintTable(ctx context.Context, w io.Writer, client *client.Client, proto *
 			row = append(row, color.New(color.FgRed).Sprintf("%s", finding.Type.String()))
 		case pb.EnvironmentValidateFinding_Warning:
 			row = append(row, color.New(color.FgBlue).Sprintf("%s", finding.Type.String()))
+		default:
+			row = append(row, finding.Type.String())
 		}
 
 		rows = append(rows, row)
-	}
-
-	// Nothing to report - don't print an empty table.
-	if len(rows) == 0 {
-		return false, nil
 	}
 
 	err = table.Print(w, header, rows)
