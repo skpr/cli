@@ -41,7 +41,7 @@ dockers_v2:
     dockerfile: Dockerfile
     ids:
       - skpr-cli
-      - skpr-agent
+      - skpr-agent-cli
       - skpr-rsh
     images:
       - "ghcr.io/skpr/cli"
