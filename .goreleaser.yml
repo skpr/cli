@@ -93,6 +93,7 @@ brews:
         type: optional
     install: |
       bin.install "skpr"
+      bin.install "skpr-agent"
       bin.install "skpr-rsh"
 
       # Install bash completion
