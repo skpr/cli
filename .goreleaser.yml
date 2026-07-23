@@ -14,6 +14,17 @@ builds:
     goarch: [ amd64, arm64 ]
     goamd64: [ v1, v3 ]
 
+  - id: skpr-agent-cli
+    main: ./cmd/skpr-agent
+    binary: skpr-agent
+    ldflags:
+      - -extldflags '-static' -X github.com/skpr/cli/cmd/skpr/version.GitVersion={{.Version}} -X github.com/skpr/cli/cmd/skpr/version.BuildDate={{time "2006-01-02"}}
+    env:
+      - CGO_ENABLED=0
+    goos: [ linux, darwin ]
+    goarch: [ amd64, arm64 ]
+    goamd64: [ v1, v3 ]
+
   - id: skpr-rsh
     main: ./cmd/skpr-rsh
     binary: skpr-rsh
@@ -30,6 +41,7 @@ dockers_v2:
     dockerfile: Dockerfile
     ids:
       - skpr-cli
+      - skpr-agent
       - skpr-rsh
     images:
       - "ghcr.io/skpr/cli"
@@ -81,6 +93,7 @@ brews:
         type: optional
     install: |
       bin.install "skpr"
+      bin.install "skpr-agent"
       bin.install "skpr-rsh"
 
       # Install bash completion

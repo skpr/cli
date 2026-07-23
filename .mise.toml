@@ -25,6 +25,7 @@ run = "go mod tidy"
 description = "Build the application"
 run = '''
 go build -o bin/skpr -ldflags=${CLI_LDFLAGS} github.com/skpr/cli/cmd/skpr
+go build -o bin/skpr-agent -ldflags=${CLI_LDFLAGS} github.com/skpr/cli/cmd/skpr-agent
 go build -o bin/skpr-rsh -ldflags=${CLI_LDFLAGS} github.com/skpr/cli/cmd/skpr-rsh
 '''
 depends = ["vendor"]
