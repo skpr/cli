@@ -31,7 +31,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 	}
 
 	if respGet.Environment.Dashboard == nil || respGet.Environment.Dashboard.URL == "" {
-		return fmt.Errorf("environment does not have a dashboard")
+		return fmt.Errorf("command deprecated. Use 'skpr console %s' instead", cmd.Environment)
 	}
 
 	if cmd.Print {
