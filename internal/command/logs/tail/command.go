@@ -16,6 +16,7 @@ import (
 
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/color"
+	"github.com/skpr/cli/internal/command/logs/streams"
 )
 
 // Command to stream the logs for an environment.
@@ -32,18 +33,21 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return err
 	}
 
-	list, err := client.Logs().ListStreams(ctx, &pb.LogListStreamsRequest{
-		Environment: cmd.Environment,
-	})
+	list, err := streams.List(ctx, client.Logs(), cmd.Environment, pb.LogStreamType_Tail)
 	if err != nil {
 		return fmt.Errorf("failed to get stream list: %w", err)
 	}
 
-	// If none are provided use the default stream provided by the API.
-	if len(cmd.Streams) == 0 && list.Default != "" {
-		cmd.Streams = []string{
-			list.Default,
-		}
+	// Collect the streams which support tailing.
+	var available []string
+
+	for _, stream := range list.Streams {
+		available = append(available, stream.Name)
+	}
+
+	// If none are provided use the default streams provided by the API.
+	if len(cmd.Streams) == 0 && list.Defaults != nil {
+		cmd.Streams = list.Defaults.Tail
 	}
 
 	if len(cmd.Streams) == 0 {
@@ -52,7 +56,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 	// Validate that the provided streams are correct.
 	for _, stream := range cmd.Streams {
-		if !slices.Contains(list.Streams, stream) {
+		if !slices.Contains(available, stream) {
 			return fmt.Errorf("stream not found: %s", stream)
 		}
 	}
