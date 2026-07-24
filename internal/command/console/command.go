@@ -10,7 +10,6 @@ import (
 
 	"github.com/skpr/cli/internal/client"
 	clientconfig "github.com/skpr/cli/internal/client/config"
-	skprcredentials "github.com/skpr/cli/internal/client/credentials"
 )
 
 // Command for console access.
@@ -32,24 +31,16 @@ func (cmd *Command) Run(ctx context.Context) error {
 	// @todo Remove the /metrics when we respond correctly in UI.
 	consoleURL := fmt.Sprintf("https://%s/projects/%s/%s/metrics", consoleHost, config.Project, cmd.Environment)
 
-	// Check if we are logged in. If so, verify the environment exists before opening.
-	credentials, err := skprcredentials.New(ctx, config)
+	ctx, client, err := client.New(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to check credentials: %w", err)
+		return err
 	}
 
-	if credentials.Username != "" || credentials.Session != "" {
-		ctx, skprClient, err := client.New(ctx)
-		if err != nil {
-			return err
-		}
-
-		_, err = skprClient.Environment().Get(ctx, &pb.EnvironmentGetRequest{
-			Name: cmd.Environment,
-		})
-		if err != nil {
-			return fmt.Errorf("failed to get environment: %w", err)
-		}
+	_, err = client.Environment().Get(ctx, &pb.EnvironmentGetRequest{
+		Name: cmd.Environment,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to get environment: %w", err)
 	}
 
 	if cmd.Print {
