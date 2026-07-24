@@ -29,7 +29,8 @@ func (cmd *Command) Run(ctx context.Context) error {
 	// Build the console URL by replacing the "cluster." prefix with "console."
 	host := config.API.Host()
 	consoleHost := strings.Replace(host, "cluster.", "console.", 1)
-	consoleURL := fmt.Sprintf("https://%s/projects/%s/%s", consoleHost, config.Project, cmd.Environment)
+	// @todo Remove the /metrics when we respond correctly in UI.
+	consoleURL := fmt.Sprintf("https://%s/projects/%s/%s/metrics", consoleHost, config.Project, cmd.Environment)
 
 	// Check if we are logged in. If so, verify the environment exists before opening.
 	credentials, err := skprcredentials.New(ctx, config)
@@ -60,4 +61,3 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 	return open.Run(consoleURL)
 }
-
