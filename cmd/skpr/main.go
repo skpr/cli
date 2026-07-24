@@ -14,6 +14,7 @@ import (
 	"github.com/skpr/cli/cmd/skpr/alias"
 	"github.com/skpr/cli/cmd/skpr/backup"
 	"github.com/skpr/cli/cmd/skpr/config"
+	"github.com/skpr/cli/cmd/skpr/console"
 	"github.com/skpr/cli/cmd/skpr/create"
 	"github.com/skpr/cli/cmd/skpr/cron"
 	"github.com/skpr/cli/cmd/skpr/daemon"
@@ -94,6 +95,7 @@ func main() {
 	cmd.AddCommand(backup.NewCommand())
 	cmd.AddCommand(config.NewCommand())
 	cmd.AddCommand(create.NewCommand())
+	cmd.AddCommand(console.NewCommand())
 	cmd.AddCommand(cron.NewCommand())
 	cmd.AddCommand(daemon.NewCommand())
 	cmd.AddCommand(dashboard.NewCommand())
