@@ -92,6 +92,11 @@ func (c Client) Environment() pb.EnvironmentClient {
 	return pb.NewEnvironmentClient(c.conn)
 }
 
+// Cluster client operations.
+func (c Client) Cluster() pb.ClusterClient {
+	return pb.NewClusterClient(c.conn)
+}
+
 // Config client operations.
 func (c Client) Config() pb.ConfigClient {
 	return pb.NewConfigClient(c.conn)
