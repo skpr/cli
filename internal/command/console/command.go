@@ -45,6 +45,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to get environment: %w", err)
 	}
 
+	// @todo Remove '/metrics' when UI supports it.
 	consoleURL := fmt.Sprintf("https://%s/projects/%s/%s/metrics", consoleHost, config.Project, cmd.Environment)
 
 	if cmd.Print {
