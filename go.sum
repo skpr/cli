@@ -219,6 +219,8 @@ github.com/sirupsen/logrus v1.9.3 h1:dueUQJ1C2q9oE3F7wvmSGAaVtTmUizReu6fjN8uqzbQ
 github.com/sirupsen/logrus v1.9.3/go.mod h1:naHLuLoDiP4jHNo9R0sCBMtWGeIprob74mVsIT4qYEQ=
 github.com/skpr/api v1.7.1-0.20260729015944-375c0b58d01a h1:91Mh3B7zH46CK3I1YzrQO9caCPfv3muAauRQaL5ve44=
 github.com/skpr/api v1.7.1-0.20260729015944-375c0b58d01a/go.mod h1:HWzGU9hY392K8N4I7xdk+anSRLoouJM2NtSjnYfIj1s=
+github.com/skpr/api v1.8.0 h1:mOfpy6W+8THIaRG2nxIFpQ8wdtTawSoUZbwhcs0VS0M=
+github.com/skpr/api v1.8.0/go.mod h1:KMGPWD5+HwbmqqX6HNtdpDylQ1lFfTS/qiSv/bolfdc=
 github.com/skpr/compass/tracing v0.0.0-20251208094547-dafe383c3926 h1:g8m8qqehB6/GMeM81BaIXQOkD2LZbCQE0HPRGear9Jw=
 github.com/skpr/compass/tracing v0.0.0-20251208094547-dafe383c3926/go.mod h1:Rokt2mnHteBaBmsSgiNk4P7laV0E8/BLQsSLyGUJLtk=
 github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966 h1:JIAuq3EEf9cgbU6AtGPK4CTG3Zf6CKMNqf0MHTggAUA=
@@ -292,6 +294,8 @@ google.golang.org/genproto/googleapis/rpc v0.0.0-20260414002931-afd174a4e478 h1:
 google.golang.org/genproto/googleapis/rpc v0.0.0-20260414002931-afd174a4e478/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
 google.golang.org/grpc v1.82.0 h1:vguDnZUPjE26w09A63VoxZPnvPjB5Riyc0mkXPFmAIU=
 google.golang.org/grpc v1.82.0/go.mod h1:yzTZ1TB1Z3SG+LIYaI+WiE8D5+PZ3ArnrSp8zF3+/ZA=
+google.golang.org/grpc v1.82.1 h1:NnAxzGRA0677vCa4BUkOAnO5+FfQqVl9iUXeD0IqcGE=
+google.golang.org/grpc v1.82.1/go.mod h1:yzTZ1TB1Z3SG+LIYaI+WiE8D5+PZ3ArnrSp8zF3+/ZA=
 google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
 google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
