@@ -46,7 +46,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 	}
 
 	// @todo Remove '/metrics' when UI supports it.
-	consoleURL := fmt.Sprintf("https://%s/projects/%s/%s/metrics", consoleHost, config.Project, cmd.Environment)
+	consoleURL := fmt.Sprintf("%s/projects/%s/%s/metrics", consoleHost, config.Project, cmd.Environment)
 
 	if cmd.Print {
 		fmt.Println(consoleURL)
