@@ -68,7 +68,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		if err != nil {
 			return fmt.Errorf("failed to print table: %w", err)
 		}
-		return fmt.Errorf("violations found")
+		return fmt.Errorf("validation issues found")
 	}
 
 	stream, err := client.Environment().Create(ctx, &pb.EnvironmentCreateRequest{
