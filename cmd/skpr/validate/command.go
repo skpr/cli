@@ -28,5 +28,7 @@ func NewCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&command.IgnoreWarnings, "ignore-warnings", command.IgnoreWarnings, "Ignore validation warnings for exit code failure")
+
 	return cmd
 }

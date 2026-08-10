@@ -18,8 +18,9 @@ import (
 
 // Command to validate an environments configuration.
 type Command struct {
-	Environment string
-	Version     string
+	Environment    string
+	Version        string
+	IgnoreWarnings bool
 }
 
 // Run the command.
@@ -44,7 +45,12 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return errors.Wrap(err, "failed to build API request")
 	}
 
-	violations, err := PrintTable(ctx, os.Stdout, client, proto)
+	findings, violations, warnings, err := Findings(ctx, client, proto)
+	if err != nil {
+		return fmt.Errorf("failed to validate environment: %w", err)
+	}
+
+	err = PrintTable(os.Stdout, findings)
 	if err != nil {
 		return fmt.Errorf("failed to print table: %w", err)
 	}
@@ -55,22 +61,48 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return fmt.Errorf("violations found")
 	}
 
+	if warnings && !cmd.IgnoreWarnings {
+		// Make sure we are returning a non-zero exit code if not ignoring warnings.
+		return fmt.Errorf("warnings found")
+	}
+
 	return nil
 }
 
-// PrintTable of validation findings.
-// Used by the create and deploy commands.
-func PrintTable(ctx context.Context, w io.Writer, client *client.Client, proto *pb.Environment) (bool, error) {
+// Findings of validation checks.
+func Findings(ctx context.Context, client *client.Client, proto *pb.Environment) ([]*pb.EnvironmentValidateFinding, bool, bool, error) {
 	resp, err := client.Environment().Validate(ctx, &pb.EnvironmentValidateRequest{
 		Environment: proto,
 	})
 	if err != nil {
-		return false, errors.Wrap(err, "failed to validate environment")
+		return nil, false, false, errors.Wrap(err, "failed to validate environment")
 	}
 
-	// Nothing to report - don't print an empty table.
 	if len(resp.Findings) == 0 {
-		return false, nil
+		return nil, false, false, nil
+	}
+
+	hasViolations, hasWarnings := false, false
+	for _, finding := range resp.Findings {
+		switch finding.Type {
+		case pb.EnvironmentValidateFinding_Violation:
+			hasViolations = true
+		case pb.EnvironmentValidateFinding_Warning:
+			hasWarnings = true
+		}
+		// Early return if both violations and warnings are found.
+		if hasViolations && hasWarnings {
+			return resp.Findings, true, true, nil
+		}
+	}
+	return resp.Findings, hasViolations, hasWarnings, nil
+}
+
+// PrintTable of validation findings.
+func PrintTable(w io.Writer, findings []*pb.EnvironmentValidateFinding) error {
+	// Nothing to report - don't print an empty table.
+	if len(findings) == 0 {
+		fmt.Fprintln(w, "No validation issues found.")
 	}
 
 	header := []string{
@@ -80,9 +112,8 @@ func PrintTable(ctx context.Context, w io.Writer, client *client.Client, proto *
 	}
 
 	var rows [][]string
-	var violationCount int
 
-	for _, finding := range resp.Findings {
+	for _, finding := range findings {
 		row := []string{
 			finding.Group,
 			finding.Message,
@@ -90,7 +121,6 @@ func PrintTable(ctx context.Context, w io.Writer, client *client.Client, proto *
 
 		switch finding.Type {
 		case pb.EnvironmentValidateFinding_Violation:
-			violationCount++
 			row = append(row, color.New(color.FgRed).Sprintf("%s", finding.Type.String()))
 		case pb.EnvironmentValidateFinding_Warning:
 			row = append(row, color.New(color.FgBlue).Sprintf("%s", finding.Type.String()))
@@ -101,10 +131,10 @@ func PrintTable(ctx context.Context, w io.Writer, client *client.Client, proto *
 		rows = append(rows, row)
 	}
 
-	err = table.Print(w, header, rows)
+	err := table.Print(w, header, rows)
 	if err != nil {
-		return false, fmt.Errorf("failed to print table: %w", err)
+		return fmt.Errorf("failed to print table: %w", err)
 	}
 
-	return violationCount > 0, nil
+	return nil
 }
