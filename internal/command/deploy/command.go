@@ -8,8 +8,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/skpr/api/pb"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/skpr/cli/internal/client"
 	"github.com/skpr/cli/internal/client/project"
@@ -20,8 +18,9 @@ import (
 
 // Command to delete the environment.
 type Command struct {
-	Environment string
-	Version     string
+	Environment    string
+	Version        string
+	IgnoreWarnings bool
 }
 
 // Run the command.
@@ -59,6 +58,19 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return errors.Wrap(err, "failed to build API request")
 	}
 
+	findings, violations, warnings, err := validate.Findings(ctx, client, proto)
+	if err != nil {
+		return fmt.Errorf("failed to validate environment: %w", err)
+	}
+
+	if violations || (warnings && !cmd.IgnoreWarnings) {
+		err = validate.PrintTable(os.Stdout, findings)
+		if err != nil {
+			return fmt.Errorf("failed to print table: %w", err)
+		}
+		return fmt.Errorf("validation issues found")
+	}
+
 	stream, err := client.Environment().Update(ctx, &pb.EnvironmentUpdateRequest{
 		Environment: proto,
 	})
@@ -73,24 +85,6 @@ func (cmd *Command) Run(ctx context.Context) error {
 		}
 
 		if err != nil {
-			if status.Code(err) == codes.FailedPrecondition {
-				fmt.Println("Environment Validation Failed.")
-				fmt.Println("Below is a list of the findings using command: skpr validate")
-
-				violations, err := validate.PrintTable(ctx, os.Stdout, client, proto)
-				if err != nil {
-					return fmt.Errorf("failed to print table: %w", err)
-				}
-
-				if violations {
-					// Make sure we are returning a non-zero exit code.
-					// We are not using the error response because this is not an error.
-					return fmt.Errorf("violations found")
-				}
-
-				return nil
-			}
-
 			return fmt.Errorf("deployment failed: %w", err)
 		}
 
