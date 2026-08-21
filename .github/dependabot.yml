@@ -9,6 +9,8 @@ updates:
       go-dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "github.com/skpr/api"
     commit-message:
       prefix: "build"
       include: "scope"
