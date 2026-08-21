@@ -11,6 +11,7 @@ updates:
           - "*"
     ignore:
       - dependency-name: "github.com/skpr/api"
+      - dependency-name: "github.com/skpr/compass"
     commit-message:
       prefix: "build"
       include: "scope"
