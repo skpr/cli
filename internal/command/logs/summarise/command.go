@@ -27,7 +27,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return err
 	}
 
-	logFilter, err := cmd.Options.Build()
+	logFilter, err := cmd.Build()
 	if err != nil {
 		return err
 	}
