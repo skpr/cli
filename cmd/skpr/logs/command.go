@@ -15,7 +15,7 @@ var (
 )
 
 // NewCommand creates a new cobra.Command for 'logss' sub command
-func NewCommand() *cobra.Command {
+func NewCommand(featureSummary bool) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:                   "logs",
@@ -27,8 +27,11 @@ func NewCommand() *cobra.Command {
 
 	cmd.AddCommand(list.NewCommand())
 	cmd.AddCommand(query.NewCommand())
-	cmd.AddCommand(summarise.NewCommand())
 	cmd.AddCommand(tail.NewCommand())
+
+	if featureSummary {
+		cmd.AddCommand(summarise.NewCommand())
+	}
 
 	return cmd
 }
