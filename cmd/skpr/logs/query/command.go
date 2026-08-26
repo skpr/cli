@@ -29,7 +29,7 @@ func NewCommand() *cobra.Command {
 	command := v1query.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "query <environment> <stream> <stream>",
+		Use:                   "query <environment> [stream] [stream]",
 		Args:                  cobra.MinimumNArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Run a bounded query over the logs of a running application",

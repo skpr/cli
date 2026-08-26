@@ -26,7 +26,7 @@ func NewCommand() *cobra.Command {
 	command := v1summarise.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "summarise <environment> <stream> <stream>",
+		Use:                   "summarise <environment> [stream] [stream]",
 		Aliases:               []string{"summarize"},
 		Args:                  cobra.MinimumNArgs(1),
 		DisableFlagsInUseLine: true,
