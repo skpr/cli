@@ -24,7 +24,7 @@ func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "purge",
 		DisableFlagsInUseLine: true,
-		Short:                 "Perform MySQL tasks for an environment",
+		Short:                 "Perform CDN purge operations",
 		Long:                  cmdLong,
 		Example:               cmdExample,
 		GroupID:               skprcommand.GroupCDN,

@@ -24,7 +24,7 @@ func NewCommand() *cobra.Command {
 	command := v1shell.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "shell [environment]",
+		Use:                   "shell <environment>",
 		DisableFlagsInUseLine: true,
 		Short:                 "Execute a multiple shell commands in a session",
 		Args:                  cobra.ExactArgs(1),
