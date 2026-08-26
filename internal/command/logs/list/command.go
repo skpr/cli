@@ -4,18 +4,22 @@ import (
 	"context"
 	"fmt"
 	"os"
-
-	"github.com/skpr/api/pb"
+	"strings"
 
 	"github.com/skpr/cli/internal/client"
+	"github.com/skpr/cli/internal/command/logs/streams"
 	"github.com/skpr/cli/internal/components/tooltip"
 	skprtable "github.com/skpr/cli/internal/table"
 )
 
 // Helpful text provided by the tooltip.
-const tooltipText = `To view logs for a specific stream, use the tail command.
+const tooltipText = `To tail a stream in real-time, use the tail command.
 
-$ skpr logs tail ENVIRONMENT STREAM STREAM`
+$ skpr logs tail ENVIRONMENT STREAM STREAM
+
+To run a bounded query over a time window, use the query command.
+
+$ skpr logs query ENVIRONMENT STREAM STREAM`
 
 // Command to list all log sources.
 type Command struct {
@@ -29,21 +33,26 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return err
 	}
 
-	resp, err := client.Logs().ListStreams(ctx, &pb.LogListStreamsRequest{
-		Environment: cmd.Environment,
-	})
+	resp, err := streams.List(ctx, client.Logs(), cmd.Environment)
 	if err != nil {
 		return fmt.Errorf("failed to list streams: %w", err)
 	}
 
 	header := []string{
-		"Streams",
+		"Stream",
+		"Capabilities",
 	}
 
 	var rows [][]string
 
 	for _, stream := range resp.Streams {
-		rows = append(rows, []string{stream})
+		var capabilities []string
+
+		for _, streamType := range stream.Types {
+			capabilities = append(capabilities, streamType.String())
+		}
+
+		rows = append(rows, []string{stream.Name, strings.Join(capabilities, ", ")})
 	}
 
 	err = skprtable.Print(os.Stdout, header, rows)

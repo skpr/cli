@@ -60,7 +60,7 @@ func main() {
 	cmd.AddCommand(info.NewCommand())
 	cmd.AddCommand(list.NewCommand())
 	cmd.AddCommand(login.NewCommand())
-	cmd.AddCommand(logs.NewCommand())
+	cmd.AddCommand(logs.NewCommand(featureFlags.LogSumamry))
 	cmd.AddCommand(mysql.NewCommand(featureFlags.DockerClient))
 	cmd.AddCommand(version.NewCommand())
 

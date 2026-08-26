@@ -19,6 +19,7 @@ type Config struct {
 // ConfigExperimental holds experimental feature flags.
 type ConfigExperimental struct {
 	Trace        bool                  `yaml:"trace,omitempty"`
+	LogSumamry   bool                  `yaml:"logSummary,omitempty"`
 	DockerClient docker.DockerClientId `yaml:"docker-client,omitempty"`
 }
 

@@ -22,7 +22,7 @@ func NewCommand() *cobra.Command {
 	command := v1tail.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "tail <environment> <stream> <stream>",
+		Use:                   "tail <environment> [stream] [stream]",
 		Args:                  cobra.MinimumNArgs(1),
 		DisableFlagsInUseLine: true,
 		Short:                 "Tail the logs of a running application",
