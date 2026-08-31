@@ -164,7 +164,7 @@ func main() {
 		})
 	}
 
-	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme)); err != nil {
+	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme), fang.WithVersion(version.GitVersion)); err != nil {
 		os.Exit(1)
 	}
 }
