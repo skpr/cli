@@ -6,7 +6,6 @@ go = "1.26"
 
 [env]
 CGO_ENABLED=0
-LGFLAGS="-extldflags '-static'"
 SKPR_API="localhost:50051?insecure=true"
 SKPR_SSH="localhost:2222"
 SKPR_PROJECT="drupal"
@@ -24,9 +23,10 @@ run = "go mod tidy"
 [tasks.build]
 description = "Build the application"
 run = '''
-go build -o bin/skpr -ldflags=${CLI_LDFLAGS} github.com/skpr/cli/cmd/skpr
-go build -o bin/skpr-agent -ldflags=${CLI_LDFLAGS} github.com/skpr/cli/cmd/skpr-agent
-go build -o bin/skpr-rsh -ldflags=${CLI_LDFLAGS} github.com/skpr/cli/cmd/skpr-rsh
+LDFLAGS="-extldflags '-static' -X github.com/skpr/cli/cmd/skpr/version.GitVersion=$(git describe --tags --always --dirty) -X github.com/skpr/cli/cmd/skpr/version.BuildDate=$(date +%Y-%m-%d)"
+go build -o bin/skpr -ldflags="${LDFLAGS}" github.com/skpr/cli/cmd/skpr
+go build -o bin/skpr-agent -ldflags="${LDFLAGS}" github.com/skpr/cli/cmd/skpr-agent
+go build -o bin/skpr-rsh -ldflags="${LDFLAGS}" github.com/skpr/cli/cmd/skpr-rsh
 '''
 depends = ["vendor"]
 
