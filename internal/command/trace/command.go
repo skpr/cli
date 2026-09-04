@@ -3,17 +3,13 @@ package trace
 import (
 	"context"
 	"fmt"
-	"io"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/skpr/api/pb"
 	"github.com/skpr/compass/pkg/app"
-	"github.com/skpr/compass/pkg/app/events"
 	applogger "github.com/skpr/compass/pkg/app/logger"
 	compasstrace "github.com/skpr/compass/pkg/trace"
 	"golang.org/x/sync/errgroup"
-
-	"github.com/skpr/cli/internal/client"
 )
 
 // Command to trace environments.
@@ -23,6 +19,11 @@ type Command struct {
 
 // Run the command.
 func (cmd *Command) Run(ctx context.Context) error {
+	ctx, api, err := cmd.preflight(ctx, connectAPI)
+	if err != nil {
+		return err
+	}
+
 	p := tea.NewProgram(app.NewModel("", app.DefaultMaxTraces, app.DefaultMaxLogs), tea.WithAltScreen())
 
 	logger, err := applogger.New(p)
@@ -31,57 +32,22 @@ func (cmd *Command) Run(ctx context.Context) error {
 	}
 
 	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
 	eg := errgroup.Group{}
 
 	// Start the collector.
 	eg.Go(func() error {
-		logger.Info("Connecting to Skpr API...")
-
-		ctx, client, err := client.New(ctx)
-		if err != nil {
-			return err
-		}
-
-		stream, err := client.Trace().StreamTraces(ctx, &pb.StreamTracesRequest{
-			Environment: cmd.Environment,
-		})
-		if err != nil {
-			return err
-		}
-
-		for {
-			select {
-			case <-ctx.Done():
-				return nil
-			default:
-				resp, err := stream.Recv()
-				if err == io.EOF {
-					break
-				}
-				if err != nil {
-					return fmt.Errorf("streaming trace failed: %w", err)
-				}
-
-				for _, t := range resp.Traces {
-					converted := traceFromProto(t)
-					p.Send(events.Trace{
-						IngestionTime: converted.Metadata.StartTime,
-						Trace:         converted,
-					})
-				}
-			}
-		}
+		return collectTraces(ctx, api, cmd.Environment, p, logger)
 	})
 
 	// Start the application.
 	eg.Go(func() error {
 		_, err := p.Run()
+		cancel()
 		if err != nil {
 			return fmt.Errorf("failed to run program: %w", err)
 		}
-
-		cancel()
 
 		return nil
 	})
