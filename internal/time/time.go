@@ -5,6 +5,7 @@ import (
 
 	timenow "github.com/jinzhu/now"
 	"github.com/pkg/errors"
+	str2duration "github.com/xhit/go-str2duration/v2"
 )
 
 const (
@@ -34,8 +35,8 @@ func parseStringWithTime(value string, now time.Time) (time.Time, error) {
 
 	t, err := timenow.New(now).Parse(value)
 	if err != nil {
-		// Its not an absolute date, try duration (add a "-" to indicate all values being in the past).
-		d, err3 := time.ParseDuration("-" + value)
+		// It's not an absolute date, try duration (add a "-" to indicate all values being in the past).
+		d, err3 := str2duration.ParseDuration("-" + value)
 		if err3 != nil {
 			return time.Time{}, errors.Wrap(err3, "Could not detect timestamp or duration in string")
 		}
