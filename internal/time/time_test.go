@@ -48,7 +48,7 @@ func TestParseStringWithTimezone(t *testing.T) {
 		{
 			Value:    "1w",
 			Expected: "2019-06-24T09:00:00Z",
-			Comment:  "relative days",
+			Comment:  "relative weeks",
 		},
 		{
 			Value:    "2d4h",
