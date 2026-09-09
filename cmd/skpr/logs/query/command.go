@@ -14,11 +14,11 @@ var (
   # Query the last hour of the default streams.
   skpr logs query dev
 
-  # Query specific streams over the last 24 hours.
-  skpr logs query dev nginx fpm --timeframe 24h
+  # Query specific streams over the last 12 hours.
+  skpr logs query dev nginx fpm --timeframe 12h
 
   # Query an absolute time range.
-  skpr logs query dev --from "2 days ago" --to now
+  skpr logs query dev --from 2d4h30m --to now
 
   # Query for events containing a substring, excluding another.
   skpr logs query dev --contains error --exclude healthcheck`
