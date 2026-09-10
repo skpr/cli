@@ -212,8 +212,8 @@ github.com/sirupsen/logrus v1.9.4 h1:TsZE7l11zFCLZnZ+teH4Umoq5BhEIfIzfRDZ1Uzql2w
 github.com/sirupsen/logrus v1.9.4/go.mod h1:ftWc9WdOfJ0a92nsE2jF5u5ZwH8Bv2zdeOC42RjbV2g=
 github.com/skpr/api v1.8.3 h1:nlPR0gfS02BJOWkvwuRbj6CyAku9ETHOnXSV8oEGNxY=
 github.com/skpr/api v1.8.3/go.mod h1:3ujFy8YadnZ/eEOCoeTnmtIFeVoBu6sQjTLLUKkFVFY=
-github.com/skpr/compass v1.12.0 h1:3MwUg1Sg+qVitZjz9C2EVKfZwgvldFwXfbuqQRWBQEo=
-github.com/skpr/compass v1.12.0/go.mod h1:VaD+bWzckT40JGeAPPkyu9Ce30tcSS2rFCbeO1buLu0=
+github.com/skpr/compass v1.13.0 h1:30rzKBbXzjOmi9Ay5yw1YOakrmlTWKkLeUe3Lu9mbGY=
+github.com/skpr/compass v1.13.0/go.mod h1:qP7fPaIfYl/tg07eYdQ4fq5IC7NprNuHQdoMAt/dJGg=
 github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966 h1:JIAuq3EEf9cgbU6AtGPK4CTG3Zf6CKMNqf0MHTggAUA=
 github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966/go.mod h1:sUM3LWHvSMaG192sy56D9F7CNvL7jUJVXoqM1QKLnog=
 github.com/spf13/cobra v1.10.2 h1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=
