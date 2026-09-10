@@ -44,6 +44,7 @@ import (
 	"github.com/skpr/cli/internal/client/config/user"
 	"github.com/skpr/cli/internal/color"
 	skprcommand "github.com/skpr/cli/internal/command"
+	"github.com/skpr/cli/internal/errorhandler"
 )
 
 const cmdExample = `
@@ -164,7 +165,7 @@ func main() {
 		})
 	}
 
-	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme), fang.WithVersion(version.GitVersion)); err != nil {
+	if err := fang.Execute(context.Background(), cmd, fang.WithColorSchemeFunc(MyColorScheme), fang.WithVersion(version.GitVersion), fang.WithErrorHandler(errorhandler.Handler)); err != nil {
 		os.Exit(1)
 	}
 }

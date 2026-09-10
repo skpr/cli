@@ -11,6 +11,11 @@ import (
 const (
 	// Directory where the credentials will be stored.
 	Directory = "skpr/credentials"
+	// DirectoryPerms for the credentials cache directory.
+	DirectoryPerms = 0700
+	// FilePerms for the credentials cache file. These credentials include a
+	// refresh token, so they are only readable by the current user.
+	FilePerms = 0600
 )
 
 // Set a credentials cache file for a cluster.
@@ -25,7 +30,7 @@ func Set(clusterName string, credentials Credentials) error {
 		return fmt.Errorf("failed to get credentials cache directory: %w", err)
 	}
 
-	err = os.MkdirAll(directory, os.ModePerm)
+	err = os.MkdirAll(directory, DirectoryPerms)
 	if err != nil {
 		return fmt.Errorf("failed to create credentials cache directory: %w", err)
 	}
@@ -35,7 +40,7 @@ func Set(clusterName string, credentials Credentials) error {
 		return fmt.Errorf("failed to get credentials cache file: %w", err)
 	}
 
-	return os.WriteFile(file, val, 0644)
+	return os.WriteFile(file, val, FilePerms)
 }
 
 // Delete a credentials cache file for a cluster.
@@ -44,7 +49,13 @@ func Delete(clusterName string) error {
 	if err != nil {
 		return fmt.Errorf("failed to get credentials cache file: %w", err)
 	}
-	return os.Remove(path)
+
+	err = os.Remove(path)
+	if err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("failed to delete file %s: %w", path, err)
+	}
+
+	return nil
 }
 
 // Get a credentials cache file for a cluster.

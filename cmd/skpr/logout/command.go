@@ -27,5 +27,9 @@ func NewCommand() *cobra.Command {
 		},
 	}
 
+	// Note: This is registered as a sign out URL with the identity provider, so
+	// it needs to match exactly, including the path.
+	cmd.Flags().StringVar(&command.Callback, "callback", "http://localhost:11218/logout", "Endpoint to callback as a part of the OIDC workflow.")
+
 	return cmd
 }

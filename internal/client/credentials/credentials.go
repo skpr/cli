@@ -13,6 +13,11 @@ type Credentials struct {
 	Session  string
 }
 
+// Empty returns true when we do not have credentials to authenticate with.
+func (c Credentials) Empty() bool {
+	return c.Username == "" || c.Password == ""
+}
+
 type ConfigGetter func(context.Context, string) (Credentials, bool, error)
 
 func New(ctx context.Context, config config.Config) (Credentials, error) {

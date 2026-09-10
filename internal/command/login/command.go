@@ -2,6 +2,7 @@ package login
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -62,10 +63,11 @@ func (cmd *Command) Run(ctx context.Context) error {
 	state := rand.String(StateLength)
 
 	ctxReady, ready := context.WithCancel(context.Background())
+	defer ready()
 
 	server := login.NewServer(cmd.Callback)
 
-	group, _ := errgroup.WithContext(context.Background())
+	group, groupCtx := errgroup.WithContext(context.Background())
 
 	oath2Config := oauth2.Config{
 		RedirectURL: cmd.Callback,
@@ -85,7 +87,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 		resp, err := server.Run(context.TODO(), ready)
 		if err != nil {
-			fmt.Println("Failed to start server:", err)
+			return fmt.Errorf("failed to run login callback server: %w", err)
 		}
 
 		log.Println("Callback received")
@@ -96,7 +98,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 		// Ensure that we are secure.
 		if resp.State != state {
-			return fmt.Errorf("failed to login with code: %w", err)
+			return errors.New("login callback returned an unexpected state, please try again")
 		}
 
 		token, err := oath2Config.Exchange(context.TODO(), resp.Code)
@@ -126,7 +128,14 @@ func (cmd *Command) Run(ctx context.Context) error {
 	})
 
 	group.Go(func() error {
-		<-ctxReady.Done()
+		// Wait for the callback server to become ready. We also watch the group
+		// so that a server which never becomes ready fails the command instead
+		// of waiting here forever.
+		select {
+		case <-ctxReady.Done():
+		case <-groupCtx.Done():
+			return groupCtx.Err()
+		}
 
 		log.Println("Opening browser session")
 

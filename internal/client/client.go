@@ -47,6 +47,12 @@ func New(ctx context.Context) (context.Context, *Client, error) {
 		return nil, nil, fmt.Errorf("could not retrieve credentials: %w", err)
 	}
 
+	// Without credentials the platform rejects every request, so we stop here
+	// rather than sending one and turning the response into an error message.
+	if credentials.Empty() {
+		return nil, nil, fmt.Errorf("%w: no credentials found for %s", skprcredentials.ErrLoginRequired, config.API.Host())
+	}
+
 	conn, err := Dial(config)
 	if err != nil {
 		return ctx, nil, fmt.Errorf("failed to dial server: %w", err)
@@ -75,11 +81,18 @@ func New(ctx context.Context) (context.Context, *Client, error) {
 func Dial(config config.Config) (*grpc.ClientConn, error) {
 	server := fmt.Sprintf("%s:%d", config.API.Host(), config.API.Port())
 
-	if config.API.Insecure() {
-		return grpc.NewClient(server, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	opts := []grpc.DialOption{
+		grpc.WithChainUnaryInterceptor(authUnaryInterceptor),
+		grpc.WithChainStreamInterceptor(authStreamInterceptor),
 	}
 
-	return grpc.NewClient(server, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
+	if config.API.Insecure() {
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	} else {
+		opts = append(opts, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
+	}
+
+	return grpc.NewClient(server, opts...)
 }
 
 // Project client.
