@@ -2,11 +2,15 @@ package cache
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"golang.org/x/oauth2"
 )
+
+// ErrNoRefreshToken is returned when these credentials have no refresh token
+// stored, which means they cannot be renewed.
+var ErrNoRefreshToken = errors.New("refresh token not found")
 
 // Credentials that are cached locally.
 type Credentials struct {
@@ -33,7 +37,17 @@ type Token struct {
 }
 
 // GetToken returns a new token from the refresh token.
+//
+// Note: The identity provider does not return a refresh token as a part of the
+// refresh grant response. The oauth2 package carries the existing one over for
+// us, so the returned token can always be stored back as is.
 func (c Credentials) GetToken(ctx context.Context) (*oauth2.Token, error) {
+	// The oauth2 package returns an unexported error for this, so we check up
+	// front to give callers something they can identify.
+	if c.Token.Refresh == "" {
+		return nil, ErrNoRefreshToken
+	}
+
 	token := oauth2.Token{
 		RefreshToken: c.Token.Refresh,
 	}
@@ -42,7 +56,7 @@ func (c Credentials) GetToken(ctx context.Context) (*oauth2.Token, error) {
 
 	newToken, err := tokenSource.Token()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get tokens: %w", err)
+		return nil, err
 	}
 
 	return newToken, nil

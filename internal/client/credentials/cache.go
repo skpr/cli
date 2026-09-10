@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity"
-	"github.com/pkg/errors"
 
 	skprcredentials "github.com/skpr/cli/internal/aws/credentials"
 	cache2 "github.com/skpr/cli/internal/client/credentials/cache"
@@ -34,7 +33,7 @@ func GetFromCache(ctx context.Context, cluster string) (Credentials, bool, error
 
 	newToken, err := credentials.GetToken(ctx)
 	if err != nil {
-		return Credentials{}, false, fmt.Errorf("failed to get token: %w", err)
+		return Credentials{}, false, classifyRefreshError(err)
 	}
 
 	credentials.Token = cache2.Token{
@@ -44,7 +43,7 @@ func GetFromCache(ctx context.Context, cluster string) (Credentials, bool, error
 	// Extract the ID Token from OAuth2 token.
 	idToken, ok := newToken.Extra("id_token").(string)
 	if !ok {
-		return Credentials{}, false, errors.Wrap(err, "Missing id_token")
+		return Credentials{}, false, fmt.Errorf("%w: response did not include an id_token", ErrLoginRequired)
 	}
 
 	cfg, err := awsconfig.LoadDefaultConfig(ctx, awsconfig.WithRegion(credentials.Cognito.Region), awsconfig.WithCredentialsProvider(aws.AnonymousCredentials{}))

@@ -3,6 +3,7 @@ package login
 import (
 	"context"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
@@ -20,6 +21,12 @@ import (
 type Server struct {
 	Callback string
 	Response Response
+	// Logout renders the logout page on the root path. The identity provider
+	// only redirects to sign out URLs which have been registered, so we accept
+	// the callback with or without the /logout path.
+	Logout bool
+	// CallbackTimeout for how long we wait for the callback.
+	CallbackTimeout time.Duration
 }
 
 // Response from the oauth2 callback.
@@ -30,6 +37,21 @@ type Response struct {
 	ErrorDescription string
 }
 
+const (
+	// ShutdownTimeout for draining connections once a callback is received.
+	ShutdownTimeout = 5 * time.Second
+	// ReadyTimeout for the callback server to start responding.
+	ReadyTimeout = 30 * time.Second
+	// DefaultCallbackTimeout for how long we wait for the callback, which
+	// includes the developer signing in with the identity provider.
+	DefaultCallbackTimeout = 5 * time.Minute
+)
+
+// ErrCallbackTimeout is returned when the identity provider did not send us a
+// callback. This usually means the callback URL has not been registered with
+// the identity provider.
+var ErrCallbackTimeout = errors.New("callback was not received")
+
 // Embed the entire directory.
 //
 //go:embed tmpl
@@ -38,7 +60,8 @@ var tmpl embed.FS
 // NewServer for responding to oauth2 callbacks.
 func NewServer(callback string) *Server {
 	return &Server{
-		Callback: callback,
+		Callback:        callback,
+		CallbackTimeout: DefaultCallbackTimeout,
 	}
 }
 
@@ -48,13 +71,26 @@ func (s *Server) Run(ctx context.Context, ready context.CancelFunc) (Response, e
 
 	ctxShutdown, shutdown := context.WithCancel(ctx)
 
-	router.HandleFunc("/", s.handleLoginCallback(shutdown)).Methods("GET")
+	if s.Logout {
+		router.HandleFunc("/", s.handleLogoutCallback(shutdown)).Methods("GET")
+	} else {
+		router.HandleFunc("/", s.handleLoginCallback(shutdown)).Methods("GET")
+	}
+
 	router.HandleFunc("/logout", s.handleLogoutCallback(shutdown)).Methods("GET")
 	router.HandleFunc("/readyz", s.handleReadyz).Methods("GET")
+
+	if s.CallbackTimeout == 0 {
+		s.CallbackTimeout = DefaultCallbackTimeout
+	}
 
 	addr, err := url.Parse(s.Callback)
 	if err != nil {
 		return s.Response, fmt.Errorf("failed to parse callback URL: %w", err)
+	}
+
+	if addr.Hostname() == "" || addr.Port() == "" {
+		return s.Response, fmt.Errorf("callback URL must include a host and a port: %s", s.Callback)
 	}
 
 	srv := &http.Server{
@@ -65,8 +101,16 @@ func (s *Server) Run(ctx context.Context, ready context.CancelFunc) (Response, e
 	group, _ := errgroup.WithContext(context.Background())
 
 	group.Go(func() error {
-		err := httputils.Wait(fmt.Sprintf("%s/readyz", s.Callback), 30*time.Second)
+		// The callback can include a path, so we build this from the host
+		// rather than the callback URL itself.
+		readyz := fmt.Sprintf("%s://%s/readyz", addr.Scheme, addr.Host)
+
+		err := httputils.Wait(ctxShutdown, readyz, ReadyTimeout)
 		if err != nil {
+			// Without this the server would wait for a callback which is never
+			// going to arrive, because we never opened the browser session.
+			shutdown()
+
 			return fmt.Errorf("failed to wait for server: %w", err)
 		}
 
@@ -77,7 +121,28 @@ func (s *Server) Run(ctx context.Context, ready context.CancelFunc) (Response, e
 
 	group.Go(func() error {
 		<-ctxShutdown.Done()
-		return srv.Shutdown(ctxShutdown)
+
+		// We shutdown with a new context because the one we waited on has been
+		// cancelled, which would make the server give up on draining the
+		// connection which is still delivering our response.
+		ctxTimeout, cancel := context.WithTimeout(context.Background(), ShutdownTimeout)
+		defer cancel()
+
+		return srv.Shutdown(ctxTimeout)
+	})
+
+	group.Go(func() error {
+		// Without this we would wait forever for a callback which is never
+		// going to arrive eg. When the identity provider rejected our callback
+		// URL because it has not been registered.
+		select {
+		case <-ctxShutdown.Done():
+			return nil
+		case <-time.After(s.CallbackTimeout):
+			shutdown()
+
+			return fmt.Errorf("%w from %s within %v", ErrCallbackTimeout, s.Callback, s.CallbackTimeout)
+		}
 	})
 
 	group.Go(func() error {

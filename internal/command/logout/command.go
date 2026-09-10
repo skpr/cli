@@ -2,9 +2,11 @@ package logout
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/url"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
@@ -18,6 +20,9 @@ import (
 	"github.com/skpr/cli/internal/client/config"
 	credentialscache "github.com/skpr/cli/internal/client/credentials/cache"
 )
+
+// CallbackTimeout for how long we wait for the logout callback.
+const CallbackTimeout = 30 * time.Second
 
 // Command to logout from the platform.
 type Command struct {
@@ -41,23 +46,15 @@ func (cmd *Command) Run(ctx context.Context) error {
 	if found {
 		log.Println("Deleting cached credentials")
 
-		token, err := credentials.GetToken(ctx)
-		if err != nil {
-			return fmt.Errorf("failed to get token source: %w", err)
-		}
-
-		cfg, err := awsconfig.LoadDefaultConfig(ctx, awsconfig.WithRegion(credentials.Cognito.Region), awsconfig.WithCredentialsProvider(aws.AnonymousCredentials{}))
-		if err != nil {
-			return fmt.Errorf("failed to load AWS config: %w", err)
-		}
-
-		_, err = cognitoidentityprovider.NewFromConfig(cfg).GlobalSignOut(ctx, &cognitoidentityprovider.GlobalSignOutInput{
-			AccessToken: aws.String(token.AccessToken),
-		})
+		// Signing out with the identity provider is best effort. If our refresh
+		// token has already expired, or was revoked, we cannot get an access
+		// token to sign out with. We still need to remove the local credentials
+		// so that a developer can login again.
+		err = globalSignOut(ctx, credentials)
 		if err != nil {
 			// @todo, We can add this later once we have log levels eg. Turn of debug mode.
 			// https://previousnext.atlassian.net/browse/SKPR-1002
-			fmt.Println("Failed to execute global sign out:", err)
+			log.Println("Failed to execute global sign out:", err)
 		}
 
 		// Delete the file now that we have invalidated our tokens.
@@ -86,17 +83,36 @@ func (cmd *Command) Run(ctx context.Context) error {
 	log.Println("Found oidclogin provider information")
 
 	ctxReady, ready := context.WithCancel(context.Background())
+	defer ready()
 
 	server := oidclogin.NewServer(cmd.Callback)
 
-	group, _ := errgroup.WithContext(context.Background())
+	// This server is handling a logout callback.
+	server.Logout = true
+
+	// The identity provider redirects straight back to us, so unlike login
+	// there is no developer interaction to wait for.
+	server.CallbackTimeout = CallbackTimeout
+
+	group, groupCtx := errgroup.WithContext(context.Background())
 
 	group.Go(func() error {
 		log.Println("Starting webserver for logout callback")
 
 		resp, err := server.Run(context.TODO(), ready)
 		if err != nil {
-			fmt.Println("Failed to start server:", err)
+			// The identity provider will not redirect back to us unless our
+			// callback URL has been registered as a sign out URL. Our local
+			// credentials have already been removed at this point, so we tell
+			// the developer what is left over instead of failing.
+			if errors.Is(err, oidclogin.ErrCallbackTimeout) {
+				log.Println("Did not receive the logout callback:", err)
+				log.Println("Local credentials have been removed, however your identity provider browser session may still be active")
+
+				return nil
+			}
+
+			return fmt.Errorf("failed to run logout callback server: %w", err)
 		}
 
 		log.Println("Callback received")
@@ -111,7 +127,14 @@ func (cmd *Command) Run(ctx context.Context) error {
 	})
 
 	group.Go(func() error {
-		<-ctxReady.Done()
+		// Wait for the callback server to become ready. We also watch the group
+		// so that a server which never becomes ready fails the command instead
+		// of waiting here forever.
+		select {
+		case <-ctxReady.Done():
+		case <-groupCtx.Done():
+			return groupCtx.Err()
+		}
 
 		log.Println("Opening browser session")
 
@@ -120,7 +143,8 @@ func (cmd *Command) Run(ctx context.Context) error {
 			return fmt.Errorf("failed to parse logout URL %w", err)
 		}
 
-		queryParams := url.Values{}
+		// Keep any query parameters which the platform has already provided.
+		queryParams := logoutURL.Query()
 		queryParams.Set("client_id", providerInfo.Cognito.ClientID)
 		queryParams.Set("logout_uri", cmd.Callback)
 
@@ -134,6 +158,29 @@ func (cmd *Command) Run(ctx context.Context) error {
 	err = group.Wait()
 	if err != nil {
 		return fmt.Errorf("failed to wait for logout: %w", err)
+	}
+
+	return nil
+}
+
+// Helper function to sign the developer out of all of their sessions with the
+// identity provider.
+func globalSignOut(ctx context.Context, credentials credentialscache.Credentials) error {
+	token, err := credentials.GetToken(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to get token: %w", err)
+	}
+
+	cfg, err := awsconfig.LoadDefaultConfig(ctx, awsconfig.WithRegion(credentials.Cognito.Region), awsconfig.WithCredentialsProvider(aws.AnonymousCredentials{}))
+	if err != nil {
+		return fmt.Errorf("failed to load AWS config: %w", err)
+	}
+
+	_, err = cognitoidentityprovider.NewFromConfig(cfg).GlobalSignOut(ctx, &cognitoidentityprovider.GlobalSignOutInput{
+		AccessToken: aws.String(token.AccessToken),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to global sign out: %w", err)
 	}
 
 	return nil
