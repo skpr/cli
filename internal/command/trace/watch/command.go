@@ -1,4 +1,4 @@
-package trace
+package watch
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// Command to trace environments.
+// Command which streams traces for an environment into the Compass app.
 type Command struct {
 	Environment string
 }
@@ -24,7 +24,13 @@ func (cmd *Command) Run(ctx context.Context) error {
 		return err
 	}
 
-	p := tea.NewProgram(app.NewModel("", app.DefaultMaxTraces, app.DefaultMaxLogs), tea.WithAltScreen())
+	model := app.NewModel("", app.Options{
+		MaxTraces: app.DefaultMaxTraces,
+		MaxLogs:   app.DefaultMaxLogs,
+		MaxBytes:  app.DefaultMaxBytes,
+	})
+
+	p := tea.NewProgram(model, tea.WithAltScreen())
 
 	logger, err := applogger.New(p)
 	if err != nil {
@@ -87,26 +93,31 @@ func traceFromProto(src *pb.Trace) compasstrace.Trace {
 		dst.ResourceUtilisation.MaxMemory = resources.GetMaxMemory()
 	}
 
-	dst.FunctionCalls = make([]compasstrace.FunctionCall, 0, len(src.GetFunctionCalls()))
-	for _, functionCall := range src.GetFunctionCalls() {
-		if functionCall == nil {
+	dst.Spans = make([]compasstrace.Span, 0, len(src.GetSpans()))
+	for _, span := range src.GetSpans() {
+		if span == nil {
 			continue
 		}
 
-		converted := compasstrace.FunctionCall{
-			Name:   functionCall.GetName(),
-			Memory: functionCall.GetMemory(),
+		converted := compasstrace.Span{
+			Name:   span.GetName(),
+			Calls:  span.GetCalls(),
+			Memory: span.GetMemory(),
 		}
-		if offset := functionCall.GetOffset(); offset != nil {
+		if offset := span.GetOffset(); offset != nil {
 			converted.Offset = offset.AsDuration()
 		}
-		if elapsed := functionCall.GetElapsed(); elapsed != nil {
+		if elapsed := span.GetElapsed(); elapsed != nil {
 			converted.Elapsed = elapsed.AsDuration()
 		}
+		if total := span.GetTotal(); total != nil {
+			converted.Total = total.AsDuration()
+		}
 
-		dst.FunctionCalls = append(dst.FunctionCalls, converted)
+		dst.Spans = append(dst.Spans, converted)
 	}
-	dst.FunctionCallsDropped = int(src.GetFunctionCallsDropped())
+	dst.Calls = src.GetCalls()
+	dst.CallsDropped = src.GetCallsDropped()
 
 	if drupal := src.GetDrupal(); drupal != nil {
 		dst.Drupal = &compasstrace.Drupal{

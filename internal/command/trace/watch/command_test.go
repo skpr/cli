@@ -1,4 +1,4 @@
-package trace
+package watch
 
 import (
 	"testing"
@@ -28,16 +28,19 @@ func TestTraceFromProto(t *testing.T) {
 			},
 		},
 		ResourceUtilisation: &pb.TraceResourceUtilisation{MaxMemory: 4096},
-		FunctionCalls: []*pb.TraceFunctionCall{
+		Spans: []*pb.TraceSpan{
 			{
 				Name:    "Drupal\\Core\\Kernel::handle",
 				Offset:  durationpb.New(25 * time.Millisecond),
 				Elapsed: durationpb.New(750 * time.Millisecond),
+				Total:   durationpb.New(900 * time.Millisecond),
+				Calls:   5,
 				Memory:  1024,
 			},
 			nil,
 		},
-		FunctionCallsDropped: 2,
+		Calls:        7,
+		CallsDropped: 2,
 		Drupal: &pb.TraceDrupal{
 			CacheEvents: []*pb.TraceDrupalCacheEvent{
 				{
@@ -66,15 +69,18 @@ func TestTraceFromProto(t *testing.T) {
 			EndTime:   endTime,
 		},
 		ResourceUtilisation: compasstrace.ResourceUtilisation{MaxMemory: 4096},
-		FunctionCalls: []compasstrace.FunctionCall{
+		Spans: []compasstrace.Span{
 			{
 				Name:    "Drupal\\Core\\Kernel::handle",
 				Offset:  25 * time.Millisecond,
 				Elapsed: 750 * time.Millisecond,
+				Total:   900 * time.Millisecond,
+				Calls:   5,
 				Memory:  1024,
 			},
 		},
-		FunctionCallsDropped: 2,
+		Calls:        7,
+		CallsDropped: 2,
 		Drupal: &compasstrace.Drupal{
 			CacheEvents: []compasstrace.CacheEvent{
 				{

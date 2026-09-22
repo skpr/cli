@@ -3,36 +3,49 @@ package trace
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/skpr/cli/cmd/skpr/trace/resume"
+	"github.com/skpr/cli/cmd/skpr/trace/status"
+	"github.com/skpr/cli/cmd/skpr/trace/suspend"
+	"github.com/skpr/cli/cmd/skpr/trace/threshold"
+	"github.com/skpr/cli/cmd/skpr/trace/watch"
 	skprcommand "github.com/skpr/cli/internal/command"
-	v1trace "github.com/skpr/cli/internal/command/trace"
 )
 
 var (
-	cmdLong = `
-  Trace requests as they flow through your application using Compass.`
+	cmdLong = `Trace requests as they flow through your application using Compass.`
 
 	cmdExample = `
-  # Start profiling for the specified environment
-  skpr trace <environment>`
+  # Watch traces for the dev environment
+  skpr trace watch dev
+
+  # Show the tracing status for the dev environment
+  skpr trace status dev
+
+  # Suspend and resume tracing for the dev environment
+  skpr trace suspend dev
+  skpr trace resume dev
+
+  # Show, or set, the tracing threshold for the dev environment
+  skpr trace threshold get dev
+  skpr trace threshold set dev 10ms`
 )
 
 // NewCommand creates a new cobra.Command for 'trace' sub command
 func NewCommand() *cobra.Command {
-	command := v1trace.Command{}
-
 	cmd := &cobra.Command{
-		Use:                   "trace [environment]",
-		Args:                  cobra.ExactArgs(1),
+		Use:                   "trace",
 		DisableFlagsInUseLine: true,
 		Short:                 "Trace requests as they flow through your application",
 		Long:                  cmdLong,
 		Example:               cmdExample,
 		GroupID:               skprcommand.GroupDebug,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			command.Environment = args[0]
-			return command.Run(cmd.Context())
-		},
 	}
+
+	cmd.AddCommand(watch.NewCommand())
+	cmd.AddCommand(status.NewCommand())
+	cmd.AddCommand(suspend.NewCommand())
+	cmd.AddCommand(resume.NewCommand())
+	cmd.AddCommand(threshold.NewCommand())
 
 	return cmd
 }
