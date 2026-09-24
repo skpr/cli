@@ -1,4 +1,4 @@
-package watch
+package tui
 
 import (
 	"context"
@@ -14,11 +14,16 @@ import (
 
 type fakeCommandAPI struct {
 	getEnvironment func(context.Context, *pb.EnvironmentGetRequest) (*pb.EnvironmentGetResponse, error)
+	getSuspended   func(context.Context, *pb.TraceGetSuspendedRequest) (*pb.TraceGetSuspendedResponse, error)
 	streamTraces   func(context.Context, *pb.StreamTracesRequest) (traceStream, error)
 }
 
 func (api *fakeCommandAPI) GetEnvironment(ctx context.Context, request *pb.EnvironmentGetRequest) (*pb.EnvironmentGetResponse, error) {
 	return api.getEnvironment(ctx, request)
+}
+
+func (api *fakeCommandAPI) GetSuspended(ctx context.Context, request *pb.TraceGetSuspendedRequest) (*pb.TraceGetSuspendedResponse, error) {
+	return api.getSuspended(ctx, request)
 }
 
 func (api *fakeCommandAPI) StreamTraces(ctx context.Context, request *pb.StreamTracesRequest) (traceStream, error) {
@@ -80,6 +85,10 @@ func TestPreflightSuccess(t *testing.T) {
 			assert.Equal(t, "staging", request.GetName())
 			return &pb.EnvironmentGetResponse{}, nil
 		},
+		getSuspended: func(_ context.Context, request *pb.TraceGetSuspendedRequest) (*pb.TraceGetSuspendedResponse, error) {
+			assert.Equal(t, "staging", request.GetEnvironment())
+			return &pb.TraceGetSuspendedResponse{}, nil
+		},
 	}
 
 	ctx, validatedAPI, err := cmd.preflight(context.Background(), func(ctx context.Context) (context.Context, commandAPI, error) {
@@ -89,4 +98,42 @@ func TestPreflightSuccess(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, true, ctx.Value(key))
 	assert.Same(t, api, validatedAPI)
+}
+
+func TestPreflightTracingNotEnabled(t *testing.T) {
+	cmd := Command{Environment: "staging"}
+	api := &fakeCommandAPI{
+		getEnvironment: func(context.Context, *pb.EnvironmentGetRequest) (*pb.EnvironmentGetResponse, error) {
+			return &pb.EnvironmentGetResponse{}, nil
+		},
+		getSuspended: func(context.Context, *pb.TraceGetSuspendedRequest) (*pb.TraceGetSuspendedResponse, error) {
+			return nil, status.Error(codes.Unknown, "trace collection is not enabled for this environment")
+		},
+	}
+
+	_, validatedAPI, err := cmd.preflight(context.Background(), func(ctx context.Context) (context.Context, commandAPI, error) {
+		return ctx, api, nil
+	})
+
+	require.EqualError(t, err, `failed to verify tracing for environment "staging": trace collection is not enabled for this environment`)
+	assert.Nil(t, validatedAPI)
+}
+
+func TestPreflightTracingSuspended(t *testing.T) {
+	cmd := Command{Environment: "staging"}
+	api := &fakeCommandAPI{
+		getEnvironment: func(context.Context, *pb.EnvironmentGetRequest) (*pb.EnvironmentGetResponse, error) {
+			return &pb.EnvironmentGetResponse{}, nil
+		},
+		getSuspended: func(context.Context, *pb.TraceGetSuspendedRequest) (*pb.TraceGetSuspendedResponse, error) {
+			return &pb.TraceGetSuspendedResponse{Suspended: true}, nil
+		},
+	}
+
+	_, validatedAPI, err := cmd.preflight(context.Background(), func(ctx context.Context) (context.Context, commandAPI, error) {
+		return ctx, api, nil
+	})
+
+	require.EqualError(t, err, `tracing is suspended for environment "staging", run "skpr trace resume staging" to resume it`)
+	assert.Nil(t, validatedAPI)
 }

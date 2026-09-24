@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/skpr/api/pb"
@@ -47,23 +48,18 @@ func (cmd *Command) Run(ctx context.Context) error {
 		duration = &value
 	}
 
-	return Print(os.Stdout, cmd.Environment, suspended.GetSuspended(), duration)
+	return Print(os.Stdout, suspended.GetSuspended(), duration)
 }
 
 // Print the tracing status for an environment.
 //
 // A nil threshold is one the environment did not report. Unlike
-// "skpr trace threshold get", that does not fail the command, so that the
+// "skpr trace get <environment> threshold", that does not fail the command, so that the
 // suspended state is still shown.
-func Print(w io.Writer, environment string, suspended bool, threshold *time.Duration) error {
+func Print(w io.Writer, suspended bool, threshold *time.Duration) error {
 	header := []string{
 		"Property",
 		"Value",
-	}
-
-	tracing := "Active"
-	if suspended {
-		tracing = "Suspended"
 	}
 
 	formattedThreshold := thresholdNotReported
@@ -72,8 +68,7 @@ func Print(w io.Writer, environment string, suspended bool, threshold *time.Dura
 	}
 
 	rows := [][]string{
-		{"Environment", environment},
-		{"Tracing", tracing},
+		{"Suspended", strconv.FormatBool(suspended)},
 		{"Threshold", formattedThreshold},
 	}
 

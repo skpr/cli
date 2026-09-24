@@ -1,4 +1,4 @@
-package watch
+package tui
 
 import (
 	"context"
@@ -44,7 +44,13 @@ func (cmd *Command) Run(ctx context.Context) error {
 
 	// Start the collector.
 	eg.Go(func() error {
-		return collectTraces(ctx, api, cmd.Environment, p, logger)
+		err := collectTraces(ctx, api, cmd.Environment, p, logger)
+		if err != nil {
+			// The stream cannot recover, so exit the app to report why.
+			p.Quit()
+		}
+
+		return err
 	})
 
 	// Start the application.
