@@ -11,6 +11,8 @@ import (
 	"github.com/skpr/compass/pkg/app/events"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type fakeTraceStream struct {
@@ -149,6 +151,27 @@ func TestCollectTracesActiveStreamCancellationIsClean(t *testing.T) {
 	err := collectTraces(ctx, api, "staging", sender, logger)
 
 	require.NoError(t, err)
+	assert.Empty(t, logger.errors)
+	assert.Equal(t, []tea.Msg{
+		events.Connection{State: events.ConnectionStateConnecting},
+		events.Connection{State: events.ConnectionStateConnected},
+	}, sender.messages)
+}
+
+func TestCollectTracesStopsWhenRejected(t *testing.T) {
+	api := &fakeCommandAPI{
+		streamTraces: func(context.Context, *pb.StreamTracesRequest) (traceStream, error) {
+			return &fakeTraceStream{recv: func() (*pb.StreamTracesResponse, error) {
+				return nil, status.Error(codes.FailedPrecondition, "trace collection is not enabled for this environment")
+			}}, nil
+		},
+	}
+
+	sender := &recordingSender{}
+	logger := &recordingLogger{}
+	err := collectTraces(context.Background(), api, "staging", sender, logger)
+
+	require.EqualError(t, err, "trace stream rejected: trace collection is not enabled for this environment")
 	assert.Empty(t, logger.errors)
 	assert.Equal(t, []tea.Msg{
 		events.Connection{State: events.ConnectionStateConnecting},

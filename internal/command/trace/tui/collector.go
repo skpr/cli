@@ -10,6 +10,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/skpr/api/pb"
 	"github.com/skpr/compass/pkg/app/events"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -41,12 +43,26 @@ func collectTraces(ctx context.Context, api commandAPI, environment string, send
 		}
 		if err == nil {
 			sender.Send(events.Connection{State: events.ConnectionStateConnected})
-			retryDelay = traceRetryInitial
-			err = receiveTraces(ctx, stream, sender)
+
+			// Opening a stream does not wait on the server, so a rejected stream
+			// only fails on its first receive. The backoff is only reset once
+			// traces arrive, otherwise every attempt would retry after the
+			// initial delay.
+			var received bool
+			received, err = receiveTraces(ctx, stream, sender)
+			if received {
+				retryDelay = traceRetryInitial
+			}
 		}
 
 		if ctx.Err() != nil {
 			return nil
+		}
+
+		// The server rejects the stream when the environment is not collecting
+		// traces, eg. tracing was suspended, which retrying will not fix.
+		if status.Code(err) == codes.FailedPrecondition {
+			return fmt.Errorf("trace stream rejected: %s", status.Convert(err).Message())
 		}
 
 		if errors.Is(err, io.EOF) {
@@ -80,15 +96,19 @@ func collectTraces(ctx context.Context, api commandAPI, environment string, send
 	}
 }
 
-func receiveTraces(ctx context.Context, stream traceStream, sender messageSender) error {
+func receiveTraces(ctx context.Context, stream traceStream, sender messageSender) (bool, error) {
+	var received bool
+
 	for {
 		response, err := stream.Recv()
 		if err != nil {
-			return err
+			return received, err
 		}
 		if response == nil {
-			return errors.New("received an empty trace stream response")
+			return received, errors.New("received an empty trace stream response")
 		}
+
+		received = true
 
 		for _, item := range response.GetTraces() {
 			converted := traceFromProto(item)
@@ -99,7 +119,7 @@ func receiveTraces(ctx context.Context, stream traceStream, sender messageSender
 		}
 
 		if ctx.Err() != nil {
-			return ctx.Err()
+			return received, ctx.Err()
 		}
 	}
 }
