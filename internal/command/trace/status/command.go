@@ -54,7 +54,7 @@ func (cmd *Command) Run(ctx context.Context) error {
 // Print the tracing status for an environment.
 //
 // A nil threshold is one the environment did not report. Unlike
-// "skpr trace get threshold", that does not fail the command, so that the
+// "skpr trace get <environment> threshold", that does not fail the command, so that the
 // suspended state is still shown.
 func Print(w io.Writer, suspended bool, threshold *time.Duration) error {
 	header := []string{

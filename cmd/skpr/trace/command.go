@@ -27,8 +27,8 @@ var (
   skpr trace resume dev
 
   # Show, or set, the tracing threshold for the dev environment
-  skpr trace get threshold dev
-  skpr trace set threshold dev 10ms`
+  skpr trace get dev threshold
+  skpr trace set dev threshold 10ms`
 )
 
 // NewCommand creates a new cobra.Command for 'trace' sub command
