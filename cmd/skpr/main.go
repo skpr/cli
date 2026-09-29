@@ -35,8 +35,10 @@ import (
 	"github.com/skpr/cli/cmd/skpr/purge"
 	"github.com/skpr/cli/cmd/skpr/release"
 	"github.com/skpr/cli/cmd/skpr/restore"
+	"github.com/skpr/cli/cmd/skpr/resume"
 	"github.com/skpr/cli/cmd/skpr/rsync"
 	"github.com/skpr/cli/cmd/skpr/shell"
+	"github.com/skpr/cli/cmd/skpr/suspend"
 	"github.com/skpr/cli/cmd/skpr/trace"
 	"github.com/skpr/cli/cmd/skpr/validate"
 	"github.com/skpr/cli/cmd/skpr/version"
@@ -116,8 +118,10 @@ func main() {
 	cmd.AddCommand(purge.NewCommand())
 	cmd.AddCommand(release.NewCommand(featureFlags.DockerClient))
 	cmd.AddCommand(restore.NewCommand())
+	cmd.AddCommand(resume.NewCommand())
 	cmd.AddCommand(rsync.NewCommand())
 	cmd.AddCommand(shell.NewCommand())
+	cmd.AddCommand(suspend.NewCommand())
 	cmd.AddCommand(validate.NewCommand())
 	cmd.AddCommand(version.NewCommand())
 
