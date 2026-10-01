@@ -10,11 +10,11 @@ var (
 	cmdLong = `Create a filesystem backup of an environment.`
 
 	cmdExample = `
-  # Create a filesystem backup of dev.
-  skpr filesystem backup create dev
+  # Create a public filesystem backup of dev.
+  skpr filesystem backup create dev public
 
-  # Create and wait for a filesystem backup.
-  skpr filesystem backup create dev --wait`
+  # Create and wait for a private filesystem backup.
+  skpr filesystem backup create dev private --wait`
 )
 
 // NewCommand creates a new cobra.Command for 'create' sub command
@@ -22,14 +22,15 @@ func NewCommand() *cobra.Command {
 	command := v1create.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "create <environment>",
-		Args:                  cobra.ExactArgs(1),
+		Use:                   "create <environment> <id>",
+		Args:                  cobra.ExactArgs(2),
 		DisableFlagsInUseLine: true,
 		Short:                 "Create a filesystem backup",
 		Long:                  cmdLong,
 		Example:               cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
+			command.VolumeName = args[1]
 			return command.Run(cmd.Context())
 		},
 	}
