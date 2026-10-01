@@ -10,10 +10,10 @@ var (
 	cmdLong = `Create a filesystem backup of an environment.`
 
 	cmdExample = `
-  # Create a public filesystem backup of dev.
+  # Create a filesystem backup of public mount on dev.
   skpr filesystem backup create dev public
 
-  # Create and wait for a private filesystem backup.
+  # Create and wait for a filesystem backup of private mount.
   skpr filesystem backup create dev private --wait`
 )
 
