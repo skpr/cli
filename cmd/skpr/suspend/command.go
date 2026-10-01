@@ -33,5 +33,8 @@ func NewCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVarP(&command.Force, "force", "f", command.Force, "Skpr will not request a confirmation for suspending production environments")
+	_ = cmd.Flags().MarkHidden("force")
+
 	return cmd
 }
