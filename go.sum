@@ -28,8 +28,8 @@ github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4 h1:7Wo47d/xn/7KttCSBd8EGYeZ7ULR
 github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4/go.mod h1:tDB2IVC1xC3vX8o+6uRlzhTxP3g1b77CZXFX/oD2FnQ=
 github.com/aws/aws-sdk-go-v2/service/cognitoidentity v1.42.1 h1:Dn59f+SXDZpxtW4PeHLX9NpTUviRa7PYKljjtrTQogQ=
 github.com/aws/aws-sdk-go-v2/service/cognitoidentity v1.42.1/go.mod h1:1QRD/NN0eVdK/AeDi5c2pSx1BOLSD8kYyDBdX0/Pj1g=
-github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.74.1 h1:Wy5HBm3TF/rxjEo9IFhrSB3s+i82CBMfsZ9yLdPZCX0=
-github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.74.1/go.mod h1:4R787AIVz+VLMJGkgnAdT7YSMNtt2yoIfvF9eo5j344=
+github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.75.0 h1:0RYFa6ArA/Y8I5fRSLN5HUFFYhxBtd8aS9CPCId6Dbc=
+github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.75.0/go.mod h1:4R787AIVz+VLMJGkgnAdT7YSMNtt2yoIfvF9eo5j344=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.66.1 h1:H63vyEXid/tHpv/UlvQUyM1c2QK5WgQRB3MK5gnAo8A=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.66.1/go.mod h1:WglfLchOYcHrYOwNV7jERuy0Xc+7jArLkEnQay93auY=
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.19 h1:bAdDl/HkGCcGPoe25ToSHEw23VIxt6CT5fLcg111BKg=
@@ -161,8 +161,8 @@ github.com/moby/docker-image-spec v1.3.1 h1:jMKff3w6PgbfSa69GfNg+zN/XLhfXJGnEx3N
 github.com/moby/docker-image-spec v1.3.1/go.mod h1:eKmb5VW8vQEh/BAr2yvVNvuiJuY6UIocYsFu/DxxRpo=
 github.com/moby/go-archive v0.3.3 h1:OxxR9paxsluYi+zDUEXTTaIxtkK3viymW+Ka7vRhhME=
 github.com/moby/go-archive v0.3.3/go.mod h1:Npdv43fFqlhZW7Xo8fbm3ZMYFvAGNviUPqX21VERbcE=
-github.com/moby/moby/api v1.56.0 h1:GQzua3NA599ASSIICx0iFgiJeO9YkdDARvQsm23ZZuQ=
-github.com/moby/moby/api v1.56.0/go.mod h1:sZ+THbVWkjOmBPPfbnzdD/G1LuIexWhqlSHHPTDQ1Uk=
+github.com/moby/moby/api v1.56.1 h1:PpWkvVPB7Fr/No8w+TfyJ/I6rWZ2YPZhT3JorIg+06c=
+github.com/moby/moby/api v1.56.1/go.mod h1:sZ+THbVWkjOmBPPfbnzdD/G1LuIexWhqlSHHPTDQ1Uk=
 github.com/moby/patternmatcher v0.6.1 h1:qlhtafmr6kgMIJjKJMDmMWq7WLkKIo23hsrpR3x084U=
 github.com/moby/patternmatcher v0.6.1/go.mod h1:hDPoyOpDY7OrrMDLaYoY3hf52gNCR/YOUYxkhApJIxc=
 github.com/moby/sys/atomicwriter v0.1.0 h1:kw5D/EqkBwsBFi0ss9v1VG3wIkVhzGvLklJ+w3A14Sw=
