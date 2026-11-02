@@ -25,26 +25,35 @@ type Command struct {
 	DryRun         bool
 	IncludePrivate bool
 	Force          bool
+
+	// confirm prompts the user; it defaults to confirmation.Confirm and is replaced in tests.
+	confirm func(force bool, message string) bool
 }
 
 // Run the command.
 func (c *Command) Run(_ context.Context) error {
-	executable, err := os.Executable()
-	if err != nil {
-		return errors.Wrap(err, "failed to lookup binary path")
-	}
-
 	plan, err := c.planPrivateFiles()
 	if err != nil {
 		return err
 	}
 
 	if plan.confirm {
+		confirm := c.confirm
+		if confirm == nil {
+			confirm = confirmation.Confirm
+		}
+
 		msg := fmt.Sprintf("You are about to download private files from %s. Private files may contain personal information. "+
 			"Only download them to investigate a specific issue, with approval. Continue? [yes/no]", plan.environment)
-		if ok := confirmation.Confirm(c.Force, msg); !ok {
-			return errors.New("aborted")
+		if ok := confirm(c.Force, msg); !ok {
+			fmt.Fprintln(os.Stderr, "Download cancelled.")
+			return nil
 		}
+	}
+
+	executable, err := os.Executable()
+	if err != nil {
+		return errors.Wrap(err, "failed to lookup binary path")
 	}
 
 	if plan.exclude != "" {
@@ -69,7 +78,8 @@ type privateFilesPlan struct {
 }
 
 // planPrivateFiles decides how the sync handles private files. Private files are only
-// downloaded with IncludePrivate set, and only after confirmation.
+// downloaded with IncludePrivate set, and only after confirmation. A dry run transfers
+// nothing, so it needs the flag but not the confirmation.
 func (c *Command) planPrivateFiles() (privateFilesPlan, error) {
 	env, remotePath, ok := splitRemote(c.Source)
 	if !ok {
@@ -79,15 +89,15 @@ func (c *Command) planPrivateFiles() (privateFilesPlan, error) {
 	plan := privateFilesPlan{environment: env}
 
 	switch classifyRemotePath(remotePath) {
-	case privateScopeInside:
+	case privateScopeRequiresFlag:
 		if !c.IncludePrivate {
 			return plan, ErrPrivateFilesNotIncluded
 		}
 
-		plan.confirm = true
+		plan.confirm = !c.DryRun
 	case privateScopeParent:
 		if c.IncludePrivate {
-			plan.confirm = true
+			plan.confirm = !c.DryRun
 		} else {
 			plan.exclude = privateExcludePattern(remotePath)
 		}

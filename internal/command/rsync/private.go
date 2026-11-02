@@ -14,11 +14,16 @@ type privateScope int
 const (
 	// privateScopeNone means the source does not include private files.
 	privateScopeNone privateScope = iota
-	// privateScopeInside means the source is the private filesystem or a path within it.
-	privateScopeInside
-	// privateScopeParent means the source is a parent directory of the private filesystem.
+	// privateScopeRequiresFlag means the source is, or may expand to, the private filesystem
+	// or a path within it, so downloading it requires the private files flag.
+	privateScopeRequiresFlag
+	// privateScopeParent means the source is a parent directory of the private filesystem,
+	// which can be synced with the private filesystem excluded.
 	privateScopeParent
 )
+
+// privateFilesElements are the path elements of PrivateFilesPath.
+var privateFilesElements = strings.Split(strings.TrimPrefix(PrivateFilesPath, "/"), "/")
 
 // splitRemote splits an rsync remote location ("env:path") into its environment and path.
 // The boolean is false when the location is a local path.
@@ -39,13 +44,12 @@ func classifyRemotePath(remotePath string) privateScope {
 		return privateScopeNone
 	}
 
-	// A glob such as "/mnt/*" can expand to the private filesystem on the remote side.
-	// Only its literal prefix is known here, so treat any glob that could reach the
-	// private filesystem as being inside it.
-	if i := strings.IndexAny(remotePath, "*?["); i >= 0 {
-		prefix := path.Dir(remotePath[:i+1])
-		if isWithin(prefix, PrivateFilesPath) || isWithin(PrivateFilesPath, prefix) {
-			return privateScopeInside
+	// A glob such as "/mnt/*" is expanded on the remote side and may include the private
+	// filesystem. An exclude can't be anchored reliably for an expanded list, so require
+	// the flag whenever the glob could reach it.
+	if strings.ContainsAny(remotePath, "*?[") {
+		if globMayReachPrivate(remotePath) {
+			return privateScopeRequiresFlag
 		}
 
 		return privateScopeNone
@@ -55,14 +59,14 @@ func classifyRemotePath(remotePath string) privateScope {
 
 	switch {
 	case isWithin(cleaned, PrivateFilesPath):
-		return privateScopeInside
+		return privateScopeRequiresFlag
 	case isWithin(PrivateFilesPath, cleaned):
 		// rsync picks the transfer root from the last path element, and "." or ".." make
 		// that root hard to predict. Without a known root an exclude can't be anchored
 		// safely, so require the private files flag instead.
 		if trimmed := strings.TrimRight(remotePath, "/"); trimmed != "" {
 			if base := path.Base(trimmed); base == "." || base == ".." {
-				return privateScopeInside
+				return privateScopeRequiresFlag
 			}
 		}
 
@@ -70,6 +74,35 @@ func classifyRemotePath(remotePath string) privateScope {
 	default:
 		return privateScopeNone
 	}
+}
+
+// globMayReachPrivate reports whether an absolute glob could expand to the private filesystem,
+// a path within it, or one of its parents. Shell globs don't match across "/", so each element
+// is matched against the element of PrivateFilesPath at the same depth. Globs containing "." or
+// ".." elements, or invalid patterns, are assumed to reach it.
+func globMayReachPrivate(glob string) bool {
+	var elements []string
+	for _, e := range strings.Split(glob, "/") {
+		switch e {
+		case "":
+			continue
+		case ".", "..":
+			return true
+		}
+		elements = append(elements, e)
+	}
+
+	for i := 0; i < len(elements) && i < len(privateFilesElements); i++ {
+		matched, err := path.Match(elements[i], privateFilesElements[i])
+		if err != nil {
+			return true
+		}
+		if !matched {
+			return false
+		}
+	}
+
+	return true
 }
 
 // isWithin reports whether child is the same path as parent or is below it.
