@@ -24,8 +24,7 @@ func Confirm(force bool, message string) bool {
 	return confirm(os.Stdin, os.Stdout, force, message)
 }
 
-// confirm prompts on out and reads the answer from in. An empty answer, or one that
-// can't be read (e.g. no input is attached), counts as "no".
+// confirm prompts on out and reads from in. An empty or unreadable answer is "no".
 func confirm(in io.Reader, out io.Writer, force bool, message string) bool {
 	if force {
 		return true

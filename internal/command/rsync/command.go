@@ -11,7 +11,7 @@ import (
 	"github.com/skpr/cli/internal/confirmation"
 )
 
-// ErrPrivateFilesNotIncluded is returned when a sync would download private files without the flag to allow it.
+// ErrPrivateFilesNotIncluded is returned when a download includes private files without --include-private.
 var ErrPrivateFilesNotIncluded = errors.New("this sync would download private files, which may contain personal information. " +
 	"Only download private files to investigate a specific issue, with approval. " +
 	"Use --include-private to download them")
@@ -26,7 +26,7 @@ type Command struct {
 	IncludePrivate bool
 	Force          bool
 
-	// confirm prompts the user; it defaults to confirmation.Confirm and is replaced in tests.
+	// confirm defaults to confirmation.Confirm.
 	confirm func(force bool, message string) bool
 }
 
@@ -69,17 +69,13 @@ func (c *Command) Run(_ context.Context) error {
 
 // privateFilesPlan describes how a sync handles private files.
 type privateFilesPlan struct {
-	// environment the files are downloaded from.
 	environment string
-	// confirm is true when the user must confirm a private file download.
-	confirm bool
-	// exclude is an rsync exclude pattern that skips private files, or empty when none is needed.
+	confirm     bool
+	// exclude is an rsync pattern that skips private files.
 	exclude string
 }
 
-// planPrivateFiles decides how the sync handles private files. Private files are only
-// downloaded with IncludePrivate set, and only after confirmation. A dry run transfers
-// nothing, so it needs the flag but not the confirmation.
+// planPrivateFiles decides how the sync handles private files. Dry runs skip confirmation.
 func (c *Command) planPrivateFiles() (privateFilesPlan, error) {
 	env, remotePath, ok := splitRemote(c.Source)
 	if !ok {

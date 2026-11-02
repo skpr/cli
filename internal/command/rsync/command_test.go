@@ -29,7 +29,7 @@ func TestGenerateArgs(t *testing.T) {
 				DryRun:      true,
 			},
 			privateExclude: "/private/",
-			// The private exclude comes first so user patterns can't re-include private files.
+			// The private exclude comes first so user patterns can't override it.
 			want: []string{
 				"-avz", "--progress", "-e", "skpr-rsh",
 				"--exclude", "/private/",
