@@ -27,7 +27,11 @@ EOF
 sudo apt update && sudo apt install skpr
 ```
 
-If you previously added the repository using `/etc/apt/sources.list.d/skpr.list`, remove that file to avoid duplicate entries.
+If you previously added the repository using `/etc/apt/sources.list.d/skpr.list`, remove it and the old key to avoid duplicate entries:
+
+```
+sudo rm /etc/apt/sources.list.d/skpr.list /etc/apt/trusted.gpg.d/packages.skpr.io.pub
+```
 
 ### Homebrew
 
