@@ -8,150 +8,112 @@ import (
 )
 
 func TestGenerateArgs(t *testing.T) {
-	c := Command{
-		Source:      "source",
-		Destination: "destination",
-	}
-
-	args := c.generateArgs("skpr", "")
-
-	assert.Equal(t, []string{
-		"-avz",
-		"--progress",
-		"-e", "skpr-rsh",
-		"source",
-		"destination",
-	}, args)
-}
-
-func TestGenerateArgsExcludes(t *testing.T) {
-	c := Command{
-		Source:      "source",
-		Destination: "destination",
-		Excludes: []string{
-			"js/*",
-			"css/*",
-			"styles/*",
-		},
-	}
-
-	args := c.generateArgs("skpr", "")
-
-	assert.Equal(t, []string{
-		"-avz",
-		"--progress",
-		"-e", "skpr-rsh",
-		"--exclude", "js/*",
-		"--exclude", "css/*",
-		"--exclude", "styles/*",
-		"source",
-		"destination",
-	}, args)
-}
-
-func TestGenerateArgsExcludeFrom(t *testing.T) {
-	c := Command{
-		Source:      "source",
-		Destination: "destination",
-		ExcludeFrom: "foo.txt",
-	}
-	args := c.generateArgs("skpr", "")
-	assert.Equal(t, []string{
-		"-avz",
-		"--progress",
-		"-e", "skpr-rsh",
-		"--exclude-from", "foo.txt",
-		"source",
-		"destination",
-	}, args)
-}
-
-func TestGenerateDryRun(t *testing.T) {
-	c := Command{
-		Source:      "source",
-		Destination: "destination",
-		DryRun:      true,
-	}
-	args := c.generateArgs("skpr", "")
-	assert.Equal(t, []string{
-		"-avz",
-		"--progress",
-		"-e", "skpr-rsh",
-		"--dry-run",
-		"source",
-		"destination",
-	}, args)
-}
-
-func TestGenerateArgsPrivateExclude(t *testing.T) {
-	c := Command{
-		Source:      "dev:/mnt/",
-		Destination: "destination",
-		Excludes:    []string{"js/*"},
-	}
-	args := c.generateArgs("skpr", "/private/")
-	assert.Equal(t, []string{
-		"-avz",
-		"--progress",
-		"-e", "skpr-rsh",
-		"--exclude", "/private/",
-		"--exclude", "js/*",
-		"dev:/mnt/",
-		"destination",
-	}, args)
-}
-
-func TestPlanPrivateFiles(t *testing.T) {
 	tests := []struct {
 		name           string
-		source         string
-		includePrivate bool
-		dryRun         bool
-		want           privateFilesPlan
-		wantErr        error
+		command        Command
+		privateExclude string
+		want           []string
 	}{
-		{name: "upload", source: "./private/", want: privateFilesPlan{}},
-		{name: "local path with colon", source: "./a:b/", want: privateFilesPlan{}},
-		{name: "public download", source: "dev:/mnt/public/", want: privateFilesPlan{environment: "dev"}},
-		{name: "relative download", source: "dev:files/", want: privateFilesPlan{environment: "dev"}},
-		{name: "similar name", source: "dev:/mnt/private-old/", want: privateFilesPlan{environment: "dev"}},
-		{name: "private without flag", source: "dev:/mnt/private/", wantErr: ErrPrivateFilesNotIncluded},
-		{name: "private subdirectory without flag", source: "dev:/mnt/private/webform", wantErr: ErrPrivateFilesNotIncluded},
-		{name: "private via traversal without flag", source: "dev:/mnt/public/../private", wantErr: ErrPrivateFilesNotIncluded},
-		{name: "private glob without flag", source: "dev:/mnt/*", wantErr: ErrPrivateFilesNotIncluded},
-		{name: "matching glob without flag", source: "dev:/mnt/priv*/", wantErr: ErrPrivateFilesNotIncluded},
-		{name: "glob within private without flag", source: "dev:/mnt/private/*.pdf", wantErr: ErrPrivateFilesNotIncluded},
-		{name: "glob parent without flag", source: "dev:/m*", wantErr: ErrPrivateFilesNotIncluded},
-		{name: "glob with traversal without flag", source: "dev:/var/*/../mnt/private", wantErr: ErrPrivateFilesNotIncluded},
-		{name: "public glob", source: "dev:/mnt/pub*/", want: privateFilesPlan{environment: "dev"}},
-		{name: "unrelated glob", source: "dev:/var/*", want: privateFilesPlan{environment: "dev"}},
-		{name: "parent ending in dot without flag", source: "dev:/mnt/.", wantErr: ErrPrivateFilesNotIncluded},
-		{name: "private with flag", source: "dev:/mnt/private/", includePrivate: true, want: privateFilesPlan{environment: "dev", confirm: true}},
-		{name: "parent with trailing slash", source: "dev:/mnt/", want: privateFilesPlan{environment: "dev", exclude: "/private/"}},
-		{name: "parent without trailing slash", source: "dev:/mnt", want: privateFilesPlan{environment: "dev", exclude: "/mnt/private/"}},
-		{name: "root", source: "dev:/", want: privateFilesPlan{environment: "dev", exclude: "/mnt/private/"}},
-		{name: "parent with flag", source: "dev:/mnt/", includePrivate: true, want: privateFilesPlan{environment: "dev", confirm: true}},
-		{name: "private dry run with flag", source: "dev:/mnt/private/", includePrivate: true, dryRun: true, want: privateFilesPlan{environment: "dev"}},
-		{name: "private dry run without flag", source: "dev:/mnt/private/", dryRun: true, wantErr: ErrPrivateFilesNotIncluded},
+		{
+			name:    "defaults",
+			command: Command{Source: "source", Destination: "destination"},
+			want:    []string{"-avz", "--progress", "-e", "skpr-rsh", "source", "destination"},
+		},
+		{
+			name: "all options",
+			command: Command{
+				Source:      "dev:/mnt/",
+				Destination: "destination",
+				Excludes:    []string{"js/*", "css/*"},
+				ExcludeFrom: "foo.txt",
+				DryRun:      true,
+			},
+			privateExclude: "/private/",
+			// The private exclude comes first so user patterns can't re-include private files.
+			want: []string{
+				"-avz", "--progress", "-e", "skpr-rsh",
+				"--exclude", "/private/",
+				"--exclude", "js/*",
+				"--exclude", "css/*",
+				"--exclude-from", "foo.txt",
+				"--dry-run",
+				"dev:/mnt/", "destination",
+			},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := Command{
-				Source:         tt.source,
-				Destination:    "destination",
-				IncludePrivate: tt.includePrivate,
-				DryRun:         tt.dryRun,
-			}
-			got, err := c.planPrivateFiles()
-			if tt.wantErr != nil {
-				assert.ErrorIs(t, err, tt.wantErr)
-				return
-			}
-			assert.NoError(t, err)
-			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.want, tt.command.generateArgs("skpr", tt.privateExclude))
 		})
 	}
+}
+
+func TestPlanPrivateFiles(t *testing.T) {
+	plan := func(c Command) (privateFilesPlan, error) {
+		c.Destination = "destination"
+		return c.planPrivateFiles()
+	}
+
+	t.Run("not private", func(t *testing.T) {
+		for source, env := range map[string]string{
+			"./private/":            "",
+			"./a:b/":                "",
+			"dev:/mnt/public/":      "dev",
+			"dev:files/":            "dev",
+			"dev:/mnt/private-old/": "dev",
+			"dev:/mnt/pub*/":        "dev",
+			"dev:/var/*":            "dev",
+		} {
+			got, err := plan(Command{Source: source})
+			assert.NoError(t, err, source)
+			assert.Equal(t, privateFilesPlan{environment: env}, got, source)
+		}
+	})
+
+	t.Run("requires flag", func(t *testing.T) {
+		for _, source := range []string{
+			"dev:/mnt/private/",
+			"dev:/mnt/private/webform",
+			"dev:/mnt/public/../private",
+			"dev:/mnt/.",
+			"dev:/mnt/*",
+			"dev:/mnt/priv*/",
+			"dev:/mnt/private/*.pdf",
+			"dev:/m*",
+			"dev:/var/*/../mnt/private",
+		} {
+			_, err := plan(Command{Source: source})
+			assert.ErrorIs(t, err, ErrPrivateFilesNotIncluded, source)
+
+			_, err = plan(Command{Source: source, DryRun: true})
+			assert.ErrorIs(t, err, ErrPrivateFilesNotIncluded, source)
+
+			got, err := plan(Command{Source: source, IncludePrivate: true})
+			assert.NoError(t, err, source)
+			assert.Equal(t, privateFilesPlan{environment: "dev", confirm: true}, got, source)
+
+			got, err = plan(Command{Source: source, IncludePrivate: true, DryRun: true})
+			assert.NoError(t, err, source)
+			assert.Equal(t, privateFilesPlan{environment: "dev"}, got, source)
+		}
+	})
+
+	t.Run("parent", func(t *testing.T) {
+		for source, exclude := range map[string]string{
+			"dev:/mnt/": "/private/",
+			"dev:/mnt":  "/mnt/private/",
+			"dev:/":     "/mnt/private/",
+		} {
+			got, err := plan(Command{Source: source})
+			assert.NoError(t, err, source)
+			assert.Equal(t, privateFilesPlan{environment: "dev", exclude: exclude}, got, source)
+
+			got, err = plan(Command{Source: source, IncludePrivate: true})
+			assert.NoError(t, err, source)
+			assert.Equal(t, privateFilesPlan{environment: "dev", confirm: true}, got, source)
+		}
+	})
 }
 
 func TestRunPrivateDeclined(t *testing.T) {
