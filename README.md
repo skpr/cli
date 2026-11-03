@@ -15,9 +15,22 @@ Full documentation is available at https://docs.skpr.io
 Add the apt repository and public key to your config, then update and install.
 
 ```
-wget -q https://packages.skpr.io/apt/packages.skpr.io.pub -O- | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/packages.skpr.io.pub > /dev/null
-echo "deb [arch=amd64v3 signed-by=/etc/apt/trusted.gpg.d/packages.skpr.io.pub] https://packages.skpr.io/apt stable main" | sudo tee -a /etc/apt/sources.list.d/skpr.list > /dev/null
+sudo install -dm 755 /etc/apt/keyrings
+wget -q https://packages.skpr.io/apt/packages.skpr.io.pub -O- | sudo gpg --dearmor --yes -o /etc/apt/keyrings/skpr.gpg
+sudo tee /etc/apt/sources.list.d/skpr.sources > /dev/null <<EOF
+Types: deb
+URIs: https://packages.skpr.io/apt
+Suites: stable
+Components: main
+Signed-By: /etc/apt/keyrings/skpr.gpg
+EOF
 sudo apt update && sudo apt install skpr
+```
+
+If you previously added the repository using `/etc/apt/sources.list.d/skpr.list`, remove it and the old key to avoid duplicate entries:
+
+```
+sudo rm /etc/apt/sources.list.d/skpr.list /etc/apt/trusted.gpg.d/packages.skpr.io.pub
 ```
 
 ### Homebrew
