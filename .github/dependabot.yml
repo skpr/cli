@@ -9,6 +9,9 @@ updates:
       go-dependencies:
         patterns:
           - "*"
+      gomod-security-deps:
+        applies-to: security-updates
+        patterns: [ "*" ]
     ignore:
       - dependency-name: "github.com/skpr/api"
       - dependency-name: "github.com/skpr/compass"
