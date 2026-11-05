@@ -49,6 +49,7 @@ func Print(w io.Writer, list []*pb.Environment) error {
 		"Size",
 		"Routes",
 		"Phase",
+		"Suspended",
 	}
 
 	var rows [][]string
@@ -60,6 +61,7 @@ func Print(w io.Writer, list []*pb.Environment) error {
 			item.Size,
 			strings.Join(append(item.Ingress.Routes, item.Ingress.Domain), "\n"),
 			color.ApplyColorToString(item.Phase),
+			fmt.Sprintf("%v", item.Suspended),
 		})
 	}
 
