@@ -81,6 +81,12 @@ brews:
     repository:
       owner: skpr
       name: homebrew-taps
+      branch: "skpr-{{ .Version }}"
+      pull_request:
+        enabled: true
+        draft: false
+        base:
+          branch: main
     commit_author:
       name: skprbot
       email: skprbot@skpr.io
