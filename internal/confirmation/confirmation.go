@@ -2,6 +2,8 @@ package confirmation
 
 import (
 	"fmt"
+	"io"
+	"os"
 
 	"github.com/skpr/cli/internal/slice"
 )
@@ -19,6 +21,11 @@ var (
 // use with caution. This confirmation prompt is here to
 // protect you.
 func Confirm(force bool, message string) bool {
+	return confirm(os.Stdin, os.Stdout, force, message)
+}
+
+// confirm prompts on out and reads from in. An empty or unreadable answer is "no".
+func confirm(in io.Reader, out io.Writer, force bool, message string) bool {
 	if force {
 		return true
 	}
@@ -26,13 +33,9 @@ func Confirm(force bool, message string) bool {
 		message = "Are you sure? [yes/no]"
 	}
 	var response string
-	fmt.Printf("%s: ", message)
-	_, err := fmt.Scanln(&response)
-	if err != nil {
-		panic(err)
+	fmt.Fprintf(out, "%s: ", message)
+	if _, err := fmt.Fscanln(in, &response); err != nil {
+		return false
 	}
-	if slice.Contains(okayResponses, response) {
-		return true
-	}
-	return false
+	return slice.Contains(okayResponses, response)
 }
