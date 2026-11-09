@@ -11,7 +11,7 @@ var (
 
 	cmdExample = `
   # Create a Mysql restore for dev with BACKUP_ID and wait.
-  skpr mysql restore create dev BACKUP_ID --wait`
+  skpr mysql restore create dev BACKUP_ID default --wait`
 )
 
 // NewCommand creates a new cobra.Command for 'create' sub command
@@ -19,8 +19,8 @@ func NewCommand() *cobra.Command {
 	command := v1create.Command{}
 
 	cmd := &cobra.Command{
-		Use:                   "create <environment> <backup_id>",
-		Args:                  cobra.ExactArgs(2),
+		Use:                   "create <environment> <backup_id> <name>",
+		Args:                  cobra.ExactArgs(3),
 		DisableFlagsInUseLine: true,
 		Short:                 "Create a MySQL restore",
 		Long:                  cmdLong,
@@ -28,6 +28,7 @@ func NewCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			command.Environment = args[0]
 			command.Backup = args[1]
+			command.DatabaseName = args[2]
 			return command.Run(cmd.Context())
 		},
 	}
