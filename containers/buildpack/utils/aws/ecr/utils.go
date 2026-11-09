@@ -30,6 +30,7 @@ func extractRegionFromURL(url string) (string, error) {
 	regions := []string{
 		aws.RegionUsEast1,
 		aws.RegionApSouthEast2,
+		aws.RegionApSouthEast6,
 	}
 
 	for _, region := range regions {
