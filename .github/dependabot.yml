@@ -3,11 +3,6 @@ version: 2
 updates:
   - package-ecosystem: "gomod"
     directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "wednesday"
-      time: "07:30"
-      timezone: "Australia/Sydney"
     groups:
       go-dependencies:
         patterns:
@@ -26,11 +21,6 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "wednesday"
-      time: "07:30"
-      timezone: "Australia/Sydney"
     commit-message:
       prefix: "build"
       include: "scope"
