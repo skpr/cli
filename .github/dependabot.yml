@@ -20,3 +20,19 @@ updates:
       include: "scope"
     cooldown:
       default-days: 1
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "build"
+      include: "scope"
+    cooldown:
+      default-days: 2
+    groups:
+      github-actions-deps:
+        patterns: [ "*" ]
+      github-actions-security-deps:
+        applies-to: security-updates
+        patterns: [ "*" ]
