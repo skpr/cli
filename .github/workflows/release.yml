@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: 📦 Install Mise
         run: |
@@ -26,20 +26,20 @@ jobs:
           mise install
 
       - name: 🔑 Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: 🔑 Log in to the GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🐋 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: ☁️ Release
         run: |
@@ -53,13 +53,13 @@ jobs:
       - release
     steps:
       - name: ⬇️ Git clone the repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: 📁 Make apt repo dirs
         run: mkdir -p apt-repo/pool/main/skpr
 
       - name: 📦 Download latest release
-        uses: robinraju/release-downloader@v1.8
+        uses: robinraju/release-downloader@v1.13
         with:
           repository: skpr/cli
           latest: true
@@ -67,14 +67,14 @@ jobs:
           out-file-path: apt-repo/pool/main/skpr
 
       - name: ⚙️ Configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: 🔑 Import GPG Private Key
-        uses: crazy-max/ghaction-import-gpg@v6
+        uses: crazy-max/ghaction-import-gpg@v7
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
 
