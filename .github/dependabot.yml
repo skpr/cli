@@ -3,6 +3,8 @@ version: 2
 updates:
   - package-ecosystem: "gomod"
     directory: "/"
+    schedule:
+      interval: "weekly"
     groups:
       go-dependencies:
         patterns:
@@ -17,10 +19,12 @@ updates:
       prefix: "build"
       include: "scope"
     cooldown:
-      default-days: 2
+      default-days: 1
 
   - package-ecosystem: "github-actions"
     directory: "/"
+    schedule:
+      interval: "weekly"
     commit-message:
       prefix: "build"
       include: "scope"
